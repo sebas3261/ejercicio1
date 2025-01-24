@@ -10,7 +10,7 @@ export default function Home() {
 
     const handleLogIn = () => {
         login({name, password, type: "user"})
-        navigate("/admin")
+        navigate("/admindashboard")
     }
   return (
     <div>
@@ -34,7 +34,7 @@ export default function Home() {
         <div onClick={()=>{handleLogIn()}}>
             sign in
         </div>
-        <NavLink to={"/signup"}>
+        <NavLink to={"/SignUp"}>
             <div>signUp</div>
         </NavLink>
     </div>

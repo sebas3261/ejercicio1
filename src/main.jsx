@@ -12,7 +12,7 @@ createRoot(document.getElementById("root")).render(
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/signup" element={<SignUp />} />
-        <Route path="admin" element={<PrivateRoute type="admin"><AdminHome/></PrivateRoute>}/>
+        <Route path="admindashboard" element={<PrivateRoute type="admin"><AdminHome/></PrivateRoute>}/>
         <Route path="*" element={<Navigate to="/" replace/>} />
       </Routes>
     </BrowserRouter>
