@@ -26,7 +26,7 @@ export default function Home() {
         <div onClick={()=>{console.log('sign in, name:', name, 'password:', password)}}>
             sign in
         </div>
-        <NavLink to={"/signup"}>
+        <NavLink to={"/SignUp"}>
             <div>signUp</div>
         </NavLink>
     </div>
