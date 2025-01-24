@@ -1,9 +1,17 @@
 import React, { useState } from 'react'
-import { NavLink } from "react-router";
+import {  useNavigate, NavLink } from "react-router";
+import { useAuth } from '../contexts/AuthContext';
 
 export default function Home() {
     const [name, setName] = useState('')
     const [password, setPassword] = useState('')
+    const {login} = useAuth()
+    const navigate = useNavigate();
+
+    const handleLogIn = () => {
+        login({name, password, type: "user"})
+        navigate("/admin")
+    }
   return (
     <div>
         <h1>Sign in</h1>
@@ -23,7 +31,7 @@ export default function Home() {
                 placeholder="Password"
             />
         </div>
-        <div onClick={()=>{console.log('sign in, name:', name, 'password:', password)}}>
+        <div onClick={()=>{handleLogIn()}}>
             sign in
         </div>
         <NavLink to={"/signup"}>

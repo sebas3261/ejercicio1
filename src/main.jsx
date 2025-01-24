@@ -1,13 +1,20 @@
-import { createRoot } from 'react-dom/client'
-import { BrowserRouter, Routes, Route } from "react-router";
-import Home from './pages/Home'
-import SignUp from './pages/SignUp';
+import { createRoot } from "react-dom/client";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router";
+import Home from "./pages/Home";
+import SignUp from "./pages/SignUp";
+import { AuthProvider } from "./contexts/AuthContext";
+import PrivateRoute from "./contexts/PrivateRoute";
+import AdminHome from "./pages/AdminHome";
 
-createRoot(document.getElementById('root')).render(
-  <BrowserRouter>
-    <Routes>
-      <Route path="/" element={<Home/>} />
-      <Route path="/signup" element={<SignUp/>} />
-    </Routes>
-  </BrowserRouter>
-)
+createRoot(document.getElementById("root")).render(
+  <AuthProvider>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="admin" element={<PrivateRoute type="admin"><AdminHome/></PrivateRoute>}/>
+        <Route path="*" element={<Navigate to="/" replace/>} />
+      </Routes>
+    </BrowserRouter>
+  </AuthProvider>
+);
