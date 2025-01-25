@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { db } from "../firebase";
-import { collection, addDoc } from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
 import { NavLink } from "react-router";
 import "../css/Signup.css";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
@@ -43,7 +43,7 @@ export default function SignUp() {
       const user = userCredential.user;
   
       // Guardar la información adicional del usuario en Firestore
-      await addDoc(collection(db, "users"), {
+      await setDoc(doc(db, "users", user.uid), {
         uid: user.uid,  // Guardamos el UID para referenciar al usuario en Firebase Authentication
         type: "user",
         name,

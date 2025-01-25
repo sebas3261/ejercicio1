@@ -35,20 +35,27 @@ export const AuthProvider = ({ children }) => {
   const login = async (credentials) => {
     try {
       const { name, password } = credentials;
-  
+        console.log("hola")
       // Autenticar con Firebase Authentication (usando email como name)
       const userCredential = await signInWithEmailAndPassword(auth, name, password);
       const firebaseUser = userCredential.user;
+
+      const ref = doc(db, "users", firebaseUser.uid);
+      const userDoc = await getDoc(ref);
+
+      const userData = userDoc.data();
+      console.log(userData)
+      
   
       // Guardar el tipo como "admin" en localStorage por ahora
-      localStorage.setItem("isAuthenticated", "user");
+      localStorage.setItem("isAuthenticated", userData.type);
       localStorage.setItem("user", JSON.stringify({ name: firebaseUser.email, uid: firebaseUser.uid }));
   
       // Actualizar el estado global con los datos del usuario
       dispatch({ type: "LOGIN", payload: { name: firebaseUser.email, type: "user" } });
   
       // Retornar el tipo "admin" por ahora
-      return "user"; // Forzamos que siempre retorne "admin"
+      return userData.type; // Forzamos que siempre retorne "admin"
     } catch (error) {
       console.error("Error al iniciar sesión:", error.message);
       return null; // Si algo falla, retornamos null

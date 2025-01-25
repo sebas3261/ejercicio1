@@ -11,6 +11,7 @@ export default function Home() {
 
   const handleLogIn = async () => {
     const type = await login({ name, password }); // Aquí usamos el email como `name`
+    console.log(type)
     if (type === "admin") {
       navigate("/admindashboard");
     } else if (type === "user") {
