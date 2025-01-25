@@ -35,7 +35,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (credentials) => {
     try {
       const { name, password } = credentials;
-        console.log("hola")
+        console.log(name)
       // Autenticar con Firebase Authentication (usando email como name)
       const userCredential = await signInWithEmailAndPassword(auth, name, password);
       const firebaseUser = userCredential.user;
@@ -61,7 +61,7 @@ export const AuthProvider = ({ children }) => {
       return null; // Si algo falla, retornamos null
     }
   };
-  
+
 
   // Función de cierre de sesión
   const logout = async () => {

@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
 import { db } from "../firebase";
 import { doc, setDoc } from "firebase/firestore";
-import { NavLink } from "react-router";
+import { useNavigate, NavLink } from "react-router"
 import "../css/Signup.css";
+import { useAuth } from "../contexts/AuthContext";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
 
 export default function SignUp() {
   const [step, setStep] = useState(1);
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
   // Step 1: User information
   const [name, setName] = useState('');
@@ -38,6 +41,7 @@ export default function SignUp() {
       // Registrar al usuario en Firebase Authentication
       const auth = getAuth();
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      
   
       // Obtener el UID del usuario registrado
       const user = userCredential.user;
@@ -63,7 +67,7 @@ export default function SignUp() {
         password,
         metodoPago
       });
-  
+      navigate("/");
       alert("Registro completado exitosamente");
     } catch (error) {
       alert("Error al guardar los datos: " + error.message);
