@@ -41,6 +41,12 @@ export default function Header({ type }) {
         <NavLink to={"/torneosUser"} className={"navlink"}>
         <p>Mis torneos</p>
         </NavLink>
+        <NavLink to={"/torneosUser"} className={"navlink"}>
+        <p>Mis torneos</p>
+        </NavLink>
+        <NavLink to={"/infouser"} className={"navlink"}>
+        <p>Mis torneos</p>
+        </NavLink>
       </div>
       <svg
         xmlns="http://www.w3.org/2000/svg"
