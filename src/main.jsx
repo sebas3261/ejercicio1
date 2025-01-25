@@ -14,8 +14,8 @@ createRoot(document.getElementById("root")).render(
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/signup" element={<SignUp />} />
-        <Route path="admindashboard" element={<PrivateRoute type="admin"><AdminHome/></PrivateRoute>}/>
-        <Route path="userdashboard" element={<PrivateRoute type="user"><UserHome/></PrivateRoute>}/>
+        <Route path="/admindashboard" element={<PrivateRoute type="admin"><AdminHome/></PrivateRoute>}/>
+        <Route path="/userdashboard" element={<PrivateRoute type="user"><UserHome/></PrivateRoute>}/>
         <Route path="*" element={<Navigate to="/" replace/>} />
       </Routes>
     </BrowserRouter>

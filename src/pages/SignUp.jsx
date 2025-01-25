@@ -119,7 +119,7 @@ export default function SignUp() {
       case 1:
         return (
           <div className='signup-fields'>
-            <h1>BIENVENIDO A (Nombre del club)</h1>
+            <h1>Bienvenido a CourtSide</h1>
             <div>
               <input 
                 type="email" 
