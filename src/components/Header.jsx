@@ -6,7 +6,7 @@ export default function Header({ type }) {
       <div className="header-container">
         <div className="header-content">
           <p>Inicio</p>
-          <p>Calendario</p>
+          <p>Entrenamiento</p>
           <p>Torneos</p>
         </div>
         <svg
