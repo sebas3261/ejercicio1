@@ -9,8 +9,14 @@ export default function Home() {
     const navigate = useNavigate();
 
     const handleLogIn = () => {
-        login({name, password, type: "user"})
-        navigate("/admindashboard")
+        const type = login({name, password, type: "user"})
+        console.log(type);
+        if(type === "admin"){
+            navigate("/admindashboard")
+        }
+        else{
+            navigate("/userdashboard")
+        }
     }
   return (
     <div>

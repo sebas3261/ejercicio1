@@ -34,7 +34,7 @@ export default function SignUp() {
       case 1:
         return (
           <div>
-            <h1>Step 1: Información Personal</h1>
+            <h1>Parte 1: Información Personal</h1>
             <div>
               <input 
                 type="text" 
@@ -119,7 +119,7 @@ export default function SignUp() {
       case 2:
         return (
           <div>
-            <h1>Step 2: Información Médica</h1>
+            <h1>Parte 2: Información Médica</h1>
             <div>
               <textarea 
                 value={condicionesMedicas} 
@@ -147,7 +147,7 @@ export default function SignUp() {
       case 3:
         return (
           <div>
-            <h1>Step 3: Contacto de Emergencia</h1>
+            <h1>Parte 3: Contacto de Emergencia</h1>
             <div>
               <input 
                 type="text" 
@@ -177,7 +177,7 @@ export default function SignUp() {
       case 4:
         return (
           <div>
-            <h1>Step 4: Pago de Matrícula</h1>
+            <h1>Parte 4: Pago de Matrícula</h1>
             <div>
               <select value={metodoPago} onChange={(e) => setMetodoPago(e.target.value)}>
                 <option value="Tarjeta">Tarjeta</option>
