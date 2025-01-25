@@ -1,3 +1,10 @@
+.Admin-title{
+  font-size: 24px;
+  text-align: center;
+  margin-bottom: 20px;
+  padding-top: 20px;
+  font: 600 26px/1.2 'Roboto', sans-serif;
+}
 .Admin-background {
   height: 100vh;
   background-color: #e6f6ff;
@@ -21,10 +28,94 @@
 }
 
 .Admin-card {
-    background-color: white;
-    height: 400px;
-    width: 90vw;
-    margin: 50px auto;
-    border-radius: 20px ;
-    box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.25); 
+  background: #ffffff; /* Degradado verde */
+  height: 400px;
+  width: 90vw;
+  margin: 50px auto;
+  border-radius: 20px ;
+  box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.25);
+  overflow-y: scroll; 
+}
+
+.Admin-card-header {
+display: flex; 
+flex-direction: column;
+align-items: center; 
+justify-content: center; 
+height: 100%; 
+text-align: center; 
+}
+.Add-button{
+  border: solid white;
+  font-size: 20px;
+  border-radius: 20px;
+  width: 120px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+.Users-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0 20px;
+}
+
+.Users-item {
+  display: flex;
+  align-items: center;
+  background-color: #f8f9fa;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+.Users-image {
+  width: 50px;
+  height: 50px;
+  background-color: #e0e0e0;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+.Users-table {
+  width: 95%;
+  border-collapse: collapse;
+  margin: 20px;
+  background-color: #ffffff; /* Fondo blanco */
+  border-radius: 10px; /* Bordes redondeados */
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Sombra ligera */
+  overflow: hidden; /* Recorta bordes internos redondeados */
+  
+}
+
+.Users-table th {
+  background-color: #9AB3D3; /* Color del encabezado */
+  color: #ffffff; /* Texto blanco */
+  padding: 10px 15px;
+  text-align: left;
+  
+}
+
+.Users-table td {
+  padding: 10px 15px;
+  text-align: left;
+  border-bottom: 1px solid #ddd; /* Líneas entre filas */
+}
+
+.Users-table tr:hover {
+  background-color: #f1f5f9; /* Fondo al pasar el mouse */
+}
+
+.Users-table td button {
+  background-color: #007bff; /* Azul para botones */
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.Users-table td button:hover {
+  background-color: #0056b3; /* Azul más oscuro al pasar el mouse */
 }
