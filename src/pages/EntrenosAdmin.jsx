@@ -9,6 +9,8 @@ export default function EntrenosAdmin() {
     { id: 2, title: 'Entrenamiento 2', description: 'Descripción 2', time: '9:41 AM' },
     { id: 3, title: 'Entrenamiento 3', description: 'Descripción 3', time: '9:41 AM' },
     { id: 4, title: 'Entrenamiento 4', description: 'Descripción 4', time: '9:41 AM' },
+    { id: 4, title: 'Entrenamiento 5', description: 'Descripción 4', time: '9:41 AM' },
+    { id: 4, title: 'Entrenamiento 4', description: 'Descripción 4', time: '9:41 AM' }
   ];
 
   return (
@@ -29,8 +31,8 @@ export default function EntrenosAdmin() {
             </div>
           ))}
         </div>
-        <button className='Entreno-button'>Crear nuevo entrenamiento</button>
       </div>
+      <button className='Entreno-button'>Crear nuevo entrenamiento</button>
     </div>
   );
 }
