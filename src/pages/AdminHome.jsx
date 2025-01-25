@@ -17,11 +17,7 @@ export default function AdminHome() {
       <div className='Admin-card'>
         <div className='Admin-card-header'>
         <h2 className='Admin-title'>Administrar miembros</h2>
-        <div>
-        <button className='Add-button'>
-          Crear nuevo miembro
-        </button>
-        </div>
+        
       
         <table className="Users-table">
         <thead>
@@ -51,7 +47,10 @@ export default function AdminHome() {
         </tbody>
       </table>
       </div>
-      
+     
+        <button className='Add-button' >
+          Crear nuevo miembro
+        </button>
       </div>
     </div>
   );

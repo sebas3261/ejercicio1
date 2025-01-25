@@ -34,7 +34,8 @@
   margin: 50px auto;
   border-radius: 20px ;
   box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.25);
-  overflow-y: scroll; 
+  overflow-y: scroll;
+  
 }
 
 .Admin-card-header {
@@ -45,38 +46,20 @@ justify-content: center;
 height: 100%; 
 text-align: center; 
 }
-.Add-button{
-  border: solid white;
-  font-size: 20px;
-  border-radius: 20px;
-  width: 120px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.Add-button {
+  margin: 10px auto 0;
+  display: block;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
   cursor: pointer;
-}
-.Users-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 0 20px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease;
 }
 
-.Users-item {
-  display: flex;
-  align-items: center;
-  background-color: #f8f9fa;
-  padding: 10px;
-  border-radius: 10px;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-}
-.Users-image {
-  width: 50px;
-  height: 50px;
-  background-color: #e0e0e0;
-  border-radius: 50%;
-  margin-right: 10px;
-}
 .Users-table {
   width: 95%;
   border-collapse: collapse;
@@ -86,10 +69,11 @@ text-align: center;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Sombra ligera */
   overflow: hidden; /* Recorta bordes internos redondeados */
   
+  
 }
 
 .Users-table th {
-  background-color: #9AB3D3; /* Color del encabezado */
+  background-color: #b1b1b1; /* Color del encabezado */
   color: #ffffff; /* Texto blanco */
   padding: 10px 15px;
   text-align: left;
@@ -107,7 +91,7 @@ text-align: center;
 }
 
 .Users-table td button {
-  background-color: #007bff; /* Azul para botones */
+  background-color:#b1b1b1; /* Azul para botones */
   color: white;
   border: none;
   padding: 5px 10px;
@@ -117,5 +101,5 @@ text-align: center;
 }
 
 .Users-table td button:hover {
-  background-color: #0056b3; /* Azul más oscuro al pasar el mouse */
+  background-color:#007bff; /* Azul más oscuro al pasar el mouse */
 }

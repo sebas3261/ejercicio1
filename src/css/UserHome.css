@@ -11,6 +11,7 @@
     margin: 50px auto;
     border-radius: 20px ;
     box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.25); 
+    
 }
 
 .User-card-header {
@@ -20,6 +21,7 @@
   justify-content: center; 
   height: 100%; 
   text-align: center; 
+  
 }
 .home-button{
   border: solid white;
