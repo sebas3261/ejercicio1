@@ -35,6 +35,40 @@ export default function SignUp() {
       case 1:
         return (
           <div>
+            <h1>BIENVENIDO A (Nombre del club)</h1>
+            <div>
+              <input 
+                type="email" 
+                name="email"
+                value={email} 
+                onChange={handleInputChange}
+                placeholder="Email"
+              />
+            </div>
+            <div>
+              <input 
+                type="password" 
+                name="password"
+                value={password} 
+                onChange={handleInputChange}
+                placeholder="Contraseña"
+              />
+            </div>
+            <div>
+              <input 
+                type="password" 
+                name="password2"
+                value={password2} 
+                onChange={handleInputChange}
+                placeholder="Verificar contraseña"
+              />
+            </div>
+            
+          </div>
+        );
+      case 2:
+        return (
+          <div>
             <h1>Parte 1: Información Personal</h1>
             <div>
               <input
@@ -61,33 +95,6 @@ export default function SignUp() {
                 value={user.telefono}
                 onChange={handleInputChange}
                 placeholder="Teléfono"
-              />
-            </div>
-            <div>
-              <input
-                type="email"
-                name="email"
-                value={user.email}
-                onChange={handleInputChange}
-                placeholder="Email"
-              />
-            </div>
-            <div>
-              <input
-                type="password"
-                name="password"
-                value={user.password}
-                onChange={handleInputChange}
-                placeholder="Contraseña"
-              />
-            </div>
-            <div>
-              <input
-                type="password"
-                name="password2"
-                value={user.password2}
-                onChange={handleInputChange}
-                placeholder="Verificar contraseña"
               />
             </div>
             <div>
@@ -133,7 +140,7 @@ export default function SignUp() {
             </div>
           </div>
         );
-      case 2:
+      case 3:
         return (
           <div>
             <h1>Parte 2: Información Médica</h1>
@@ -164,7 +171,7 @@ export default function SignUp() {
             </div>
           </div>
         );
-      case 3:
+      case 4:
         return (
           <div>
             <h1>Parte 3: Contacto de Emergencia</h1>
@@ -197,7 +204,7 @@ export default function SignUp() {
             </div>
           </div>
         );
-      case 4:
+      case 5:
         return (
           <div>
             <h1>Parte 4: Pago de Matrícula</h1>
@@ -225,7 +232,7 @@ export default function SignUp() {
       {renderStep()}
       <div>
         {step > 1 && <button onClick={() => setStep(step - 1)}>Back</button>}
-        {step < 4 && <button onClick={() => setStep(step + 1)}>Next</button>}
+        {step < 5 && <button onClick={() => setStep(step + 1)}>Next</button>}
       </div>
       <NavLink to={"/"}>
         <div>Home</div>
