@@ -1,0 +1,15 @@
+.header-content{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    width: 100%
+}
+
+.header-container{
+    padding: 30px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}

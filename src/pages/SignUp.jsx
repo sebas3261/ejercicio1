@@ -9,7 +9,6 @@ import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
 export default function SignUp() {
   const [step, setStep] = useState(1);
-  const { login } = useAuth();
   const navigate = useNavigate();
 
   // Step 1: User information
@@ -86,7 +85,7 @@ export default function SignUp() {
                 type="email" 
                 value={email} 
                 onChange={(e) => setEmail(e.target.value)} 
-                placeholder="Email"
+                placeholder="Correo"
               />
             </div>
             <div>

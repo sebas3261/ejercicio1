@@ -30,7 +30,7 @@ export default function Home() {
             type="email" // Cambiado a email para mayor claridad
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="Email"
+            placeholder="Correo"
           />
         </div>
         <div>
@@ -38,7 +38,7 @@ export default function Home() {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
+            placeholder="Contraseña"
           />
         </div>
         <div
@@ -47,10 +47,10 @@ export default function Home() {
           }}
           className="home-button"
         >
-          Enter
+          Entrar
         </div>
         <NavLink to={"/SignUp"} className={"navlink"}>
-          <div>Sign up</div>
+          <div>Registrarse</div>
         </NavLink>
       </div>
     </div>
