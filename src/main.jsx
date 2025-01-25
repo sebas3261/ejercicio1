@@ -11,6 +11,7 @@ import TorneosAdmin from "./pages/TorneosAdmin";
 import TorneosUser from "./pages/TorneosUser";
 import UserHome from "./pages/UserHome";
 import "./css/main.css"
+import InfoUser from "./pages/InfoUser";
 
 createRoot(document.getElementById("root")).render(
   <AuthProvider>
@@ -24,6 +25,8 @@ createRoot(document.getElementById("root")).render(
         <Route path="/entrenosUser" element={<PrivateRoute type="user"><EntrenosUser/></PrivateRoute>}/>
         <Route path="/torneosAdmin" element={<PrivateRoute type="admin"><TorneosAdmin/></PrivateRoute>}/>
         <Route path="/torneosUser" element={<PrivateRoute type="user"><TorneosUser/></PrivateRoute>}/>
+        <Route path="/infoUser" element={<PrivateRoute type="user"><InfoUser/></PrivateRoute>} />
+
         <Route path="*" element={<Navigate to="/" replace/>} />
       </Routes>
     </BrowserRouter>
