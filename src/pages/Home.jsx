@@ -24,7 +24,7 @@ export default function Home() {
   return (
     <div className="home-background">
       <div className="home-backbox">
-        <h1>Nombre del club</h1>
+        <h1>CourtSide</h1>
         <div>
           <input
             type="email" // Cambiado a email para mayor claridad
