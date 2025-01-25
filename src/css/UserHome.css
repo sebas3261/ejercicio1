@@ -1,26 +1,10 @@
-.Admin-background {
+.User-background {
   height: 100vh;
   background-color: #e6f6ff;
   overflow: hidden;
 }
 
-.Admin-img-container {
-  max-height: 150px;
-  overflow: hidden;
-  margin: 0 auto; /* Centra el contenedor horizontalmente si es más pequeño que el ancho del padre */
-  width: 90vw; /* Controla el ancho total del contenedor */
-}
-
-.Admin-img {
-  height: 100%;
-  object-fit: cover;
-  transform: translateY(-55%);
-  border-radius: 10px;
-  width: 100%; /* Asegúrate de que la imagen ocupe el ancho del contenedor */
-  margin: 0 auto; /* Margen adicional para centrar */
-}
-
-.Admin-card {
+.User-card {
     background: linear-gradient(to bottom, #C2D1B0, #ffffff); /* Degradado verde */
     height: 400px;
     width: 90vw;
@@ -29,7 +13,7 @@
     box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.25); 
 }
 
-.Admin-card-header {
+.User-card-header {
   display: flex; 
   flex-direction: column;
   align-items: center; 
