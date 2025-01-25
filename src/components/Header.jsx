@@ -1,13 +1,20 @@
 import React from "react";
 import "./header.css";
+import { NavLink } from "react-router";
 export default function Header({ type }) {
   if (type == "admin") {
     return (
       <div className="header-container">
         <div className="header-content">
-          <p>Inicio</p>
+          <NavLink to={"/admindashboard"} className={"navlink"}>
+            <p>Inicio</p>
+          </NavLink>
+          <NavLink to={"/entrenosAdmin"} className={"navlink"}>
           <p>Entrenamiento</p>
+          </NavLink>
+          <NavLink to={"/torneosAdmin"} className={"navlink"}>
           <p>Torneos</p>
+          </NavLink>
         </div>
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -25,9 +32,15 @@ export default function Header({ type }) {
   return (
     <div className="header-container">
       <div className="header-content">
+        <NavLink to={"/userdashboard"} className={"navlink"}>
         <p>Inicio</p>
-        <p>Mis actividades</p>
-        <p>Mi informacion</p>
+        </NavLink>
+        <NavLink to={"/entrenosUser"} className={"navlink"}>
+        <p>Mis entrenamientos</p>
+        </NavLink>
+        <NavLink to={"/torneosUser"} className={"navlink"}>
+        <p>Mis torneos</p>
+        </NavLink>
       </div>
       <svg
         xmlns="http://www.w3.org/2000/svg"
