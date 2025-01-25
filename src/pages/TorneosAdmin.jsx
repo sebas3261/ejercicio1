@@ -82,25 +82,30 @@ export default function TorneosAdmin() {
       <Header type="admin" />
       <TopImg number={1} />
       {!showCreateTournament ? (
-        <div className='Torneos-card'>
-          <h2 className='Torneos-title'>Torneos</h2>
-          <div className='Torneos-list-container'>
-            <div className='Torneos-list'>
-              {tournaments.map((tournament, index) => (
-                <div key={index} className='Torneos-item'>
-                  <div className='Torneo-image'></div>
-                  <div className='Torneo-info'>
-                    <h3>{tournament.name}</h3>
-                    <p>Categoría: {tournament.categoria}</p>
+        <>
+          <div className='Torneos-card'>
+            <h2 className='Torneos-title'>Torneos</h2>
+            <div className='Torneos-list-container'>
+              <div className='Torneos-list'>
+                {tournaments.map((tournament, index) => (
+                  <div key={index} className='Torneos-item'>
+                    <div className='Torneo-image'></div>
+                    <div className='Torneo-info'>
+                      <h3>{tournament.name}</h3>
+                      <p>Categoría: {tournament.categoria}</p>
+                    </div>
+                    <span className='Torneo-time'>{new Date(tournament.date).toLocaleString()}</span>
                   </div>
-                  <span className='Torneo-time'>{new Date(tournament.date).toLocaleString()}</span>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
-          <button className='Torneo-button' onClick={() => setShowCreateTournament(true)}>Crear nuevo Torneo</button>
-        </div>
-      ) : (
+          {/* Botón fuera de la tarjeta */}
+          <button className='Torneo-button' onClick={() => setShowCreateTournament(true)}>
+            Crear nuevo Torneo
+          </button>
+        </>
+      ): (
         <div className="tournaments-container">
           <h1>Crear Nuevo Torneo</h1>
           <div className="tournament-setup">
