@@ -48,10 +48,12 @@ export default function AdminHome() {
       </table>
       </div>
      
-        <button className='Add-button' >
+        
+      </div>
+      <button className='Add-button' >
           Crear nuevo miembro
         </button>
-      </div>
     </div>
+    
   );
 }
