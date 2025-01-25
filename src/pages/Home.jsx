@@ -1,48 +1,55 @@
-import React, { useState } from 'react'
-import {  useNavigate, NavLink } from "react-router";
-import { useAuth } from '../contexts/AuthContext';
+import React, { useState } from "react";
+import { useNavigate, NavLink } from "react-router";
+import { useAuth } from "../contexts/AuthContext";
+import "../css/Home.css";
 
 export default function Home() {
-    const [name, setName] = useState('')
-    const [password, setPassword] = useState('')
-    const {login} = useAuth()
-    const navigate = useNavigate();
+  const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
-    const handleLogIn = () => {
-        const type = login({name, password, type: "user"})
-        console.log(type);
-        if(type === "admin"){
-            navigate("/admindashboard")
-        }
-        else{
-            navigate("/userdashboard")
-        }
+  const handleLogIn = () => {
+    const type = login({ name, password, type: "user" });
+    console.log(type);
+    if (type === "admin") {
+      navigate("/admindashboard");
+    } else {
+      navigate("/userdashboard");
     }
+  };
   return (
-    <div>
+    <div className="home-background">
+      <div className="home-backbox">
         <h1>Sign in</h1>
         <div>
-            <input 
-                type="text" 
-                value={name} 
-                onChange={(e) => setName(e.target.value)} 
-                placeholder="Name"
-            />
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="User"
+          />
         </div>
         <div>
-            <input 
-                type="password" 
-                value={password} 
-                onChange={(e) => setPassword(e.target.value)} 
-                placeholder="Password"
-            />
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Password"
+          />
         </div>
-        <div onClick={()=>{handleLogIn()}}>
-            sign in
+        <div
+          onClick={() => {
+            handleLogIn();
+          }}
+          className="home-button"
+        >
+          Enter
         </div>
         <NavLink to={"/SignUp"}>
-            <div>signUp</div>
+          <div>signUp</div>
         </NavLink>
+      </div>
     </div>
-  )
+  );
 }

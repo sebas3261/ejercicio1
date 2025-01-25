@@ -6,6 +6,8 @@ import { AuthProvider } from "./contexts/AuthContext";
 import PrivateRoute from "./contexts/PrivateRoute";
 import AdminHome from "./pages/AdminHome";
 import UserHome from "./pages/UserHome";
+import "./css/main.css"
+
 createRoot(document.getElementById("root")).render(
   <AuthProvider>
     <BrowserRouter>
