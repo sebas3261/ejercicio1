@@ -9,6 +9,9 @@ export default function TorneosUser() {
     { id: 2, title: 'Torneo 2', description: 'Descripción 2', time: '9:41 AM' },
     { id: 3, title: 'Torneo 3', description: 'Descripción 3', time: '9:41 AM' },
     { id: 4, title: 'Torneo 4', description: 'Descripción 4', time: '9:41 AM' },
+    { id: 5, title: 'Torneo 5', description: 'Descripción 4', time: '9:41 AM' },
+    { id: 6, title: 'Torneo 4', description: 'Descripción 4', time: '9:41 AM' }
+
   ];
 
   return (
