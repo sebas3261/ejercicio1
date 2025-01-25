@@ -9,8 +9,8 @@ export default function EntrenosHome() {
     { id: 2, title: 'Entrenamiento 2', description: 'Descripción 2', time: '9:41 AM' },
     { id: 3, title: 'Entrenamiento 3', description: 'Descripción 3', time: '9:41 AM' },
     { id: 4, title: 'Entrenamiento 4', description: 'Descripción 4', time: '9:41 AM' },
-    { id: 4, title: 'Entrenamiento 5', description: 'Descripción 4', time: '9:41 AM' },
-    { id: 4, title: 'Entrenamiento 4', description: 'Descripción 4', time: '9:41 AM' }
+    { id: 5, title: 'Entrenamiento 5', description: 'Descripción 4', time: '9:41 AM' },
+    { id: 6, title: 'Entrenamiento 4', description: 'Descripción 4', time: '9:41 AM' }
   ];
 
   return (
