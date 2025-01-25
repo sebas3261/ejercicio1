@@ -114,6 +114,29 @@ export default function SignUp() {
     }
   };
 
+  const validateFields = () => {
+    if (step === 1) {
+      return password && password2 && email;
+    } else if (step === 2) {
+      return name && apellido && telefono && direccion && fechaNacimiento ;
+    } else if (step === 3) {
+      return condicionesMedicas && alergias && certificadoMedico
+    } else if (step === 4) {
+      return contactoEmergencia && telefonoEmergencia && relacionEmergencia;
+    }else if (step === 5) {
+      return  metodoPago;
+    }
+    return false;
+  };
+
+  const handleNext = () => {
+    if (validateFields()) {
+      setStep(step + 1);
+    } else {
+      alert('Por favor, complete todos los campos antes de continuar.');
+    }
+  };
+
   const renderStep = () => {
     switch (step) {
       case 1:
@@ -291,7 +314,7 @@ export default function SignUp() {
       {renderStep()}
       <div>
         {step > 1 && <button onClick={() => setStep(step - 1)} className='signup-button'>Back</button>}
-        {step < 5 && <button onClick={() => setStep(step + 1)} className='signup-button'>Next</button>}
+        {step < 5 && <button onClick={handleNext} className='signup-button'>Next</button>}
       </div>
       <NavLink to={"/"} className={"navlink"}>
         <div>Sign in</div>
