@@ -114,28 +114,54 @@ export default function SignUp() {
     }
   };
 
+  const validateStep1 = () => {
+    if (password !== password2) {
+      alert('Las contraseñas deben ser iguales.');
+      return false;
+    }
+    if (password && password.length < 6) {
+      alert('La contraseña debe tener al menos 6 caracteres.');
+      return false;
+    }
+    if (email && !email.includes('@')) {
+      alert('El correo es inválido.');
+      return false;
+    }
+    return true;
+  };
+  
   const validateFields = () => {
     if (step === 1) {
+      // Solo verifica si hay datos en los campos
       return password && password2 && email;
     } else if (step === 2) {
-      return name && apellido && telefono && direccion && fechaNacimiento ;
+      return name && apellido && telefono && direccion && fechaNacimiento;
     } else if (step === 3) {
-      return condicionesMedicas && alergias && certificadoMedico
+      return condicionesMedicas && alergias && certificadoMedico;
     } else if (step === 4) {
       return contactoEmergencia && telefonoEmergencia && relacionEmergencia;
-    }else if (step === 5) {
-      return  metodoPago;
+    } else if (step === 5) {
+      return metodoPago;
     }
+    
     return false;
   };
-
+  
   const handleNext = () => {
-    if (validateFields()) {
-      setStep(step + 1);
-    } else {
-      alert('Por favor, complete todos los campos antes de continuar.');
+    if (step === 1 && !validateStep1()) {
+      // Si estamos en el paso 1, verifica las contraseñas y el email
+      return;
     }
+    if (!validateFields()) {
+      // Si faltan campos por completar, muestra el mensaje de error
+      if (!document.getElementById("error-msg")) {
+        alert('Por favor, complete todos los campos antes de continuar.');
+      }
+      return;
+    }
+    setStep(step + 1);
   };
+  
 
   const renderStep = () => {
     switch (step) {
