@@ -34,6 +34,37 @@ export default function SignUp() {
       case 1:
         return (
           <div>
+            <h1>BIENVENIDO A (Nombre del club)</h1>
+            <div>
+              <input 
+                type="email" 
+                value={email} 
+                onChange={(e) => setEmail(e.target.value)} 
+                placeholder="Email"
+              />
+            </div>
+            <div>
+              <input 
+                type="password" 
+                value={password} 
+                onChange={(e) => CreatePassword(e.target.value)} 
+                placeholder="Contraseña"
+              />
+            </div>
+            <div>
+              <input 
+                type="password" 
+                value={password2} 
+                onChange={(e) => VerifyPassword(e.target.value)} 
+                placeholder="Verificar contraseña"
+              />
+            </div>
+            
+          </div>
+        );
+      case 2:
+        return (
+          <div>
             <h1>Parte 1: Información Personal</h1>
             <div>
               <input 
@@ -59,30 +90,7 @@ export default function SignUp() {
                 placeholder="Teléfono"
               />
             </div>
-            <div>
-              <input 
-                type="email" 
-                value={email} 
-                onChange={(e) => setEmail(e.target.value)} 
-                placeholder="Email"
-              />
-            </div>
-            <div>
-              <input 
-                type="password" 
-                value={password} 
-                onChange={(e) => CreatePassword(e.target.value)} 
-                placeholder="Contraseña"
-              />
-            </div>
-            <div>
-              <input 
-                type="password" 
-                value={password2} 
-                onChange={(e) => VerifyPassword(e.target.value)} 
-                placeholder="Verificar contraseña"
-              />
-            </div>
+            
             <div>
               <input 
                 type="text" 
@@ -116,7 +124,7 @@ export default function SignUp() {
             </div>
           </div>
         );
-      case 2:
+      case 3:
         return (
           <div>
             <h1>Parte 2: Información Médica</h1>
@@ -144,7 +152,7 @@ export default function SignUp() {
             </div>
           </div>
         );
-      case 3:
+      case 4:
         return (
           <div>
             <h1>Parte 3: Contacto de Emergencia</h1>
@@ -174,7 +182,7 @@ export default function SignUp() {
             </div>
           </div>
         );
-      case 4:
+      case 5:
         return (
           <div>
             <h1>Parte 4: Pago de Matrícula</h1>
@@ -200,7 +208,7 @@ export default function SignUp() {
       {renderStep()}
       <div>
         {step > 1 && <button onClick={() => setStep(step - 1)}>Back</button>}
-        {step < 4 && <button onClick={() => setStep(step + 1)}>Next</button>}
+        {step < 5 && <button onClick={() => setStep(step + 1)}>Next</button>}
       </div>
       <NavLink to={"/"}>
         <div>Home</div>
