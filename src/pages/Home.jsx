@@ -17,7 +17,7 @@ export default function Home() {
     } else if (type === "user") {
       navigate("/userdashboard");
     } else {
-      alert("Error: Usuario o contraseña incorrectos no hay tipo");
+      alert("Error: Usuario o contraseña incorrectos o vacios");
     }
   };
 
