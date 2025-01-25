@@ -7,6 +7,7 @@ import PrivateRoute from "./contexts/PrivateRoute";
 import AdminHome from "./pages/AdminHome";
 import EntrenosAdmin from "./pages/EntrenosAdmin";
 import EntrenosUser from "./pages/EntrenosUser";
+import TorneosAdmin from "./pages/TorneosAdmin";
 import UserHome from "./pages/UserHome";
 import "./css/main.css"
 
@@ -20,6 +21,7 @@ createRoot(document.getElementById("root")).render(
         <Route path="/userdashboard" element={<PrivateRoute type="user"><UserHome/></PrivateRoute>}/>
         <Route path="/entrenosAdmin" element={<PrivateRoute type="admin"><EntrenosAdmin/></PrivateRoute>}/>
         <Route path="/entrenosUser" element={<PrivateRoute type="user"><EntrenosUser/></PrivateRoute>}/>
+        <Route path="/torneosAdmin" element={<PrivateRoute type="admin"><TorneosAdmin/></PrivateRoute>}/>
         <Route path="*" element={<Navigate to="/" replace/>} />
       </Routes>
     </BrowserRouter>
