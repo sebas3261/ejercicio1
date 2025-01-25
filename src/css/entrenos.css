@@ -1,30 +1,70 @@
-.Admin-background {
-  height: 100vh;
-  background-color: #e6f6ff;
-  overflow: hidden;
+.Admin-title {
+  font-size: 24px;
+  text-align: center;
+  margin-bottom: 20px;
+  padding-top: 20px;
+  font: 600 26px/1.2 'Roboto', sans-serif;
 }
 
-.Admin-img-container {
-  max-height: 200px;
-  overflow: hidden;
-  margin: 0 auto; /* Centra el contenedor horizontalmente si es más pequeño que el ancho del padre */
-  width: 90vw; /* Controla el ancho total del contenedor */
+.Entrenos-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0 20px;
 }
 
-.Admin-img {
-  height: 100%;
-  object-fit: cover;
-  transform: translateY(-55%);
+.Entreno-item {
+  display: flex;
+  align-items: center;
+  background-color: #f8f9fa;
+  padding: 10px;
   border-radius: 10px;
-  width: 100%; /* Asegúrate de que la imagen ocupe el ancho del contenedor */
-  margin: 0 auto; /* Margen adicional para centrar */
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.Admin-card {
-    background-color: white;
-    height: 400px;
-    width: 90vw;
-    margin: 50px auto;
-    border-radius: 20px ;
-    box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.25); 
+.Entreno-image {
+  width: 50px;
+  height: 50px;
+  background-color: #e0e0e0;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.Entreno-info {
+  flex-grow: 1;
+}
+
+.Entreno-info h3 {
+  margin: 0;
+  font: 500 20px/1.2 'Roboto', sans-serif;
+
+}
+
+.Entreno-info p {
+  font-size: 14px;
+  margin: 0;
+  color: #6c757d;
+}
+
+.Entreno-time {
+  font-size: 12px;
+  color: #6c757d;
+}
+
+.Admin-button {
+  margin: 20px auto 0;
+  display: block;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease;
+}
+
+.Admin-button:hover {
+  background-color: #0056b3;
 }

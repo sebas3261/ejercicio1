@@ -14,9 +14,9 @@ export default function AdminHome() {
   return (
     <div className='Admin-background'>
       <Header type="admin" />
-      <TopImg number={5} />
+      <TopImg number={2} />
       <div className='Admin-card'>
-        <h2 className='Admin-title'>Entrenamientos</h2>
+        <h2 className='Admin-title'>Entrenamientos Programados</h2>
         <div className='Entrenos-list'>
           {entrenamientos.map((entreno) => (
             <div key={entreno.id} className='Entreno-item'>
@@ -29,7 +29,6 @@ export default function AdminHome() {
             </div>
           ))}
         </div>
-        <button className='Admin-button'>Crear nuevo entrenamiento</button>
       </div>
     </div>
   );
