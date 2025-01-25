@@ -1,9 +1,13 @@
 import React, { createContext, useReducer, useContext } from "react";
+import { auth, db } from "../firebase"; // Asegúrate de configurar Firebase correctamente
+import { signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
 
 export const AuthContext = createContext();
 
 const initialState = {
-  isAuthenticated: localStorage.getItem("isAuthenticated") === "admin" | localStorage.getItem("isAuthenticated") === "user",
+  isAuthenticated: false,
+  user: null,
 };
 
 const authReducer = (state, action) => {
@@ -28,20 +32,40 @@ const authReducer = (state, action) => {
 export const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
 
-  const login = (user) => {
-    if(user.type == "admin"){
-        localStorage.setItem("isAuthenticated", "admin");
+  const login = async (credentials) => {
+    try {
+      const { name, password } = credentials;
+  
+      // Autenticar con Firebase Authentication (usando email como name)
+      const userCredential = await signInWithEmailAndPassword(auth, name, password);
+      const firebaseUser = userCredential.user;
+  
+      // Guardar el tipo como "admin" en localStorage por ahora
+      localStorage.setItem("isAuthenticated", "user");
+      localStorage.setItem("user", JSON.stringify({ name: firebaseUser.email, uid: firebaseUser.uid }));
+  
+      // Actualizar el estado global con los datos del usuario
+      dispatch({ type: "LOGIN", payload: { name: firebaseUser.email, type: "user" } });
+  
+      // Retornar el tipo "admin" por ahora
+      return "user"; // Forzamos que siempre retorne "admin"
+    } catch (error) {
+      console.error("Error al iniciar sesión:", error.message);
+      return null; // Si algo falla, retornamos null
     }
-    else{
-        localStorage.setItem("isAuthenticated", "user");
-    }
-    dispatch({ type: "LOGIN", payload: user });
-    return user.type;
   };
+  
 
-  const logout = () => {
-    localStorage.removeItem('isAuthenticated');
-    dispatch({ type: 'LOGOUT' });
+  // Función de cierre de sesión
+  const logout = async () => {
+    try {
+      await signOut(auth);
+      localStorage.removeItem("isAuthenticated");
+      localStorage.removeItem("user");
+      dispatch({ type: "LOGOUT" });
+    } catch (error) {
+      console.error("Error al cerrar sesión:", error.message);
+    }
   };
 
   return (
@@ -52,5 +76,5 @@ export const AuthProvider = ({ children }) => {
 };
 
 export const useAuth = () => {
-    return useContext(AuthContext);
+  return useContext(AuthContext);
 };
