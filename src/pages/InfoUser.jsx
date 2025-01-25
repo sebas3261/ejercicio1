@@ -2,6 +2,7 @@ import React from "react";
 import "../css/infouser.css";
 import { Doughnut, Bar } from "react-chartjs-2";
 import Header from "../components/Header";
+import Header from '../components/Header';
 
 const InfoUser = () => {
   const doughnutData = {
