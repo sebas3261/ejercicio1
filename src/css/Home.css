@@ -21,13 +21,22 @@
         font-size: 90px;
     }
 
-    input{
-        border-radius: 20px ;
-        width: 200px;
-        height: 25px;
-        padding-left: 10px;
-        margin-bottom: 10px;
-    }
+    
+}
+
+input, select, textarea{
+    border-radius: 20px ;
+    width: 200px;
+    height: 25px;
+    padding-left: 10px;
+    margin-bottom: 10px;
+    border-color: white;
+    border-style: none ;
+}
+
+textarea{
+    padding-top: 10px;
+    height: 50px;
 }
 
 .home-button{
@@ -38,5 +47,11 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
+}
+
+.navlink{
+    text-decoration: none;
+    color: inherit;
 }
 

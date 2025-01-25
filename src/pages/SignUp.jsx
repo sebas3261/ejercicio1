@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink } from "react-router";
+import "../css/Signup.css"
 
 export default function SignUp() {
   const [step, setStep] = useState(1);
@@ -33,7 +34,7 @@ export default function SignUp() {
     switch (step) {
       case 1:
         return (
-          <div>
+          <div className='signup-fields'>
             <h1>BIENVENIDO A (Nombre del club)</h1>
             <div>
               <input 
@@ -64,7 +65,7 @@ export default function SignUp() {
         );
       case 2:
         return (
-          <div>
+          <div className='signup-fields'> 
             <h1>Parte 1: Información Personal</h1>
             <div>
               <input 
@@ -126,7 +127,7 @@ export default function SignUp() {
         );
       case 3:
         return (
-          <div>
+          <div className='signup-fields'>
             <h1>Parte 2: Información Médica</h1>
             <div>
               <textarea 
@@ -154,7 +155,7 @@ export default function SignUp() {
         );
       case 4:
         return (
-          <div>
+          <div className='signup-fields'>
             <h1>Parte 3: Contacto de Emergencia</h1>
             <div>
               <input 
@@ -184,7 +185,7 @@ export default function SignUp() {
         );
       case 5:
         return (
-          <div>
+          <div className='signup-fields'>
             <h1>Parte 4: Pago de Matrícula</h1>
             <div>
               <select value={metodoPago} onChange={(e) => setMetodoPago(e.target.value)}>
@@ -194,7 +195,7 @@ export default function SignUp() {
               </select>
             </div>
             <div>
-              <button onClick={() => console.log('Matrícula completada')}>Finalizar Matrícula</button>
+              <button onClick={() => console.log('Matrícula completada')} className='signup-button-matricula'>Finalizar Matrícula</button>
             </div>
           </div>
         );
@@ -204,14 +205,14 @@ export default function SignUp() {
   };
 
   return (
-    <div>
+    <div className='signup-fields signup-background'>
       {renderStep()}
       <div>
-        {step > 1 && <button onClick={() => setStep(step - 1)}>Back</button>}
-        {step < 5 && <button onClick={() => setStep(step + 1)}>Next</button>}
+        {step > 1 && <button onClick={() => setStep(step - 1)} className='signup-button'>Back</button>}
+        {step < 5 && <button onClick={() => setStep(step + 1)} className='signup-button'>Next</button>}
       </div>
-      <NavLink to={"/"}>
-        <div>Home</div>
+      <NavLink to={"/"} className={"navlink"}>
+        <div>Sign in</div>
       </NavLink>
     </div>
   );

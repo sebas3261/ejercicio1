@@ -10,7 +10,7 @@ export default function Home() {
   const navigate = useNavigate();
 
   const handleLogIn = () => {
-    const type = login({ name, password, type: "user" });
+    const type = login({ name, password, type: "admin" });
     console.log(type);
     if (type === "admin") {
       navigate("/admindashboard");
@@ -46,8 +46,8 @@ export default function Home() {
         >
           Enter
         </div>
-        <NavLink to={"/SignUp"}>
-          <div>signUp</div>
+        <NavLink to={"/SignUp"} className={"navlink"}>
+          <div>sign up</div>
         </NavLink>
       </div>
     </div>

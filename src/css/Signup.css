@@ -1,0 +1,39 @@
+.signup-background{
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: url("../assets/fondo2.jpg"); 
+    background-size: 200vh; /* La imagen ocupará la mitad superior */
+    background-origin: content-box;
+    background-repeat: no-repeat;
+    background-attachment: fixed; 
+    color: white;
+}
+
+.signup-fields{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.signup-button, .signup-button-matricula{
+    background: none;
+    border: none;
+    color: white;
+    border: solid white;
+    font-size: 20px;
+    border-radius: 20px;
+    margin-right: 10px;
+    margin-left: 10px;
+}
+
+.signup-button{
+    width: 120px;
+}
+
+.signup-button-matricula{
+    width: 200px;
+    margin-bottom: 10px;
+}
