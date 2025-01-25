@@ -3,7 +3,7 @@ import "../css/torneos.css";
 import TopImg from '../components/TopImg';
 import Header from '../components/Header';
 
-export default function TorneosAdmin() {
+export default function TorneosUser() {
   const entrenamientos = [
     { id: 1, title: 'Torneo 1', description: 'Descripción 1', time: '9:41 AM' },
     { id: 2, title: 'Torneo 2', description: 'Descripción 2', time: '9:41 AM' },
@@ -13,10 +13,10 @@ export default function TorneosAdmin() {
 
   return (
     <div className='Torneos-background'>
-      <Header type="admin" />
+      <Header type="user" />
       <TopImg number={1} />
       <div className='Torneos-card'>
-        <h2 className='Torneos-title'>Torneos</h2>
+        <h2 className='Torneos-title'>Tus Torneos</h2>
         <div className='Torneos-list'>
           {entrenamientos.map((entreno) => (
             <div key={entreno.id} className='Torneos-item'>
@@ -29,7 +29,6 @@ export default function TorneosAdmin() {
             </div>
           ))}
         </div>
-        <button className='Torneo-button'>Crear nuevo Torneo</button>
       </div>
     </div>
   );
