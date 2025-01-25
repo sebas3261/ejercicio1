@@ -3,7 +3,6 @@ import { db } from "../firebase";
 import { doc, setDoc } from "firebase/firestore";
 import { useNavigate, NavLink } from "react-router"
 import "../css/Signup.css";
-import { useAuth } from "../contexts/AuthContext";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
 
@@ -72,7 +71,48 @@ export default function SignUp() {
       alert("Error al guardar los datos: " + error.message);
     }
   };
-  
+
+  const handleNameChange = (e) => {
+    const value = e.target.value;
+    if (/^[a-zA-Z\s]*$/.test(value)) {
+      setName(value);
+    }
+  };
+
+  const handleApellidoChange = (e) => {
+    const value = e.target.value;
+    if (/^[a-zA-Z\s]*$/.test(value)) {
+      setApellido(value);
+    }
+  };
+
+  const handleContactoEmergenciaChange = (e) => {
+    const value = e.target.value;
+    if (/^[a-zA-Z\s]*$/.test(value)) {
+      setContactoEmergencia(value);
+    }
+  };
+
+  const handleRelacionEmergenciaChange = (e) => {
+    const value = e.target.value;
+    if (/^[a-zA-Z\s]*$/.test(value)) {
+      setRelacionEmergencia(value);
+    }
+  };
+
+  const handleTelefonoChange = (e) => {
+    const value = e.target.value;
+    if (/^\d*$/.test(value)) {
+      setTelefono(value);
+    }
+  };
+
+  const handleTelefonoEmergenciaChange = (e) => {
+    const value = e.target.value;
+    if (/^\d*$/.test(value)) {
+      setTelefonoEmergencia(value);
+    }
+  };
 
   const renderStep = () => {
     switch (step) {
@@ -114,7 +154,7 @@ export default function SignUp() {
               <input 
                 type="text" 
                 value={name} 
-                onChange={(e) => setName(e.target.value)} 
+                onChange={handleNameChange} 
                 placeholder="Nombre"
               />
             </div>
@@ -122,7 +162,7 @@ export default function SignUp() {
               <input 
                 type="text" 
                 value={apellido} 
-                onChange={(e) => setApellido(e.target.value)} 
+                onChange={handleApellidoChange} 
                 placeholder="Apellido"
               />
             </div>
@@ -130,7 +170,7 @@ export default function SignUp() {
               <input 
                 type="tel" 
                 value={telefono} 
-                onChange={(e) => setTelefono(e.target.value)} 
+                onChange={handleTelefonoChange} 
                 placeholder="Teléfono"
               />
             </div>
@@ -203,7 +243,7 @@ export default function SignUp() {
               <input 
                 type="text" 
                 value={contactoEmergencia} 
-                onChange={(e) => setContactoEmergencia(e.target.value)} 
+                onChange={handleContactoEmergenciaChange} 
                 placeholder="Nombre del contacto"
               />
             </div>
@@ -211,7 +251,7 @@ export default function SignUp() {
               <input 
                 type="tel" 
                 value={telefonoEmergencia} 
-                onChange={(e) => setTelefonoEmergencia(e.target.value)} 
+                onChange={handleTelefonoEmergenciaChange} 
                 placeholder="Teléfono del contacto"
               />
             </div>
@@ -219,7 +259,7 @@ export default function SignUp() {
               <input 
                 type="text" 
                 value={relacionEmergencia} 
-                onChange={(e) => setRelacionEmergencia(e.target.value)} 
+                onChange={handleRelacionEmergenciaChange} 
                 placeholder="Relación con el contacto"
               />
             </div>
@@ -259,4 +299,3 @@ export default function SignUp() {
     </div>
   );
 }
-
