@@ -4,30 +4,32 @@ import { useAuth } from "../contexts/AuthContext";
 import "../css/Home.css";
 
 export default function Home() {
-  const [name, setName] = useState("");
+  const [name, setName] = useState(""); // En este caso, `name` será el email
   const [password, setPassword] = useState("");
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleLogIn = () => {
-    const type = login({ name, password, type: "admin" });
-    console.log(type);
+  const handleLogIn = async () => {
+    const type = await login({ name, password }); // Aquí usamos el email como `name`
     if (type === "admin") {
       navigate("/admindashboard");
-    } else {
+    } else if (type === "user") {
       navigate("/userdashboard");
+    } else {
+      alert("Error: Usuario o contraseña incorrectos no hay tipo");
     }
   };
+
   return (
     <div className="home-background">
       <div className="home-backbox">
         <h1>Nombre del club</h1>
         <div>
           <input
-            type="text"
+            type="email" // Cambiado a email para mayor claridad
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="User"
+            placeholder="Email"
           />
         </div>
         <div>
@@ -47,7 +49,7 @@ export default function Home() {
           Enter
         </div>
         <NavLink to={"/SignUp"} className={"navlink"}>
-          <div>sign up</div>
+          <div>Sign up</div>
         </NavLink>
       </div>
     </div>

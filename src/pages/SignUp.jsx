@@ -3,6 +3,8 @@ import { db } from "../firebase";
 import { collection, addDoc } from "firebase/firestore";
 import { NavLink } from "react-router";
 import "../css/Signup.css";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+
 
 export default function SignUp() {
   const [step, setStep] = useState(1);
@@ -31,15 +33,22 @@ export default function SignUp() {
 
   // Step 4: Payment
   const [metodoPago, setMetodoPago] = useState('Tarjeta');
-
   const handleFinalSubmit = async () => {
     try {
+      // Registrar al usuario en Firebase Authentication
+      const auth = getAuth();
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+  
+      // Obtener el UID del usuario registrado
+      const user = userCredential.user;
+  
+      // Guardar la información adicional del usuario en Firestore
       await addDoc(collection(db, "users"), {
+        uid: user.uid,  // Guardamos el UID para referenciar al usuario en Firebase Authentication
         type: "user",
         name,
         apellido,
         email,
-        password,
         telefono,
         direccion,
         fechaNacimiento,
@@ -51,13 +60,16 @@ export default function SignUp() {
         contactoEmergencia,
         telefonoEmergencia,
         relacionEmergencia,
+        password,
         metodoPago
       });
+  
       alert("Registro completado exitosamente");
     } catch (error) {
       alert("Error al guardar los datos: " + error.message);
     }
   };
+  
 
   const renderStep = () => {
     switch (step) {
