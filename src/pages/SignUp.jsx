@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import { db } from "../firebase";
+import { collection, addDoc } from "firebase/firestore";
 import { NavLink } from "react-router";
-import "../css/Signup.css"
+import "../css/Signup.css";
 
 export default function SignUp() {
   const [step, setStep] = useState(1);
@@ -8,8 +10,8 @@ export default function SignUp() {
   // Step 1: User information
   const [name, setName] = useState('');
   const [apellido, setApellido] = useState('');
-  const [password, CreatePassword] = useState('');
-  const [password2, VerifyPassword] = useState('');
+  const [password, createPassword] = useState('');
+  const [password2, verifyPassword] = useState('');
   const [email, setEmail] = useState('');
   const [telefono, setTelefono] = useState('');
   const [direccion, setDireccion] = useState('');
@@ -30,6 +32,32 @@ export default function SignUp() {
   // Step 4: Payment
   const [metodoPago, setMetodoPago] = useState('Tarjeta');
 
+  const handleFinalSubmit = async () => {
+    try {
+      await addDoc(collection(db, "users"), {
+        name,
+        apellido,
+        email,
+        password,
+        telefono,
+        direccion,
+        fechaNacimiento,
+        nivelJuego,
+        categoria,
+        condicionesMedicas,
+        alergias,
+        certificadoMedico,
+        contactoEmergencia,
+        telefonoEmergencia,
+        relacionEmergencia,
+        metodoPago
+      });
+      alert("Registro completado exitosamente");
+    } catch (error) {
+      alert("Error al guardar los datos: " + error.message);
+    }
+  };
+
   const renderStep = () => {
     switch (step) {
       case 1:
@@ -48,7 +76,7 @@ export default function SignUp() {
               <input 
                 type="password" 
                 value={password} 
-                onChange={(e) => CreatePassword(e.target.value)} 
+                onChange={(e) => createPassword(e.target.value)} 
                 placeholder="Contraseña"
               />
             </div>
@@ -56,11 +84,10 @@ export default function SignUp() {
               <input 
                 type="password" 
                 value={password2} 
-                onChange={(e) => VerifyPassword(e.target.value)} 
+                onChange={(e) => verifyPassword(e.target.value)} 
                 placeholder="Verificar contraseña"
               />
             </div>
-            
           </div>
         );
       case 2:
@@ -91,7 +118,6 @@ export default function SignUp() {
                 placeholder="Teléfono"
               />
             </div>
-            
             <div>
               <input 
                 type="text" 
@@ -195,7 +221,7 @@ export default function SignUp() {
               </select>
             </div>
             <div>
-              <button onClick={() => console.log('Matrícula completada')} className='signup-button-matricula'>Finalizar Matrícula</button>
+              <button onClick={handleFinalSubmit} className='signup-button-matricula'>Finalizar Matrícula</button>
             </div>
           </div>
         );
