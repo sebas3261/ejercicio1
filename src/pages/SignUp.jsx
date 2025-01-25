@@ -35,6 +35,7 @@ export default function SignUp() {
   const handleFinalSubmit = async () => {
     try {
       await addDoc(collection(db, "users"), {
+        type: "user",
         name,
         apellido,
         email,
