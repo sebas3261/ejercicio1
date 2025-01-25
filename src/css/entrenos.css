@@ -1,0 +1,30 @@
+.Admin-background {
+  height: 100vh;
+  background-color: #e6f6ff;
+  overflow: hidden;
+}
+
+.Admin-img-container {
+  max-height: 200px;
+  overflow: hidden;
+  margin: 0 auto; /* Centra el contenedor horizontalmente si es más pequeño que el ancho del padre */
+  width: 90vw; /* Controla el ancho total del contenedor */
+}
+
+.Admin-img {
+  height: 100%;
+  object-fit: cover;
+  transform: translateY(-55%);
+  border-radius: 10px;
+  width: 100%; /* Asegúrate de que la imagen ocupe el ancho del contenedor */
+  margin: 0 auto; /* Margen adicional para centrar */
+}
+
+.Admin-card {
+    background-color: white;
+    height: 400px;
+    width: 90vw;
+    margin: 50px auto;
+    border-radius: 20px ;
+    box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.25); 
+}
