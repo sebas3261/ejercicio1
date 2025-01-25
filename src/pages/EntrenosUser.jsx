@@ -3,7 +3,7 @@ import "../css/entrenos.css";
 import TopImg from '../components/TopImg';
 import Header from '../components/Header';
 
-export default function AdminHome() {
+export default function EntrenosHome() {
   const entrenamientos = [
     { id: 1, title: 'Entrenamiento 1', description: 'Descripción 1', time: '9:41 AM' },
     { id: 2, title: 'Entrenamiento 2', description: 'Descripción 2', time: '9:41 AM' },
@@ -12,11 +12,11 @@ export default function AdminHome() {
   ];
 
   return (
-    <div className='Admin-background'>
-      <Header type="admin" />
+    <div className='Entrenos-background'>
+      <Header type="user" />
       <TopImg number={2} />
-      <div className='Admin-card'>
-        <h2 className='Admin-title'>Entrenamientos Programados</h2>
+      <div className='Entrenos-card'>
+        <h2 className='Entrenos-title'>Entrenamientos Programados</h2>
         <div className='Entrenos-list'>
           {entrenamientos.map((entreno) => (
             <div key={entreno.id} className='Entreno-item'>

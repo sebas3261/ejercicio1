@@ -1,9 +1,14 @@
-.Admin-title {
+.Entrenos-title {
   font-size: 24px;
   text-align: center;
   margin-bottom: 20px;
   padding-top: 20px;
   font: 600 26px/1.2 'Roboto', sans-serif;
+}
+.Entrenos-background {
+  height: 100vh;
+  background-color: #e6f6ff;
+  overflow: hidden;
 }
 
 .Entrenos-list {
@@ -51,7 +56,7 @@
   color: #6c757d;
 }
 
-.Admin-button {
+.Entreno-button {
   margin: 20px auto 0;
   display: block;
   padding: 10px 20px;
@@ -65,6 +70,11 @@
   transition: background-color 0.3s ease;
 }
 
-.Admin-button:hover {
-  background-color: #0056b3;
+.Entrenos-card {
+  background-color: white;
+  height: 400px;
+  width: 90vw;
+  margin: 50px auto;
+  border-radius: 20px ;
+  box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.25); 
 }
