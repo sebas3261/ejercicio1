@@ -1,34 +1,33 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import { NavLink } from "react-router";
 
 export default function SignUp() {
   const [step, setStep] = useState(1);
 
   // Step 1: User information
-  const [user, setUser] = useState({
-    name: "",
-    apellido: "",
-    password: "",
-    password2: "",
-    email: "",
-    telefono: "",
-    direccion: "",
-    fechaNacimiento: "",
-    nivelJuego: "Principiante",
-    categoria: "Infantil",
-    condicionesMedicas: "",
-    alergias: "",
-    certificadoMedico: "",
-    contactoEmergencia: "",
-    telefonoEmergencia: "",
-    relacionEmergencia: "",
-    metodoPago: "Tarjeta",
-  });
+  const [name, setName] = useState('');
+  const [apellido, setApellido] = useState('');
+  const [password, CreatePassword] = useState('');
+  const [password2, VerifyPassword] = useState('');
+  const [email, setEmail] = useState('');
+  const [telefono, setTelefono] = useState('');
+  const [direccion, setDireccion] = useState('');
+  const [fechaNacimiento, setFechaNacimiento] = useState('');
+  const [nivelJuego, setNivelJuego] = useState('Principiante');
+  const [categoria, setCategoria] = useState('Infantil');
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setUser((prevState) => ({ ...prevState, [name]: value }));
-  };
+  // Step 2: Medical information
+  const [condicionesMedicas, setCondicionesMedicas] = useState('');
+  const [alergias, setAlergias] = useState('');
+  const [certificadoMedico, setCertificadoMedico] = useState('');
+
+  // Step 3: Emergency contact
+  const [contactoEmergencia, setContactoEmergencia] = useState('');
+  const [telefonoEmergencia, setTelefonoEmergencia] = useState('');
+  const [relacionEmergencia, setRelacionEmergencia] = useState('');
+
+  // Step 4: Payment
+  const [metodoPago, setMetodoPago] = useState('Tarjeta');
 
   const renderStep = () => {
     switch (step) {
@@ -39,27 +38,24 @@ export default function SignUp() {
             <div>
               <input 
                 type="email" 
-                name="email"
                 value={email} 
-                onChange={handleInputChange}
+                onChange={(e) => setEmail(e.target.value)} 
                 placeholder="Email"
               />
             </div>
             <div>
               <input 
                 type="password" 
-                name="password"
                 value={password} 
-                onChange={handleInputChange}
+                onChange={(e) => CreatePassword(e.target.value)} 
                 placeholder="Contraseña"
               />
             </div>
             <div>
               <input 
                 type="password" 
-                name="password2"
                 value={password2} 
-                onChange={handleInputChange}
+                onChange={(e) => VerifyPassword(e.target.value)} 
                 placeholder="Verificar contraseña"
               />
             </div>
@@ -71,67 +67,55 @@ export default function SignUp() {
           <div>
             <h1>Parte 1: Información Personal</h1>
             <div>
-              <input
-                type="text"
-                name="name"
-                value={user.name}
-                onChange={handleInputChange}
+              <input 
+                type="text" 
+                value={name} 
+                onChange={(e) => setName(e.target.value)} 
                 placeholder="Nombre"
               />
             </div>
             <div>
-              <input
-                type="text"
-                name="apellido"
-                value={user.apellido}
-                onChange={handleInputChange}
+              <input 
+                type="text" 
+                value={apellido} 
+                onChange={(e) => setApellido(e.target.value)} 
                 placeholder="Apellido"
               />
             </div>
             <div>
-              <input
-                type="tel"
-                name="telefono"
-                value={user.telefono}
-                onChange={handleInputChange}
+              <input 
+                type="tel" 
+                value={telefono} 
+                onChange={(e) => setTelefono(e.target.value)} 
                 placeholder="Teléfono"
               />
             </div>
+            
             <div>
-              <input
-                type="text"
-                name="direccion"
-                value={user.direccion}
-                onChange={handleInputChange}
+              <input 
+                type="text" 
+                value={direccion} 
+                onChange={(e) => setDireccion(e.target.value)} 
                 placeholder="Dirección"
               />
             </div>
             <div>
-              <input
-                type="date"
-                name="fechaNacimineto"
-                value={user.fechaNacimiento}
-                onChange={handleInputChange}
+              <input 
+                type="date" 
+                value={fechaNacimiento} 
+                onChange={(e) => setFechaNacimiento(e.target.value)} 
                 placeholder="Fecha de nacimiento"
               />
             </div>
             <div>
-              <select
-                value={user.nivelJuego}
-                name="nivelJuego"
-                onChange={handleInputChange}
-              >
+              <select value={nivelJuego} onChange={(e) => setNivelJuego(e.target.value)}>
                 <option value="Principiante">Principiante</option>
                 <option value="Intermedio">Intermedio</option>
                 <option value="Avanzado">Avanzado</option>
               </select>
             </div>
             <div>
-              <select
-                name="categoria"
-                value={user.categoria}
-                onChange={handleInputChange}
-              >
+              <select value={categoria} onChange={(e) => setCategoria(e.target.value)}>
                 <option value="Infantil">Infantil</option>
                 <option value="Juvenil">Juvenil</option>
                 <option value="Adulto">Adulto</option>
@@ -145,27 +129,24 @@ export default function SignUp() {
           <div>
             <h1>Parte 2: Información Médica</h1>
             <div>
-              <textarea
-                value={user.condicionesMedicas}
-                name="condicionesMedicas"
-                onChange={handleInputChange}
+              <textarea 
+                value={condicionesMedicas} 
+                onChange={(e) => setCondicionesMedicas(e.target.value)} 
                 placeholder="Condiciones Médicas"
               ></textarea>
             </div>
             <div>
-              <textarea
-                value={user.alergias}
-                name="alergias"
-                onChange={handleInputChange}
+              <textarea 
+                value={alergias} 
+                onChange={(e) => setAlergias(e.target.value)} 
                 placeholder="Alergias"
               ></textarea>
             </div>
             <div>
-              <input
-                type="text"
-                name="certificadoMedico"
-                value={user.certificadoMedico}
-                onChange={handleInputChange}
+              <input 
+                type="text" 
+                value={certificadoMedico} 
+                onChange={(e) => setCertificadoMedico(e.target.value)} 
                 placeholder="Certificado Médico"
               />
             </div>
@@ -176,29 +157,26 @@ export default function SignUp() {
           <div>
             <h1>Parte 3: Contacto de Emergencia</h1>
             <div>
-              <input
-                type="text"
-                name="contactoEmergencia"
-                value={user.contactoEmergencia}
-                onChange={handleInputChange}
+              <input 
+                type="text" 
+                value={contactoEmergencia} 
+                onChange={(e) => setContactoEmergencia(e.target.value)} 
                 placeholder="Nombre del contacto"
               />
             </div>
             <div>
-              <input
-                type="tel"
-                name="telefonoEmergencia"
-                value={user.telefonoEmergencia}
-                onChange={handleInputChange}
+              <input 
+                type="tel" 
+                value={telefonoEmergencia} 
+                onChange={(e) => setTelefonoEmergencia(e.target.value)} 
                 placeholder="Teléfono del contacto"
               />
             </div>
             <div>
-              <input
-                type="text"
-                name="relacionEmergencia"
-                value={user.relacionEmergencia}
-                onChange={handleInputChange}
+              <input 
+                type="text" 
+                value={relacionEmergencia} 
+                onChange={(e) => setRelacionEmergencia(e.target.value)} 
                 placeholder="Relación con el contacto"
               />
             </div>
@@ -209,16 +187,14 @@ export default function SignUp() {
           <div>
             <h1>Parte 4: Pago de Matrícula</h1>
             <div>
-              <select value={user.metodoPago} onChange={handleInputChange} name="metodoPago">
+              <select value={metodoPago} onChange={(e) => setMetodoPago(e.target.value)}>
                 <option value="Tarjeta">Tarjeta</option>
                 <option value="Transferencia">Transferencia Bancaria</option>
                 <option value="Efectivo">Efectivo</option>
               </select>
             </div>
             <div>
-              <button onClick={() => console.log(user)}>
-                Finalizar Matrícula
-              </button>
+              <button onClick={() => console.log('Matrícula completada')}>Finalizar Matrícula</button>
             </div>
           </div>
         );
@@ -240,3 +216,4 @@ export default function SignUp() {
     </div>
   );
 }
+
