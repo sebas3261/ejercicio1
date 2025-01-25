@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { db } from "../firebase";
 import { collection, doc, setDoc, getDocs } from "firebase/firestore";
-import "../css/Entrenos.css";
+import "../css/entrenos.css";
 import TopImg from '../components/TopImg';
 import Header from '../components/Header';
 
@@ -55,25 +55,30 @@ export default function EntrenosAdmin() {
       <Header type="admin" />
       <TopImg number={5} />
       {!showCreateEntreno ? (
-        <div className='Entrenos-card'>
-          <h2 className='Entrenos-title'>Entrenamientos</h2>
-          <div className='Entrenos-list-container'>
-            <div className='Entrenos-list'>
-              {entrenos.map((entreno, index) => (
-                <div key={index} className='Entreno-item'>
-                  <div className='Entreno-image'></div>
-                  <div className='Entreno-info'>
-                    <h3>{entreno.name}</h3>
-                    <p>Categoría: {entreno.categoria}</p>
-                    <p>Cancha: {entreno.cancha}</p>
+        <>
+          <div className='Entrenos-card'>
+            <h2 className='Entrenos-title'>Entrenamientos</h2>
+            <div className='Entrenos-list-container'>
+              <div className='Entrenos-list'>
+                {entrenos.map((entreno, index) => (
+                  <div key={index} className='Entreno-item'>
+                    <div className='Entreno-image'></div>
+                    <div className='Entreno-info'>
+                      <h3>{entreno.name}</h3>
+                      <p>Categoría: {entreno.categoria}</p>
+                      <p>Cancha: {entreno.cancha}</p>
+                    </div>
+                    <span className='Entreno-time'>{new Date(entreno.date).toLocaleString()}</span>
                   </div>
-                  <span className='Entreno-time'>{new Date(entreno.date).toLocaleString()}</span>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
-          <button className='Entreno-button' onClick={() => setShowCreateEntreno(true)}>Crear nuevo Entrenamiento</button>
-        </div>
+          {/* Botón fuera de la tarjeta */}
+          <button className='Entreno-button' onClick={() => setShowCreateEntreno(true)}>
+            Crear nuevo Entrenamiento
+          </button>
+        </>
       ) : (
         <div className="entrenos-container">
           <h1>Crear Nuevo Entrenamiento</h1>
