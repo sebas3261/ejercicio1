@@ -93,9 +93,10 @@ export default function AdminHome() {
     <div className='Admin-background'>
       <Header type="admin" />
       <TopImg number={6} />
+      <h2 className='Admin-title'>Administrar miembros</h2>
       <div className='Admin-card'>
         <div className='Admin-card-header'>
-          <h2 className='Admin-title'>Administrar miembros</h2>
+          
           <table className="Users-table">
             <thead>
               <tr>

@@ -126,8 +126,8 @@ export default function EntrenosAdmin() {
       <TopImg number={5} />
       {!showCreateEntreno ? (
         <>
+          <h2 className='Entrenos-title'>Entrenamientos</h2>
           <div className='Entrenos-card'>
-            <h2 className='Entrenos-title'>Entrenamientos</h2>
             <div className='Entrenos-list-container'>
               <div className='Entrenos-list'>
                 {entrenos.map((entreno, index) => (
