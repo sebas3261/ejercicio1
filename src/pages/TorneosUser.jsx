@@ -106,7 +106,7 @@ export default function TorneosHome() {
                 tournaments.map((tournament) => (
                   <div
                     key={tournament.id}
-                    className="Torneo-item"
+                    className="Torneos-item"
                     onClick={() => handleTournamentClick(tournament)}
                   >
                     <div className="Torneo-image"></div>

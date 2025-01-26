@@ -27,14 +27,19 @@
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.Torneo-image {
-  width: 50px;
-  height: 50px;
-  background-color: #e0e0e0;
-  border-radius: 50%;
-  margin-right: 10px;
-}
-
+  .Torneo-image {
+      width: 50px;
+      height: 50px;
+      background-color: #e0e0e0;
+      border-radius: 50%;
+      margin-right: 10px;
+      transition: background-color 0.3s ease;
+  }
+  
+  .Torneo-image:hover {
+      background-color: #a9a9a9; /* Gris oscuro */
+      cursor: pointer; /* Cambia el cursor a una mano */
+  }
 .Torneo-info {
   flex-grow: 1;
 }
@@ -75,11 +80,34 @@
   height: 50vh; /* Altura inicial relativa a la ventana */
   max-height: 400px; /* No excederá esta altura */
   width: 90vw;
-  margin: 20px auto;
+  margin: 50px auto;
   margin-bottom: 30px;
   border-radius: 20px;
   box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.25);
   overflow-y: scroll;
-  padding-top: 30px;
-  padding-bottom: 40px;
+  padding-bottom: 30px;
+}
+.Torneo-details {
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Aumenta el espacio entre los elementos */
+  padding: 20px; /* Aumenta el padding para dar más espacio interno */
+  margin: 40px auto; /* Agrega más espacio alrededor del contenedor */
+  max-width: 800px; /* Limita el ancho máximo para que no ocupe todo el ancho de la pantalla */
+  width: 100%; /* Asegura que ocupe todo el ancho disponible hasta el max-width */
+  background-color: #f9f9f9; /* Opcional: agrega un fondo claro para separar visualmente */
+  border-radius: 10px; /* Añade bordes redondeados si deseas */
+}
+
+.Back-button {
+  margin: 10px auto 0;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease;
 }
