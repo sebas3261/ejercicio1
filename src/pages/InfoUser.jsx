@@ -1,13 +1,10 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { Doughnut, Bar } from "react-chartjs-2";
 import "../css/infouser.css";
 import Header from "../components/Header";
-import TopImg from "../components/TopImg";
-import { Doughnut, Bar } from "react-chartjs-2";
 
-
-
-const InfoUser = () => {
-  const doughnutData = {
+export default function InfoUser() {
+  const [doughnutData, setDoughnutData] = useState({
     datasets: [
       {
         data: [40, 60],
@@ -15,15 +12,23 @@ const InfoUser = () => {
         borderWidth: 0,
       },
     ],
-  };
+  });
 
-  const barData = {
+  const [barData, setBarData] = useState({
     labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
     datasets: [
-      { label: "Días asistencia", data: [5, 10, 8, 12, 15, 7, 10], backgroundColor: "#03a9f4" },
-      { label: "# torneos", data: [1, 2, 1, 3, 4, 2, 3], backgroundColor: "#000000" },
+      {
+        label: "Días asistencia",
+        data: [5, 10, 8, 12, 15, 7, 10],
+        backgroundColor: "#03a9f4",
+      },
+      {
+        label: "# torneos",
+        data: [1, 2, 1, 3, 4, 2, 3],
+        backgroundColor: "#000000",
+      },
     ],
-  };
+  });
 
   return (
     <div className="infouser-background">
@@ -40,13 +45,23 @@ const InfoUser = () => {
           </div>
         </div>
         <div className="Medals-container">
-          <img src="/path/to/silver-medal.png" alt="Silver" className="Medal-image" />
-          <img src="/path/to/gold-medal.png" alt="Gold" className="Medal-image" />
-          <img src="/path/to/bronze-medal.png" alt="Bronze" className="Medal-image" />
+          <img
+            src="/path/to/silver-medal.png"
+            alt="Silver"
+            className="Medal-image"
+          />
+          <img
+            src="/path/to/gold-medal.png"
+            alt="Gold"
+            className="Medal-image"
+          />
+          <img
+            src="/path/to/bronze-medal.png"
+            alt="Bronze"
+            className="Medal-image"
+          />
         </div>
       </div>
     </div>
   );
-};
-
-export default InfoUser;
+}

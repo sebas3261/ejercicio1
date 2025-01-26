@@ -31,16 +31,24 @@ export default function AdminHome() {
     fetchUsers();
   }, []);
 
-  const handleDeleteUser = async (id) => {
+  const handleDeleteUser = async (id, uid) => {
     const confirmDelete = window.confirm("¿Estás seguro de que deseas eliminar este usuario?");
-    
+  
     if (!confirmDelete) {
       return; // Cancelar la eliminación si el usuario no confirma
     }
   
     try {
+      const functions = getFunctions();
+      const deleteAuthUser = httpsCallable(functions, "deleteAuthUser");
+  
+      // Eliminar de Firebase Authentication
+      await deleteAuthUser({ uid });
+  
+      // Eliminar de Firestore
       const userDoc = doc(db, "users", id);
       await deleteDoc(userDoc);
+  
       setUsuarios((prev) => prev.filter((user) => user.id !== id));
       alert("Usuario eliminado exitosamente.");
     } catch (error) {
@@ -48,6 +56,7 @@ export default function AdminHome() {
       alert("Hubo un error al intentar eliminar el usuario.");
     }
   };
+  
   // Activar edición de usuario
   const handleEditClick = (user) => {
     setEditingUserId(user.id);
