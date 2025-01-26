@@ -83,8 +83,8 @@ export default function TorneosAdmin() {
       <TopImg number={1} />
       {!showCreateTournament ? (
         <>
+          <h2 className='Torneos-title'>Torneos</h2>
           <div className='Torneos-card'>
-            <h2 className='Torneos-title'>Torneos</h2>
             <div className='Torneos-list-container'>
               <div className='Torneos-list'>
                 {tournaments.map((tournament, index) => (

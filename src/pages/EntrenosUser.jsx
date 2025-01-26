@@ -73,8 +73,8 @@ export default function EntrenosHome() {
     <div className="Entrenos-background">
       <Header type="user" />
       <TopImg number={2} />
+      <h2 className="Entrenos-title">Entrenamientos Programados</h2>
       <div className="Entrenos-card">
-        <h2 className="Entrenos-title">Entrenamientos Programados</h2>
         <div className="Entrenos-list">
           {entrenamientos.length > 0 ? (
             entrenamientos.map((entreno) => (
