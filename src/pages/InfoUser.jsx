@@ -1,46 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { Doughnut, Bar } from "react-chartjs-2";
 import "../css/infouser.css";
 import Header from "../components/Header";
-import {
-  collection,
-  query,
-  where,
-  getDocs,
-  doc,
-  getDoc,
-} from "firebase/firestore";
+import { Chart } from "react-google-charts";
+import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import TopImg from "../components/TopImg";
 
 export default function InfoUser() {
-  const [doughnutData, setDoughnutData] = useState({
-    datasets: [
-      {
-        data: [40, 60],
-        backgroundColor: ["#4caf50", "#e0e0e0"],
-        borderWidth: 0,
-      },
-    ],
-  });
-
-  const [barData, setBarData] = useState({
-    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
-    datasets: [
-      {
-        label: "Días asistencia",
-        data: [5, 10, 8, 12, 15, 7, 10],
-        backgroundColor: "#03a9f4",
-      },
-      {
-        label: "# torneos",
-        data: [1, 2, 1, 3, 4, 2, 3],
-        backgroundColor: "#000000",
-      },
-    ],
-  });
-
   const [userCategory, setUserCategory] = useState(null);
+  const [userBalance, setUserBalance] = useState(null);
+  const [paymentStatus, setPaymentStatus] = useState(null);
+  const [participation, setParticipation] = useState(0); 
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -63,7 +33,10 @@ export default function InfoUser() {
         }
 
         const userData = userDoc.data();
-        setUserCategory(userData.categoria || "");
+        setUserCategory(userData.categoria || "Desconocida");
+        setUserBalance(userData.saldo || 0);
+        setPaymentStatus(userData.deuda > 0 ? "Debe dinero" : "Al día");
+        setParticipation(userData.participacion || 40); 
       } catch (error) {
         console.error("Error al cargar datos del usuario:", error);
       } finally {
@@ -82,38 +55,80 @@ export default function InfoUser() {
     );
   }
 
+  const pieChartData = [
+    ["Label", "Value"],
+    ["Participación", participation],
+    ["Faltante", 100 - participation],
+  ];
+
+  const barChartData = [
+    ["Mes", "Días asistencia", "# Torneos"],
+    ["Ene", 10, 2],
+    ["Feb", 15, 3],
+    ["Mar", 20, 4],
+    ["Abr", 25, 5],
+    ["May", 30, 6],
+    ["Jun", 35, 7],
+  ];
+
+  const pieChartOptions = {
+    pieHole: 0.4,
+    colors: ["#4caf50", "#e0e0e0"],
+    legend: "none",
+  };
+
+  const barChartOptions = {
+    chartArea: { width: "70%" },
+    colors: ["#42a5f5", "#000000"],
+    hAxis: { title: "Mes" },
+    vAxis: { title: "Cantidad" },
+  };
+
   return (
     <div className="infouser-background">
       <Header type="user" />
-      <TopImg number={4}/>
+      <TopImg number={4} />
       <div className="infouser-card">
         <h2 className="infouser-header">Resumen de Actividad</h2>
+        <div className="user-category-right">
+          Categoría del usuario: {userCategory}
+        </div>
+        <div className="infouser-balance-box">
+          <h3>Saldo</h3>
+          <p>${userBalance}</p>
+          <span
+            className={`payment-status ${
+              paymentStatus === "Debe dinero" ? "debt" : "paid"
+            }`}
+          >
+            {paymentStatus}
+          </span>
+          {paymentStatus === "Debe dinero" && (
+            <button className="pay-button">Pagar</button>
+          )}
+        </div>
+
         <div className="infouser-chart">
           <div className="infouser-chart-item">
             <p>Promedio participación</p>
+            <Chart
+              chartType="PieChart"
+              data={pieChartData}
+              options={pieChartOptions}
+              width={"100%"}
+              height={"200px"}
+            />
           </div>
           <div className="infouser-chart-item">
+            <p>Informe mensual</p>
+            <Chart
+              chartType="ColumnChart"
+              data={barChartData}
+              options={barChartOptions}
+              width={"100%"}
+              height={"200px"}
+            />
           </div>
-        </div>
-        <div className="Medals-container">
-          <img
-            src="/path/to/silver-medal.png"
-            alt="Silver"
-            className="Medal-image"
-          />
-          <img
-            src="/path/to/gold-medal.png"
-            alt="Gold"
-            className="Medal-image"
-          />
-          <img
-            src="/path/to/bronze-medal.png"
-            alt="Bronze"
-            className="Medal-image"
-          />
-        </div>
-        <div className="User-category">
-          <h3>Categoría del usuario: {userCategory || "Desconocida"}</h3>
         </div>
       </div>
     </div>
