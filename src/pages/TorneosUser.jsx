@@ -100,7 +100,7 @@ export default function TorneosHome() {
       <div className="Torneos-card">
         {!selectedTournament ? (
           <>
-            <h2 className="Torneos-title">Torneos Disponibles, dar click para posiciones</h2>
+            <h2 className="Torneos-title">Torneos Disponibles, dar click en el circulo para posiciones</h2>
             <div className="Torneos-list">
               {tournaments.length > 0 ? (
                 tournaments.map((tournament) => (
