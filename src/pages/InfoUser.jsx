@@ -1,37 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Doughnut, Bar } from "react-chartjs-2";
 import "../css/infouser.css";
 import Header from "../components/Header";
+import { Chart } from "react-google-charts";
 import { collection, query, where, getDocs, doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase";
+import TopImg from "../components/TopImg";
 
 export default function InfoUser() {
-  const [doughnutData, setDoughnutData] = useState({
-    datasets: [
-      {
-        data: [40, 60],
-        backgroundColor: ["#4caf50", "#e0e0e0"],
-        borderWidth: 0,
-      },
-    ],
-  });
-
-  const [barData, setBarData] = useState({
-    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
-    datasets: [
-      {
-        label: "Días asistencia",
-        data: [5, 10, 8, 12, 15, 7, 10],
-        backgroundColor: "#03a9f4",
-      },
-      {
-        label: "# torneos",
-        data: [1, 2, 1, 3, 4, 2, 3],
-        backgroundColor: "#000000",
-      },
-    ],
-  });
-
   const [userCategory, setUserCategory] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -74,18 +49,61 @@ export default function InfoUser() {
     );
   }
 
+  // Datos para los gráficos
+  const pieChartData = [
+    ["Label", "Value"],
+    ["Participación", 40],
+  ];
+
+  const barChartData = [
+    ["Mes", "Días asistencia", "# Torneos"],
+    ["Ene", 10, 2],
+    ["Feb", 9, 3],
+    ["Mar", 14, 4],
+    ["Abr", 10, 5],
+    ["May", 12, 6],
+    ["Jun", 7, 7],
+  ];
+
+  const pieChartOptions = {
+    pieHole: 0.4,
+    colors: ["#4caf50", "#e0e0e0"],
+    legend: "none",
+  };
+
+  const barChartOptions = {
+    chartArea: { width: "70%" },
+    colors: ["#42a5f5", "#000000"],
+    hAxis: { title: "Mes" },
+    vAxis: { title: "Cantidad" },
+  };
+
   return (
     <div className="infouser-background">
       <Header type="user" />
+      <TopImg number={4} />
       <div className="infouser-card">
         <h2 className="infouser-header">Resumen de Actividad</h2>
         <div className="infouser-chart">
           <div className="infouser-chart-item">
-            <Doughnut data={doughnutData} />
             <p>Promedio participación</p>
+            <Chart
+              chartType="PieChart"
+              data={pieChartData}
+              options={pieChartOptions}
+              width={"100%"}
+              height={"200px"}
+            />
           </div>
           <div className="infouser-chart-item">
-            <Bar data={barData} />
+            <p>Informe mensual</p>
+            <Chart
+              chartType="ColumnChart"
+              data={barChartData}
+              options={barChartOptions}
+              width={"100%"}
+              height={"200px"}
+            />
           </div>
         </div>
         <div className="Medals-container">
@@ -112,4 +130,3 @@ export default function InfoUser() {
     </div>
   );
 }
-
