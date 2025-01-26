@@ -8,7 +8,7 @@
 .Admin-background {
   height: 100vh;
   background-color: #e6f6ff;
-  overflow: hidden;
+  overflow: scroll;
 }
 
 .Admin-img-container {
@@ -108,4 +108,7 @@ text-align: center;
 
 .Users-table td button:hover {
   background-color:#007bff; /* Azul más oscuro al pasar el mouse */
+}
+.Add-button{
+  margin-bottom: 20px;
 }
