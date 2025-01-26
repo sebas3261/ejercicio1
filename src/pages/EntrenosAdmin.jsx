@@ -193,20 +193,15 @@ export default function EntrenosAdmin() {
                 onChange={(e) => setEntrenoName(e.target.value)}
                 placeholder="Nombre Entrenamiento"
               />
-              <div className="select-container">
-                <select
-                  value={categoria}
-                  onChange={(e) => setCategoria(e.target.value)}
-                >
-                  <option value="Infantil">Infantil</option>
-                  <option value="Juvenil">Juvenil</option>
-                  <option value="Adulto">Adulto</option>
-                  <option value="Profesional">Profesional</option>
-                </select>
-                <div className="categoria-display">
-                  {categoria} {/* Muestra la categoría seleccionada encima del select */}
-                </div>
-              </div>
+             <select
+              value={categoria}
+              onChange={(e) => setCategoria(e.target.value)}
+            >
+              <option value="Infantil">Infantil</option>
+              <option value="Juvenil">Juvenil</option>
+              <option value="Adulto">Adulto</option>
+              <option value="Profesional">Profesional</option>
+            </select>
               <input
                 type="text"
                 value={cancha}

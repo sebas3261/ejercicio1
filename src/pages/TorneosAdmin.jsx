@@ -107,8 +107,9 @@ export default function TorneosAdmin() {
         </>
       ): (
         <div className="tournaments-container">
-          <h1>Crear Nuevo Torneo</h1>
-          <div className="tournament-setup">
+          <h2 className='Torneos-title'>Crear nuevo torneo</h2>
+          <div className="torneo-setup">
+          <div className="torneo-form-container">
             <input
               type="text"
               value={tournamentName}
@@ -131,10 +132,13 @@ export default function TorneosAdmin() {
               placeholder="Número de jugadores"
               min="1"
             />
-            <button onClick={handleCreateTournament}>Crear Torneo</button>
           </div>
-
-          {numPlayers > 0 && (
+            <div className="torneos-contenedor">
+            <button className="Torneo-button" onClick={handleCreateTournament}>Crear Torneo</button>
+            </div>
+            
+            <div className="container">
+            {numPlayers > 0 && (
             <div className="players-list">
               <h2>Asignar Jugadores a Posiciones</h2>
               <table>
@@ -165,6 +169,8 @@ export default function TorneosAdmin() {
               </table>
             </div>
           )}
+         </div> 
+        </div>
         </div>
       )}
     </div>
