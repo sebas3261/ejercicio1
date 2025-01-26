@@ -3,9 +3,8 @@ import "../css/infouser.css";
 import Header from "../components/Header";
 import TopImg from "../components/TopImg";
 import { Doughnut, Bar } from "react-chartjs-2";
-import silverMedal from "../assets/medals/silver-medal.png";
-import goldMedal from "../assets/medals/gold-medal.png";
-import bronzeMedal from "../assets/medals/bronze-medal.png";
+
+
 
 const InfoUser = () => {
   const doughnutData = {
@@ -29,7 +28,6 @@ const InfoUser = () => {
   return (
     <div className="infouser-background">
       <Header type="user" />
-      <TopImg imageSrc="https://via.placeholder.com/1200x200" />
       <div className="infouser-card">
         <h2 className="infouser-header">Resumen de Actividad</h2>
         <div className="infouser-chart">
@@ -42,9 +40,9 @@ const InfoUser = () => {
           </div>
         </div>
         <div className="Medals-container">
-          <img src={silverMedal} alt="Silver Medal" className="Medal-image" />
-          <img src={goldMedal} alt="Gold Medal" className="Medal-image" />
-          <img src={bronzeMedal} alt="Bronze Medal" className="Medal-image" />
+          <img src="/path/to/silver-medal.png" alt="Silver" className="Medal-image" />
+          <img src="/path/to/gold-medal.png" alt="Gold" className="Medal-image" />
+          <img src="/path/to/bronze-medal.png" alt="Bronze" className="Medal-image" />
         </div>
       </div>
     </div>
