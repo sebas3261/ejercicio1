@@ -68,6 +68,8 @@ export default function EntrenosHome() {
   }
 
   return (
+
+
     <div className="Entrenos-background">
       <Header type="user" />
       <TopImg number={2} />
@@ -82,6 +84,18 @@ export default function EntrenosHome() {
                   <h3>{entreno.name}</h3>
                   <p>Categoria: {entreno.categoria}</p>
                   <p>Cancha: {entreno.cancha}</p>
+                  {/* Log de los datos de asistencia y el uid */}
+                  <p>
+                    {console.log("Asistencia en Firebase:", entreno.asistencia)}
+                    {console.log("UID del usuario:", localStorage.getItem("user").uid)}
+
+                    {/* Verificación de la asistencia */}
+                    {entreno.asistencia?.includes(JSON.parse(localStorage.getItem("user"))?.uid) ? ( 
+                      "Asistencia Confirmada"
+                    ) : (
+                      "No asististe a esta clase"
+                    )}
+                  </p>
                 </div>
               </div>
             ))

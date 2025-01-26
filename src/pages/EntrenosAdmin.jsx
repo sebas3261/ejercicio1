@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { db } from "../firebase";
-import { collection, doc, setDoc, getDocs } from "firebase/firestore";
+import { collection, doc, setDoc, getDocs, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
 import "../css/entrenos.css";
 import TopImg from '../components/TopImg';
 import Header from '../components/Header';
@@ -11,6 +11,8 @@ export default function EntrenosAdmin() {
   const [entrenoName, setEntrenoName] = useState('');
   const [categoria, setCategoria] = useState('Infantil');
   const [cancha, setCancha] = useState('');
+  const [users, setUsers] = useState([]);
+  const [attendanceSelection, setAttendanceSelection] = useState({});
 
   // Cargar entrenamientos desde Firebase
   useEffect(() => {
@@ -20,7 +22,14 @@ export default function EntrenosAdmin() {
       setEntrenos(entrenosList);
     };
 
+    const fetchUsers = async () => {
+      const usersSnapshot = await getDocs(collection(db, "users"));
+      const usersList = usersSnapshot.docs.map(doc => doc.data());
+      setUsers(usersList);
+    };
+
     fetchEntrenos();
+    fetchUsers();
   }, []);
 
   // Función para crear un nuevo entrenamiento
@@ -36,6 +45,7 @@ export default function EntrenosAdmin() {
         categoria,
         cancha,
         date: new Date().toISOString(),
+        asistencia: [], // Inicializamos la lista de asistencia vacía
       };
 
       await setDoc(doc(db, "entrenos", entrenoName), entrenoData);
@@ -48,6 +58,46 @@ export default function EntrenosAdmin() {
     } catch (error) {
       alert("Error al crear el entrenamiento: " + error.message);
     }
+  };
+
+  // Manejar cambios en la selección de asistencia
+  const handleAttendanceChange = (userId, isPresent) => {
+    setAttendanceSelection(prevSelection => ({
+      ...prevSelection,
+      [userId]: isPresent,
+    }));
+  };
+
+  // Función para marcar asistencia de forma manual
+  const handleMarkAttendance = async (entrenoId) => {
+    const selectedEntreno = entrenos.find(entreno => entreno.id === entrenoId);
+    if (!selectedEntreno) return;
+
+    const usersToUpdate = users.filter(user => attendanceSelection[user.uid]);
+    const entrenoRef = doc(db, "entrenos", entrenoId);
+
+    // Actualizamos la asistencia en Firebase
+    await updateDoc(entrenoRef, {
+      asistencia: arrayUnion(...usersToUpdate.map(user => user.uid)),
+    });
+
+    alert('Asistencia marcada para los usuarios seleccionados.');
+  };
+
+  // Función para quitar asistencia
+  const handleRemoveAttendance = async (entrenoId) => {
+    const selectedEntreno = entrenos.find(entreno => entreno.id === entrenoId);
+    if (!selectedEntreno) return;
+
+    const usersToRemove = users.filter(user => attendanceSelection[user.uid]);
+    const entrenoRef = doc(db, "entrenos", entrenoId);
+
+    // Quitamos los usuarios seleccionados de la lista de asistencia en Firebase
+    await updateDoc(entrenoRef, {
+      asistencia: arrayRemove(...usersToRemove.map(user => user.uid)),
+    });
+
+    alert('Asistencia eliminada para los usuarios seleccionados.');
   };
 
   return (
@@ -69,12 +119,41 @@ export default function EntrenosAdmin() {
                       <p>Cancha: {entreno.cancha}</p>
                     </div>
                     <span className='Entreno-time'>{new Date(entreno.date).toLocaleString()}</span>
+
+                    {/* Botón para marcar asistencia */}
+                    <button
+                      className="Entreno-mark-attendance"
+                      onClick={() => handleMarkAttendance(entreno.id)}
+                    >
+                      Marcar asistencia
+                    </button>
+
+                    {/* Botón para quitar asistencia */}
+                    <button
+                      className="Entreno-remove-attendance"
+                      onClick={() => handleRemoveAttendance(entreno.id)}
+                    >
+                      Quitar asistencia
+                    </button>
+
+                    {/* Mostrar lista de usuarios */}
+                    <div>
+                      {users.filter(user => user.categoria === entreno.categoria).map(user => (
+                        <div key={user.uid}>
+                          <input
+                            type="checkbox"
+                            checked={attendanceSelection[user.uid] || false}
+                            onChange={(e) => handleAttendanceChange(user.uid, e.target.checked)}
+                          />
+                          <label>{user.name}</label>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 ))}
               </div>
             </div>
           </div>
-          {/* Botón fuera de la tarjeta */}
           <button className='Entreno-button' onClick={() => setShowCreateEntreno(true)}>
             Crear nuevo Entrenamiento
           </button>
@@ -111,4 +190,3 @@ export default function EntrenosAdmin() {
     </div>
   );
 }
-
