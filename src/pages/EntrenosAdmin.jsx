@@ -139,21 +139,24 @@ export default function EntrenosAdmin() {
                       <p>Cancha: {entreno.cancha}</p>
                     </div>
                     
-                    {/* Botón para marcar asistencia */}
-                    <button
-                      className="Entreno-mark-attendance"
-                      onClick={() => handleMarkAttendance(entreno.name)}
-                    >
-                      Marcar asistencia
-                    </button>
+                    {/* Contenedor para los botones de asistencia */}
+                    <div className="button-container">
+                      {/* Botón para marcar asistencia */}
+                      <button
+                        className="Entreno-mark-attendance"
+                        onClick={() => handleMarkAttendance(entreno.name)}
+                      >
+                        Confirmar asistencia
+                      </button>
 
-                    {/* Botón para quitar asistencia */}
-                    <button
-                      className="Entreno-remove-attendance"
-                      onClick={() => handleRemoveAttendance(entreno.name)}
-                    >
-                      Quitar asistencia
-                    </button>
+                      {/* Botón para quitar asistencia */}
+                      <button
+                        className="Entreno-remove-attendance"
+                        onClick={() => handleRemoveAttendance(entreno.name)}
+                      >
+                        Quitar asistencia
+                      </button>
+                    </div>
 
                     {/* Mostrar lista de usuarios */}
                     <div>
@@ -173,37 +176,49 @@ export default function EntrenosAdmin() {
               </div>
             </div>
           </div>
+          <div className="entrenos-contenedor">
           <button className='Entreno-button' onClick={() => setShowCreateEntreno(true)}>
             Crear nuevo Entrenamiento
           </button>
+          </div>
         </>
       ) : (
         <div className="entrenos-container">
-          <h1>Crear Nuevo Entrenamiento</h1>
+          <h2 className='Entrenos-title'>Crear nuevo Entrenamiento</h2>
           <div className="entreno-setup">
-            <input
-              type="text"
-              value={entrenoName}
-              onChange={(e) => setEntrenoName(e.target.value)}
-              placeholder="Nombre del Entrenamiento"
-            />
-            <select
-              value={categoria}
-              onChange={(e) => setCategoria(e.target.value)}
-            >
-              <option value="Infantil">Infantil</option>
-              <option value="Juvenil">Juvenil</option>
-              <option value="Adulto">Adulto</option>
-              <option value="Profesional">Profesional</option>
-            </select>
-            <input
-              type="text"
-              value={cancha}
-              onChange={(e) => setCancha(e.target.value)}
-              placeholder="Nombre de la Cancha"
-            />
-            <button onClick={handleCreateEntreno}>Crear Entrenamiento</button>
-          </div>
+            <div className="entreno-form-container">
+              <input
+                type="text"
+                value={entrenoName}
+                onChange={(e) => setEntrenoName(e.target.value)}
+                placeholder="Nombre Entrenamiento"
+              />
+              <div className="select-container">
+                <select
+                  value={categoria}
+                  onChange={(e) => setCategoria(e.target.value)}
+                >
+                  <option value="Infantil">Infantil</option>
+                  <option value="Juvenil">Juvenil</option>
+                  <option value="Adulto">Adulto</option>
+                  <option value="Profesional">Profesional</option>
+                </select>
+                <div className="categoria-display">
+                  {categoria} {/* Muestra la categoría seleccionada encima del select */}
+                </div>
+              </div>
+              <input
+                type="text"
+                value={cancha}
+                onChange={(e) => setCancha(e.target.value)}
+                placeholder="Nombre de la Cancha"
+              />
+            </div>
+            <div className="entrenos-contenedor">
+              <button className="Entreno-button" onClick={handleCreateEntreno}>Crear Entrenamiento</button>
+              <button className="Entreno-button" onClick={() => setShowCreateEntreno(false)}>Volver a Entrenamientos</button>
+            </div>
+          </div>             
         </div>
       )}
     </div>
