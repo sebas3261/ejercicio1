@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { db } from "../firebase";
 import { collection, doc, setDoc, getDocs } from "firebase/firestore";
-import "../css/Torneos.css";
+import "../css/torneos.css";
 import TopImg from '../components/TopImg';
 import Header from '../components/Header';
 

@@ -1,7 +1,9 @@
 import React from "react";
 import "../css/infouser.css";
-import { Doughnut, Bar } from "react-chartjs-2";
 import Header from "../components/Header";
+import TopImg from "../components/TopImg";
+import { Doughnut, Bar } from "react-chartjs-2";
+
 
 
 const InfoUser = () => {
@@ -24,16 +26,16 @@ const InfoUser = () => {
   };
 
   return (
-    <div className="Infouser-background">
+    <div className="infouser-background">
       <Header type="user" />
-      <div className="Infouser-card">
-        <h2 className="Infouser-header">Resumen de Actividad</h2>
-        <div className="Infouser-chart">
-          <div className="Infouser-chart-item">
+      <div className="infouser-card">
+        <h2 className="infouser-header">Resumen de Actividad</h2>
+        <div className="infouser-chart">
+          <div className="infouser-chart-item">
             <Doughnut data={doughnutData} />
             <p>Promedio participación</p>
           </div>
-          <div className="Infouser-chart-item">
+          <div className="infouser-chart-item">
             <Bar data={barData} />
           </div>
         </div>
