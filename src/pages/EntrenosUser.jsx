@@ -60,7 +60,11 @@ export default function EntrenosHome() {
   }, []);
 
   if (loading) {
-    return <p>Cargando entrenamientos...</p>;
+    return (
+      <div className="loading-container">
+        <p className="loading-text">Cargando entrenamientos...</p>
+      </div>
+    );
   }
 
   return (

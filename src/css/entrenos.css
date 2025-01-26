@@ -82,3 +82,29 @@
   overflow-y: scroll;
   padding-bottom: 30px;
 }
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: rgba(255, 255, 255, 0.9); /* Fondo semitransparente */
+}
+
+.loading-text {
+  font-size: 2rem; /* Tamaño de fuente grande */
+  font-weight: bold;
+  color: #333; /* Color oscuro */
+  animation: pulse 1.5s infinite; /* Animación de pulso */
+}
+
+/* Animación de pulso */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
