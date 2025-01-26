@@ -7,8 +7,17 @@ export default function Header({ type }) {
   const { logout } = useAuth();
   const navigate = useNavigate();
   const handleLogout =  () => {
-    logout();
+    const confirmLogOut = window.confirm("¿Estás seguro de que deseas cerrar tu sesión?");
+  
+    if (!confirmLogOut) {
+      return;
+    }
+    else {
+      logout();
     navigate("/");
+
+    }
+    
 
     
   }
