@@ -139,7 +139,6 @@ export default function EntrenosAdmin() {
                       <p>Cancha: {entreno.cancha}</p>
                     </div>
                     
-                    {/* Contenedor para los botones de asistencia */}
                     <div className="button-container">
                       {/* Botón para marcar asistencia */}
                       <button
@@ -156,9 +155,10 @@ export default function EntrenosAdmin() {
                       >
                         Quitar asistencia
                       </button>
-                    </div>
+                    
 
                     {/* Mostrar lista de usuarios */}
+                    <div className="asistencia-container">
                     <div>
                       {users.filter(user => user.categoria === entreno.categoria).map(user => (
                         <div key={user.uid}>
@@ -170,6 +170,8 @@ export default function EntrenosAdmin() {
                           <label>{user.name}</label>
                         </div>
                       ))}
+                    </div>
+                    </div>
                     </div>
                   </div>
                 ))}

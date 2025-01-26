@@ -122,6 +122,21 @@
   display: flex;
   gap: 10px; 
   justify-content: flex-start; 
+  align-items: center;
+  
+}
+
+button {
+  background-color: #d1cfcf;
+  border: none; 
+  border-radius: 5px; 
+  cursor: pointer; 
+  font-size: 1rem; 
+  height: auto; 
+}
+
+button:hover {
+  background-color: #979797; /* Color de fondo cuando el mouse pasa por encima */
 }
 
 .Entreno-mark-attendance, .Entreno-remove-attendance {
@@ -156,3 +171,12 @@
 }
 
 
+.asistencia-container{
+  display: flex;
+  gap: 10px; 
+  justify-content: flex-start; 
+  align-items: center;
+  margin-right: 25px;
+  
+
+}
