@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Doughnut, Bar } from "react-chartjs-2";
 import "../css/infouser.css";
 import Header from "../components/Header";
+import { collection, query, where, getDocs, doc, getDoc } from "firebase/firestore";
+import { db } from "../firebase";
 
 export default function InfoUser() {
   const [doughnutData, setDoughnutData] = useState({
@@ -29,6 +31,48 @@ export default function InfoUser() {
       },
     ],
   });
+
+  const [userCategory, setUserCategory] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const storedUser = JSON.parse(localStorage.getItem("user"));
+        const uid = storedUser?.uid;
+
+        if (!uid) {
+          console.error("No se encontró un UID en localStorage.");
+          return;
+        }
+
+        const userDocRef = doc(db, "users", uid);
+        const userDoc = await getDoc(userDocRef);
+
+        if (!userDoc.exists()) {
+          console.error("No se encontró información del usuario en Firestore.");
+          return;
+        }
+
+        const userData = userDoc.data();
+        setUserCategory(userData.categoria || "");
+      } catch (error) {
+        console.error("Error al cargar datos del usuario:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <p className="loading-text">Cargando información del usuario...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="infouser-background">
@@ -61,7 +105,11 @@ export default function InfoUser() {
             className="Medal-image"
           />
         </div>
+        <div className="User-category">
+          <h3>Categoría del usuario: {userCategory || "Desconocida"}</h3>
+        </div>
       </div>
     </div>
   );
 }
+
