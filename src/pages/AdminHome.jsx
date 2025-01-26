@@ -14,9 +14,19 @@ export default function AdminHome() {
   
   useEffect(() => {
     const fetchUsers = async () => {
-      const usersCollection = collection(db, "users");
-      const data = await getDocs(usersCollection);
-      setUsuarios(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+      try {
+        const usersCollection = collection(db, "users");
+        const data = await getDocs(usersCollection);
+  
+        // Filtrar usuarios con type "user"
+        const filteredUsers = data.docs
+          .map((doc) => ({ ...doc.data(), id: doc.id }))
+          .filter((user) => user.type === "user");
+  
+        setUsuarios(filteredUsers);
+      } catch (error) {
+        console.error("Error al obtener usuarios:", error);
+      }
     };
     fetchUsers();
   }, []);
@@ -141,13 +151,14 @@ export default function AdminHome() {
               ))}
             </tbody>
           </table>
-          <NavLink to={"/signup"} className={"navlink"}>
+          
+        </div>
+      </div>
+      <NavLink to={"/signup"} className={"navlink"}>
             <button className='Add-button' >
               Crear nuevo miembro
             </button>
           </NavLink>
-        </div>
-      </div>
     </div>
   );
 }
