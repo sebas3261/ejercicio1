@@ -146,15 +146,19 @@ export default function SignUp() {
 
   const handleTelefonoChange = (e) => {
     const value = e.target.value;
-    if (/^\d*$/.test(value)) {
+    if (/^3\d{0,9}$/.test(value)) {
       setTelefono(value);
     }
   };
 
   const handleTelefonoEmergenciaChange = (e) => {
     const value = e.target.value;
-    if (/^\d*$/.test(value)) {
-      setTelefonoEmergencia(value);
+    if (/^3\d{0,9}$/.test(value)) {
+      if (value !== telefono) { // Verifica que no sea igual al teléfono principal
+        setTelefonoEmergencia(value);
+      } else {
+        alert("El número de emergencia no puede ser igual al número principal.");
+      }
     }
   };
 
