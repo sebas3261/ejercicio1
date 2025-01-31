@@ -1,6 +1,6 @@
 .infouser-background {
-  min-height: 100vh; /* Cambiado de height a min-height */
-  background-color: #e6f6ff; /* Fondo azul claro */
+  min-height: 100vh; 
+  background-color: #e6f6ff; 
   display: flex;
   flex-direction: column;
 }
@@ -20,7 +20,7 @@
 }
 
 .TopImg {
-  margin-bottom: 20px; /* Espacio entre TopImg y la tarjeta */
+  margin-bottom: 20px;
 }
 
 .infouser-card {
@@ -28,7 +28,7 @@
   border-radius: 0px;
   box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.25);
   padding: 20px;
-  margin: 20px auto 30px; /* Ajustado para dar más espacio desde TopImg */
+  margin: 20px auto 30px; 
   width: 90vw;
   max-width: 1340px;
 }
