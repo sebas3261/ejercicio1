@@ -167,11 +167,12 @@ export default function SignUp() {
       alert('La contraseña debe tener al menos 6 caracteres.');
       return false;
     }
-    if (email && !email.includes('@')) {
-      alert('El correo es inválido.');
-      return false;
-    }
-    return true;
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailPattern.test(email)) {
+    alert('El correo es inválido.');
+    return false;
+  }
+  return true;
   };
 
   const validateFields = () => {
