@@ -21,7 +21,6 @@ export default function SignUp() {
   const [fechaNacimiento, setFechaNacimiento] = useState('');
   const [nivelJuego, setNivelJuego] = useState('Principiante');
   const [categoria, setCategoria] = useState('Infantil');
-
   // Step 2: Medical information
   const [condicionesMedicas, setCondicionesMedicas] = useState('');
   const [alergias, setAlergias] = useState('');
@@ -63,7 +62,8 @@ export default function SignUp() {
         telefonoEmergencia,
         relacionEmergencia,
         password,
-        metodoPago
+        metodoPago,
+        isAuthenticated: false,
       });
       navigate("/");
       alert("Registro completado exitosamente");

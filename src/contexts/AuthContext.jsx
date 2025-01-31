@@ -43,7 +43,14 @@ export const AuthProvider = ({ children }) => {
       const ref = doc(db, "users", firebaseUser.uid);
       const userDoc = await getDoc(ref);
 
+
       const userData = userDoc.data();
+
+      if (!userData.isAuthenticated&&userData.type!=="admin") {
+        alert("El usuario aún no ha sido autenticado por el administrador");
+        return null;
+      }
+
       console.log(userData)
       
   
