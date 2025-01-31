@@ -65,6 +65,7 @@ export const AuthProvider = ({ children }) => {
       return userData.type; // Forzamos que siempre retorne "admin"
     } catch (error) {
       console.error("Error al iniciar sesión:", error.message);
+      alert("Error: Usuario o contraseña incorrectos o vacios");
       return null; // Si algo falla, retornamos null
     }
   };

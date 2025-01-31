@@ -16,8 +16,6 @@ export default function Home() {
       navigate("/admindashboard");
     } else if (type === "user") {
       navigate("/userdashboard");
-    } else {
-      alert("Error: Usuario o contraseña incorrectos o vacios");
     }
   };
 
