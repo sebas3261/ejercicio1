@@ -279,7 +279,7 @@ export default function SignUp() {
             </div>
             <div>
               <select value={rol} onChange={(e) => setRol(e.target.value)}>
-                <option value="usuario">Usuario</option>
+                <option value="user">Usuario</option>
                 <option value="profesor">Profesor</option>
               </select>
             </div>
