@@ -137,7 +137,7 @@ export default function EntrenosProfe() {
 
                   <div className="asistencia-container">
                     <div>
-                      {users.filter(user => user.categoria === entreno.categoria && user.type === "user").map(user => (
+                      {users.filter(user => user.categoria === entreno.categoria && user.type === "user" && user.isAuthenticated == true).map(user => (
                         <div key={user.uid}>
                           <input
                             type="checkbox"
