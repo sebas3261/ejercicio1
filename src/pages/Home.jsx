@@ -16,7 +16,10 @@ export default function Home() {
       navigate("/admindashboard");
     } else if (type === "user") {
       navigate("/userdashboard");
-    } else {
+    } else if (type == "profesor") {
+      navigate("entrenosprofe")
+    }
+    else {
       alert("Error: Usuario o contraseña incorrectos o vacios");
     }
   };
