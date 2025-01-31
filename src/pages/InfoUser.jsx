@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "../css/infouser.css";
 import Header from "../components/Header";
 import { Chart } from "react-google-charts";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, collection, query, getDocs } from "firebase/firestore";
 import { db } from "../firebase";
 import TopImg from "../components/TopImg";
 
@@ -10,7 +10,11 @@ export default function InfoUser() {
   const [userCategory, setUserCategory] = useState(null);
   const [userBalance, setUserBalance] = useState(null);
   const [paymentStatus, setPaymentStatus] = useState(null);
-  const [participation, setParticipation] = useState(0); 
+  const [trainingCount, setTrainingCount] = useState(0);
+  const [totalTrainings, setTotalTrainings] = useState(0);
+  const [tournamentCount, setTournamentCount] = useState(0);
+  const [totalTournaments, setTotalTournaments] = useState(0);
+  const [tournamentsWon, setTournamentsWon] = useState(0); // Estado para los torneos ganados
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -36,7 +40,54 @@ export default function InfoUser() {
         setUserCategory(userData.categoria || "Desconocida");
         setUserBalance(userData.saldo || 0);
         setPaymentStatus(userData.deuda > 0 ? "Debe dinero" : "Al día");
-        setParticipation(userData.participacion || 40); 
+
+        // Consultar entrenos
+        const entrenosQuery = query(collection(db, "entrenos"));
+        const entrenosSnapshot = await getDocs(entrenosQuery);
+        let attendedTrainings = 0;
+        let totalCategoryTrainings = 0;
+
+        entrenosSnapshot.forEach((doc) => {
+          const entrenoData = doc.data();
+          if (entrenoData.categoria === userData.categoria) {
+            totalCategoryTrainings++;
+          }
+          if (entrenoData.asistencia && entrenoData.asistencia.includes(uid)) {
+            attendedTrainings++;
+          }
+        });
+
+        setTrainingCount(attendedTrainings);
+        setTotalTrainings(totalCategoryTrainings);
+        
+        // Consultar torneos
+        const tournamentsQuery = query(collection(db, "tournaments"));
+        const tournamentsSnapshot = await getDocs(tournamentsQuery);
+        let attendedTournaments = 0;
+        let totalCategoryTournaments = 0;
+        let wonTournaments = 0; // Variable para contar los torneos ganados
+
+        tournamentsSnapshot.forEach((doc) => {
+          const tournamentData = doc.data();
+          if (tournamentData.categoria === userData.categoria) {
+            totalCategoryTournaments++;
+          }
+          if (
+            tournamentData.rankings &&
+            tournamentData.rankings.some((rank) => rank.playerId === uid)
+          ) {
+            attendedTournaments++;
+            // Verificar si el jugador ha ganado el torneo
+            if (tournamentData.rankings.some((rank) => rank.playerId === uid && rank.position === 1)) {
+              wonTournaments++;
+            }
+          }
+        });
+
+        setTournamentCount(attendedTournaments);
+        setTotalTournaments(totalCategoryTournaments);
+        setTournamentsWon(wonTournaments); // Actualizar el estado de torneos ganados
+
       } catch (error) {
         console.error("Error al cargar datos del usuario:", error);
       } finally {
@@ -55,20 +106,16 @@ export default function InfoUser() {
     );
   }
 
-  const pieChartData = [
-    ["Label", "Value"],
-    ["Participación", participation],
-    ["Faltante", 100 - participation],
+  const pieChartDataTrainings = [
+    ["Entrenos", "Cantidad"],
+    ["Asistidos", trainingCount],
+    ["No asistidos", totalTrainings - trainingCount],
   ];
 
-  const barChartData = [
-    ["Mes", "Días asistencia", "# Torneos"],
-    ["Ene", 10, 2],
-    ["Feb", 15, 3],
-    ["Mar", 20, 4],
-    ["Abr", 25, 5],
-    ["May", 30, 6],
-    ["Jun", 35, 7],
+  const pieChartDataTournaments = [
+    ["Torneos", "Cantidad"],
+    ["Participados", tournamentCount],
+    ["No participados", totalTournaments - tournamentCount],
   ];
 
   const pieChartOptions = {
@@ -77,57 +124,33 @@ export default function InfoUser() {
     legend: "none",
   };
 
-  const barChartOptions = {
-    chartArea: { width: "70%" },
-    colors: ["#42a5f5", "#000000"],
-    hAxis: { title: "Mes" },
-    vAxis: { title: "Cantidad" },
-  };
-
   return (
     <div className="infouser-background">
       <Header type="user" />
       <TopImg number={4} />
       <div className="infouser-card">
         <h2 className="infouser-header">Resumen de Actividad</h2>
-        <div className="user-category-right">
-          Categoría del usuario: {userCategory}
-        </div>
+        <div className="user-category-right">Categoría del usuario: {userCategory}</div>
         <div className="infouser-balance-box">
           <h3>Saldo</h3>
           <p>${userBalance}</p>
-          <span
-            className={`payment-status ${
-              paymentStatus === "Debe dinero" ? "debt" : "paid"
-            }`}
-          >
-            {paymentStatus}
-          </span>
-          {paymentStatus === "Debe dinero" && (
-            <button className="pay-button">Pagar</button>
-          )}
+          <span className={`payment-status ${paymentStatus === "Debe dinero" ? "debt" : "paid"}`}>{paymentStatus}</span>
+          {paymentStatus === "Debe dinero" && <button className="pay-button">Pagar</button>}
         </div>
 
         <div className="infouser-chart">
           <div className="infouser-chart-item">
-            <p>Promedio participación</p>
-            <Chart
-              chartType="PieChart"
-              data={pieChartData}
-              options={pieChartOptions}
-              width={"100%"}
-              height={"200px"}
-            />
+            <p>Entrenos Asistidos</p>
+            <Chart chartType="PieChart" data={pieChartDataTrainings} options={pieChartOptions} width={"100%"} height={"200px"} />
           </div>
           <div className="infouser-chart-item">
-            <p>Informe mensual</p>
-            <Chart
-              chartType="ColumnChart"
-              data={barChartData}
-              options={barChartOptions}
-              width={"100%"}
-              height={"200px"}
-            />
+            <p>Torneos Participados</p>
+            <Chart chartType="PieChart" data={pieChartDataTournaments} options={pieChartOptions} width={"100%"} height={"200px"} />
+            {tournamentsWon > 0 && (
+              <p className="tournament-wins">
+                🏆 Has ganado {tournamentsWon} de {totalTournaments} torneos en tu categoria.
+              </p>
+            )}
           </div>
         </div>
       </div>
