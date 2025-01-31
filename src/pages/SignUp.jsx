@@ -167,6 +167,10 @@ export default function SignUp() {
       alert('La contraseña debe tener al menos 6 caracteres.');
       return false;
     }
+    if (/\s/.test(password)) {
+      alert('La contraseña no puede contener espacios.');
+      return false;
+    }
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!emailPattern.test(email)) {
     alert('El correo es inválido.');
