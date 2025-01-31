@@ -7,6 +7,7 @@ import { db } from "../firebase"; // Asegúrate de tener configurada la conexió
 
 export default function EntrenosHome() {
   const [entrenamientos, setEntrenamientos] = useState([]);
+  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -38,6 +39,11 @@ export default function EntrenosHome() {
           return;
         }
 
+        // Obtener los usuarios de Firestore
+        const usersSnapshot = await getDocs(collection(db, "users"));
+        const usersList = usersSnapshot.docs.map((doc) => doc.data());
+        setUsers(usersList);
+
         // Obtener entrenamientos según la categoría
         const entrenosRef = collection(db, "entrenos");
         const q = query(entrenosRef, where("categoria", "==", userCategoria));
@@ -68,8 +74,6 @@ export default function EntrenosHome() {
   }
 
   return (
-
-
     <div className="Entrenos-background">
       <Header type="user" />
       <TopImg number={2} />
@@ -84,13 +88,20 @@ export default function EntrenosHome() {
                   <h3>{entreno.name}</h3>
                   <p>Categoria: {entreno.categoria}</p>
                   <p>Cancha: {entreno.cancha}</p>
+                  {/* Mostrar nombre del profesor */}
+                  <p>
+                    Profesor: {
+                      users.find((user) => user.uid === entreno.profesor)?.name ||
+                      "Profesor no encontrado"
+                    }
+                  </p>
                   {/* Log de los datos de asistencia y el uid */}
                   <p>
                     {console.log("Asistencia en Firebase:", entreno.asistencia)}
                     {console.log("UID del usuario:", localStorage.getItem("user").uid)}
 
                     {/* Verificación de la asistencia */}
-                    {entreno.asistencia?.includes(JSON.parse(localStorage.getItem("user"))?.uid) ? ( 
+                    {entreno.asistencia?.includes(JSON.parse(localStorage.getItem("user"))?.uid) ? (
                       "Asistencia Confirmada"
                     ) : (
                       "No asististe a esta clase"

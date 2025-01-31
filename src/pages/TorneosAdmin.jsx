@@ -33,7 +33,7 @@ export default function TorneosAdmin() {
   }, []);
 
   useEffect(() => {
-    const filtered = players.filter(player => player.categoria === categoria);
+    const filtered = players.filter(player => player.categoria === categoria && player.type === "user" && player.isAuthenticated == true);
     setFilteredPlayers(filtered);
   }, [categoria, players]);
 

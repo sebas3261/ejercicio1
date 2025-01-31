@@ -56,7 +56,7 @@ export default function EntrenosProfe() {
   }, []);
 
   // Manejar los cambios en la selección de asistencia
-  const handleAttendanceChange = (entrenoName, userId, isPresent) => {
+  const handleAttendanceChange = async (entrenoName, userId, isPresent) => {
     setAttendanceSelection(prevSelection => ({
       ...prevSelection,
       [entrenoName]: {
@@ -64,6 +64,20 @@ export default function EntrenosProfe() {
         [userId]: isPresent,
       },
     }));
+
+    const entrenoRef = doc(db, "entrenos", entrenoName);
+
+    if (isPresent) {
+      await updateDoc(entrenoRef, {
+        asistencia: arrayUnion(userId),
+      });
+      alert('Asistencia marcada para el usuario.');
+    } else {
+      await updateDoc(entrenoRef, {
+        asistencia: arrayRemove(userId),
+      });
+      alert('Asistencia eliminada para el usuario.');
+    }
   };
 
   // Función para marcar asistencia
@@ -115,23 +129,15 @@ export default function EntrenosProfe() {
                 </div>
 
                 <div className="button-container">
-                  <button
+                  <p
                     className="Entreno-mark-attendance"
-                    onClick={() => handleMarkAttendance(entreno.name)}
                   >
-                    Confirmar asistencia
-                  </button>
-
-                  <button
-                    className="Entreno-remove-attendance"
-                    onClick={() => handleRemoveAttendance(entreno.name)}
-                  >
-                    Quitar asistencia
-                  </button>
+                    Marque/desmarque la asistencia
+                    </p>
 
                   <div className="asistencia-container">
                     <div>
-                      {users.filter(user => user.categoria === entreno.categoria && user.type === "user").map(user => (
+                      {users.filter(user => user.categoria === entreno.categoria && user.type === "user" && user.isAuthenticated == true).map(user => (
                         <div key={user.uid}>
                           <input
                             type="checkbox"
