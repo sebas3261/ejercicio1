@@ -171,9 +171,9 @@ export default function SignUp() {
       alert('La contraseña no puede contener espacios.');
       return false;
     }
-    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    const emailPattern = /^[^\s@]+@[a-zA-Z.-]+\.[a-zA-Z]{2,}$/;
     if (!emailPattern.test(email)) {
-    alert('El correo es inválido.');
+    alert('El correo es inválido. Recuerde que no puede tener espacios');
     return false;
   }
   return true;
