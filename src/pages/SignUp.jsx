@@ -100,7 +100,8 @@ export default function SignUp() {
         telefonoEmergencia,
         relacionEmergencia,
         password,
-        metodoPago
+        metodoPago,
+        isAuthenticated: false
       });
 
       navigate("/");
