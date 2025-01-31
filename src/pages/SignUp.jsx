@@ -18,6 +18,7 @@ export default function SignUp() {
   const [telefono, setTelefono] = useState('');
   const [direccion, setDireccion] = useState('');
   const [fechaNacimiento, setFechaNacimiento] = useState('');
+  const [edadError, setEdadError] = useState(''); // Estado para el mensaje de error de edad
   const [nivelJuego, setNivelJuego] = useState('Principiante');
   const [categoria, setCategoria] = useState('Infantil');
 
@@ -38,19 +39,24 @@ export default function SignUp() {
     const value = e.target.value;
     setFechaNacimiento(value);
 
-    const birthDate = new Date(value);
-    const today = new Date();
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const monthDiff = today.getMonth() - birthDate.getMonth();
-    const dayDiff = today.getDate() - birthDate.getDate();
+    if (value) {
+      const birthDate = new Date(value);
+      const today = new Date();
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+      const dayDiff = today.getDate() - birthDate.getDate();
 
-    if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
-      age--;
-    }
+      if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+        age--;
+      }
 
-    if (age < 5 || age > 100) {
-      alert("La edad debe estar entre 5 y 100 años.");
-      setFechaNacimiento("");
+      if (age < 5 || age > 100) {
+        setEdadError("La edad debe estar entre 5 y 100 años.");
+      } else {
+        setEdadError(""); // Limpiar el mensaje de error si la edad es válida
+      }
+    } else {
+      setEdadError(""); // Si el usuario borra la fecha, se limpia el error
     }
   };
 
@@ -65,10 +71,6 @@ export default function SignUp() {
     }
     if (!email.includes('@')) {
       alert('El correo es inválido.');
-      return false;
-    }
-    if (!fechaNacimiento) {
-      alert("Por favor, ingrese una fecha de nacimiento válida.");
       return false;
     }
     return true;
@@ -112,6 +114,10 @@ export default function SignUp() {
     if (step === 1 && !validateStep1()) {
       return;
     }
+    if (step === 2 && edadError) {
+      alert(edadError);
+      return;
+    }
     setStep(step + 1);
   };
 
@@ -135,6 +141,7 @@ export default function SignUp() {
             <input type="tel" value={telefono} onChange={(e) => setTelefono(e.target.value)} placeholder="Teléfono" />
             <input type="text" value={direccion} onChange={(e) => setDireccion(e.target.value)} placeholder="Dirección" />
             <input type="date" value={fechaNacimiento} onChange={handleFechaNacimientoChange} placeholder="Fecha de nacimiento" />
+            {edadError && <p style={{ color: 'red' }}>{edadError}</p>}
             <select value={nivelJuego} onChange={(e) => setNivelJuego(e.target.value)}>
               <option value="Principiante">Principiante</option>
               <option value="Intermedio">Intermedio</option>
@@ -146,24 +153,6 @@ export default function SignUp() {
               <option value="Adulto">Adulto</option>
               <option value="Profesional">Profesional</option>
             </select>
-          </div>
-        );
-      case 3:
-        return (
-          <div className='signup-fields'>
-            <h1>Información Médica</h1>
-            <textarea value={condicionesMedicas} onChange={(e) => setCondicionesMedicas(e.target.value)} placeholder="Condiciones Médicas"></textarea>
-            <textarea value={alergias} onChange={(e) => setAlergias(e.target.value)} placeholder="Alergias"></textarea>
-            <input type="text" value={certificadoMedico} onChange={(e) => setCertificadoMedico(e.target.value)} placeholder="Certificado Médico" />
-          </div>
-        );
-      case 4:
-        return (
-          <div className='signup-fields'>
-            <h1>Contacto de Emergencia</h1>
-            <input type="text" value={contactoEmergencia} onChange={(e) => setContactoEmergencia(e.target.value)} placeholder="Nombre del contacto" />
-            <input type="tel" value={telefonoEmergencia} onChange={(e) => setTelefonoEmergencia(e.target.value)} placeholder="Teléfono del contacto" />
-            <input type="text" value={relacionEmergencia} onChange={(e) => setRelacionEmergencia(e.target.value)} placeholder="Relación con el contacto" />
           </div>
         );
       case 5:
