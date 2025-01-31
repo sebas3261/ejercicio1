@@ -20,6 +20,7 @@ export default function SignUp() {
   const [fechaNacimiento, setFechaNacimiento] = useState('');
   const [nivelJuego, setNivelJuego] = useState('Principiante');
   const [categoria, setCategoria] = useState('Infantil');
+  const [rol, setRol] = useState('Usuario');
 
   // Step 2: Medical information
   const [condicionesMedicas, setCondicionesMedicas] = useState('');
@@ -90,7 +91,7 @@ export default function SignUp() {
       // Guardar la información adicional del usuario en Firestore
       await setDoc(doc(db, "users", user.uid), {
         uid: user.uid,  // Guardamos el UID para referenciar al usuario en Firebase Authentication
-        type: "user",
+        type: rol,
         name,
         apellido,
         email,
@@ -271,6 +272,12 @@ export default function SignUp() {
                 onChange={handleApellidoChange}
                 placeholder="Apellido"
               />
+            </div>
+            <div>
+              <select value={rol} onChange={(e) => setRol(e.target.value)}>
+                <option value="usuario">Usuario</option>
+                <option value="profesor">Profesor</option>
+              </select>
             </div>
             <div>
               <input
