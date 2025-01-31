@@ -118,7 +118,7 @@ export default function SignUp() {
 
   const handleNameChange = (e) => {
     const value = e.target.value;
-    if (/^[a-zA-Z\s]*$/.test(value)) {
+    if (/^[a-zA-Z\s6]*$/.test(value)) {
       setName(value);
     }
   };
