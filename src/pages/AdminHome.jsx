@@ -20,7 +20,7 @@ export default function AdminHome() {
         // Filtrar usuarios con type "user"
         const filteredUsers = data.docs
           .map((doc) => ({ ...doc.data(), id: doc.id }))
-          .filter((user) => user.type === "user");
+          .filter((user) => user.type !== "admin");
   
         setUsuarios(filteredUsers);
       } catch (error) {
@@ -166,6 +166,7 @@ export default function AdminHome() {
                       <td>{user.apellido}</td>
                       <td>{user.telefono}</td>
                       <td>{user.email}</td>
+                      <td>{user.type}</td>
                       <td>{user.isAuthenticated ? "✅ Sí" : "❌ No"}</td>
                       <td>
                         <button onClick={() => handleEditClick(user)}>Editar</button>
