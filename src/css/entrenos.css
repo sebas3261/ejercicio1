@@ -181,3 +181,7 @@ button:hover {
   
 
 }
+
+.delete-button {
+  margin-left: 10px; /* Ajusta el valor según el espacio deseado */
+}
