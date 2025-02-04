@@ -25,7 +25,7 @@ export default function SignUp() {
     rol: "user",
     emergencyContact: "",
     emergenciContactNumber: "",
-    emergencyCpntactRelation: "",
+    emergencyContactRelation: "",
   });
 
   const handleChange = (e) => {
