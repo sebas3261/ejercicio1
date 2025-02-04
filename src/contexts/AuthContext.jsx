@@ -1,7 +1,11 @@
 import React, { createContext, useReducer, useContext } from "react";
 import { auth, db } from "../firebase"; // Asegúrate de configurar Firebase correctamente
-import { signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
+import {
+  signInWithEmailAndPassword,
+  signOut,
+  createUserWithEmailAndPassword
+} from "firebase/auth";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 
 export const AuthContext = createContext();
 
@@ -35,32 +39,40 @@ export const AuthProvider = ({ children }) => {
   const login = async (credentials) => {
     try {
       const { name, password } = credentials;
-        console.log(name)
+      console.log(name);
       // Autenticar con Firebase Authentication (usando email como name)
-      const userCredential = await signInWithEmailAndPassword(auth, name, password);
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        name,
+        password
+      );
       const firebaseUser = userCredential.user;
 
       const ref = doc(db, "users", firebaseUser.uid);
       const userDoc = await getDoc(ref);
 
-
       const userData = userDoc.data();
 
-      if (!userData.isAuthenticated&&userData.type!=="admin") {
+      if (!userData.isAuthenticated && userData.type !== "admin") {
         alert("El usuario aún no ha sido autenticado por el administrador");
         return null;
       }
 
-      console.log(userData)
-      
-  
+      console.log(userData);
+
       // Guardar el tipo como "admin" en localStorage por ahora
       localStorage.setItem("isAuthenticated", userData.type);
-      localStorage.setItem("user", JSON.stringify({ name: firebaseUser.email, uid: firebaseUser.uid }));
-  
+      localStorage.setItem(
+        "user",
+        JSON.stringify({ name: firebaseUser.email, uid: firebaseUser.uid })
+      );
+
       // Actualizar el estado global con los datos del usuario
-      dispatch({ type: "LOGIN", payload: { name: firebaseUser.email, type: "user" } });
-  
+      dispatch({
+        type: "LOGIN",
+        payload: { name: firebaseUser.email, type: "user" },
+      });
+
       // Retornar el tipo "admin" por ahora
       return userData.type; // Forzamos que siempre retorne "admin"
     } catch (error) {
@@ -69,7 +81,6 @@ export const AuthProvider = ({ children }) => {
       return null; // Si algo falla, retornamos null
     }
   };
-
 
   // Función de cierre de sesión
   const logout = async () => {
@@ -83,8 +94,42 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const signUp = async (userG, password) => {
+    try {
+    const email = userG.email;
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+    const user = userCredential.user;
+    await setDoc(doc(db, "users", user.uid), {
+      uid: user.uid,
+      type: userG.rol,
+      name: userG.name,
+      apellido: userG.lastname,
+      email: userG.email,
+      telefono: userG.number,
+      direccion: userG.address,
+      fechaNacimiento: userG.birthday,
+      nivelJuego: userG.level,
+      categoria: userG.category,
+      contactoEmergencia: userG.emergencyContact,
+      telefonoEmergencia: userG.emergenciContactNumber,
+      relacionEmergencia: userG.emergencyCpntactRelation,
+      isAuthenticated: false,
+    });
+    alert("Registro completado exitosamente");
+    }catch (error) {
+      if (error.code === 'auth/email-already-in-use'){
+        alert("El correo ya está registrado, por favor ingresa otro.")
+    }
+      throw new Error(error)
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ login, logout, ...state }}>
+    <AuthContext.Provider value={{ login, logout, signUp, ...state }}>
       {children}
     </AuthContext.Provider>
   );
