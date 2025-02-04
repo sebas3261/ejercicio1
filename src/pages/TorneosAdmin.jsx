@@ -184,9 +184,11 @@ export default function TorneosAdmin() {
               </div>
             </div>
           </div>
+          <div className="torneos-contenedor">
           <button className='Torneo-button' onClick={() => setShowCreateTournament(true)}>
             Crear nuevo Torneo
           </button>
+          </div>
         </>
       ) : (
         <div className="tournaments-container">
