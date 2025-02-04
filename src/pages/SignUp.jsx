@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import SignUpSteps from "../components/signUpSteps";
+import SignUpSteps from "../components/SignUpSteps";
 import "../css/Signup.css";
 import { useNavigate, NavLink } from "react-router";
 import { useAuth } from "../contexts/AuthContext";
