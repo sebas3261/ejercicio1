@@ -4,7 +4,7 @@
     justify-content: center;
     align-items: center;
     background: url("../assets/fondo2.jpg"); 
-    background-size: 200vh;
+    background-size: 100vw;
     background-origin: content-box;
     background-repeat: no-repeat;
     background-attachment: fixed; 
@@ -43,3 +43,9 @@
     color: red;
     margin-bottom: 10px;
 }
+
+@media (max-width: 700px) {
+    .signup-background{
+        background-size: 200vh;
+    }
+  }

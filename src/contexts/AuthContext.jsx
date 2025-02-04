@@ -119,7 +119,6 @@ export const AuthProvider = ({ children }) => {
       relacionEmergencia: userG.emergencyContactRelation,
       isAuthenticated: false,
     });
-    alert("Registro completado exitosamente");
     }catch (error) {
       if (error.code === 'auth/email-already-in-use'){
         alert("El correo ya está registrado, por favor ingresa otro.")

@@ -4,10 +4,11 @@
     justify-content: center;
     align-items: center;
     background: url("../assets/fondo.jpg"); 
-    background-size: 200vh; /* La imagen ocupará la mitad superior */
+    background-size: 100vw; /* La imagen ocupará la mitad superior */
     background-origin: content-box;
     background-repeat: no-repeat;
     background-attachment: fixed; 
+    overflow: hidden;
 }
 
 .home-backbox{
@@ -54,4 +55,10 @@ textarea{
     text-decoration: none;
     color: inherit;
 }
+
+@media (max-width: 700px) {
+    .home-background{
+        background-size: 200vh;
+    }
+  }
 
