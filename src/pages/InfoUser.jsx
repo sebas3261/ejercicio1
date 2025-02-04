@@ -5,11 +5,13 @@ import { Chart } from "react-google-charts";
 import { doc, getDoc, collection, query, getDocs } from "firebase/firestore";
 import { db } from "../firebase";
 import TopImg from "../components/TopImg";
-
+import { NavLink } from "react-router";
 export default function InfoUser() {
   const [userCategory, setUserCategory] = useState(null);
+  //pagos
   const [userBalance, setUserBalance] = useState(null);
   const [paymentStatus, setPaymentStatus] = useState(null);
+
   const [trainingCount, setTrainingCount] = useState(0);
   const [totalTrainings, setTotalTrainings] = useState(0);
   const [tournamentCount, setTournamentCount] = useState(0);
@@ -38,8 +40,8 @@ export default function InfoUser() {
 
         const userData = userDoc.data();
         setUserCategory(userData.categoria || "Desconocida");
-        setUserBalance(userData.saldo || 0);
-        setPaymentStatus(userData.deuda > 0 ? "Debe dinero" : "Al día");
+        setUserBalance(userData.montoMatricula || 0);
+        setPaymentStatus(userData.montoMatricula > 0 ? "Debe dinero" : "Al día");
 
         // Consultar entrenos
         const entrenosQuery = query(collection(db, "entrenos"));
@@ -135,7 +137,10 @@ export default function InfoUser() {
           <h3>Saldo</h3>
           <p>${userBalance}</p>
           <span className={`payment-status ${paymentStatus === "Debe dinero" ? "debt" : "paid"}`}>{paymentStatus}</span>
-          {paymentStatus === "Debe dinero" && <button className="pay-button">Pagar</button>}
+          <NavLink to={"/pagosuser"} className={"navlink"}>
+          {paymentStatus === "Debe dinero" && <button className="pay-button" >Pagar</button>}
+        </NavLink>
+          
         </div>
 
         <div className="infouser-chart">

@@ -67,6 +67,9 @@ export default function Header({ type }) {
           <NavLink to={"/infoadmin"} className={"navlink"}>
           <p>Infromacion General</p>
         </NavLink>
+        <NavLink to={"/gestionpagos"} className={"navlink"}>
+          <p>Gestión Pagos</p>
+        </NavLink>
         </div>
         <div onClick={handleLogout}>
           <svg

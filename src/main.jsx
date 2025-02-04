@@ -13,8 +13,12 @@ import InfoUser from "./pages/InfoUser";
 import UserHome from "./pages/UserHome";
 import EntrenosProfe from "./pages/EntrenosProfe"
 import Infoadmin from "./pages/infoadmin"
+import GestionPagosAdmin from "./pages/GestionPagosAdmin";
+import PagosUser from "./pages/PagosUser";
 
 import "./css/main.css";
+
+
 
 createRoot(document.getElementById("root")).render(
   <AuthProvider>
@@ -31,6 +35,8 @@ createRoot(document.getElementById("root")).render(
         <Route path="/infoUser" element={<PrivateRoute type="user"><InfoUser /></PrivateRoute>} />
         <Route path="/infoadmin" element={<PrivateRoute type="admin"><Infoadmin /></PrivateRoute>} />
         <Route path="/entrenosprofe" element={<PrivateRoute type="profesor"><EntrenosProfe /></PrivateRoute>} />
+        <Route path="/gestionpagos" element={<PrivateRoute type="admin"><GestionPagosAdmin /></PrivateRoute>} />
+        <Route path="/pagosuser" element={<PrivateRoute type="user"><PagosUser /></PrivateRoute>} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
