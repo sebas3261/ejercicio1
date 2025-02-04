@@ -47,12 +47,22 @@ export default function SignUpSteps({
             setErrorType(8);
             return
         }
+        if(user.number.length != 10){
+          setError(true);
+          setErrorType(9);
+          return
+      }
     }
     if(step == 2){
         if(!user.emergenciContactNumber || !user.emergencyContact){
             setError(true);
             setErrorType(7);
             return
+        }
+        if(user.emergenciContactNumber.length != 10){
+          setError(true);
+          setErrorType(9);
+          return
         }
     }
     setError(false);

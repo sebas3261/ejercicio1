@@ -116,7 +116,7 @@ export const AuthProvider = ({ children }) => {
       categoria: userG.category,
       contactoEmergencia: userG.emergencyContact,
       telefonoEmergencia: userG.emergenciContactNumber,
-      relacionEmergencia: userG.emergencyCpntactRelation,
+      relacionEmergencia: userG.emergencyContactRelation,
       isAuthenticated: false,
     });
     alert("Registro completado exitosamente");

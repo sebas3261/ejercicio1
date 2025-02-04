@@ -28,6 +28,9 @@ export default function Error({ type }) {
     case 8:
         error = "La fecha de nacimiento debe estar en el rango de 5 a 100 años.";
         break;
+    case 9:
+        error = "El numero debe ser de 10 caracteres";
+        break;
     default:
       error = "test";
   }

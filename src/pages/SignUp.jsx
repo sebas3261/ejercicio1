@@ -55,6 +55,7 @@ export default function SignUp() {
         console.log(user)
     }
 
+
     if(error){
         return
     }
