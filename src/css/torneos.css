@@ -1,14 +1,16 @@
-.Torneos-title{
+.Torneos-title {
   font-size: 24px;
   text-align: center;
   margin-bottom: 20px;
   padding-top: 20px;
   font: 600 26px/1.2 'Roboto', sans-serif;
 }
+
 .Torneos-background {
   height: 100vh;
   background-color: #e6f6ff;
-  overflow: scroll;
+  overflow-y: scroll; /* Solo scroll vertical */
+  overflow-x: hidden; /* Evitar scroll horizontal */
 }
 
 .Torneos-list {
@@ -27,32 +29,30 @@
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-  .Torneo-image {
-      width: 50px;
-      height: 50px;
-      background-color: #e0e0e0;
-      border-radius: 50%;
-      margin-right: 10px;
-      transition: background-color 0.3s ease;
-  }
-  
+.Torneo-image {
+  width: 50px;
+  height: 50px;
+  background-color: #e0e0e0;
+  border-radius: 50%;
+  margin-right: 10px;
+  transition: background-color 0.3s ease;
+}
+
 .Torneo-image:hover {
   background-color: #a9a9a9; /* Cambia a gris oscuro al hacer hover */
   cursor: pointer; /* Cambia el cursor a una mano */
 }
- 
+
 .Torneo-info {
   flex-grow: 1;
-
 }
 
 .Torneo-info h3 {
   margin: 0;
   font: 500 20px/1.2 'Roboto', sans-serif;
-
 }
 
-.Toreno-info p {
+.Torneo-info p {
   font-size: 14px;
   margin: 0;
   color: #6c757d;
@@ -63,9 +63,7 @@
   color: #6c757d;
 }
 
-
-.Torneo-button 
-  {
+.Torneo-button {
   display: block;
   padding: 10px 20px;
   background-color: #007bff;
@@ -78,36 +76,37 @@
   transition: background-color 0.3s ease;
   margin-bottom: 20px;
 }
-.torneos-contenedor {
 
+.torneos-contenedor {
   display: flex;
-  gap: 10px; 
-  justify-content:center; 
+  gap: 10px;
+  justify-content: center;
 }
 
 .Torneos-card, .torneo-setup {
   background-color: white;
-  height: 50vh; /* Altura inicial relativa a la ventana */
-  max-height: 400px; /* No excederá esta altura */
+  height: 50vh;
+  max-height: 400px;
   width: 90vw;
-  margin: 30px auto;
+  margin: 20px auto;
   margin-bottom: 30px;
   border-radius: 20px;
   box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.25);
   overflow-y: scroll;
-  padding-bottom: 30px;
-  padding-top: 25px;
+  padding-top: 30px;
+  padding-bottom: 40px;
 }
+
 .Torneo-details {
   display: flex;
   flex-direction: column;
   gap: 20px; /* Aumenta el espacio entre los elementos */
   padding: 20px; /* Aumenta el padding para dar más espacio interno */
   margin: 40px auto; /* Agrega más espacio alrededor del contenedor */
-  max-width: 800px; /* Limita el ancho máximo para que no ocupe todo el ancho de la pantalla */
-  width: 100%; /* Asegura que ocupe todo el ancho disponible hasta el max-width */
-  background-color: #f9f9f9; /* Opcional: agrega un fondo claro para separar visualmente */
-  border-radius: 10px; /* Añade bordes redondeados si deseas */
+  max-width: 800px; /* Limita el ancho máximo */
+  width: 100%; /* Ocupa todo el ancho disponible hasta el max-width */
+  background-color: #f9f9f9; /* Fondo claro opcional */
+  border-radius: 10px; /* Bordes redondeados */
 }
 
 .Back-button {
@@ -123,54 +122,114 @@
   transition: background-color 0.3s ease;
 }
 
+/* Contenedor para las dos columnas */
+.torneo-two-column-container {
+  display: flex;
+  flex-direction: row; /* Alineación horizontal */
+  justify-content: space-around; /* Distribuye el espacio entre los elementos y los bordes */
+  gap: 40px; /* Espacio considerable entre formulario y tabla */
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box; /* Asegura que el padding no desborde */
+}
 
 .torneo-form-container {
   display: flex;
-  flex-direction: row; /* Alineación horizontal de los elementos */
+  flex-direction: column; /* Alineación vertical dentro del formulario */
   gap: 15px; /* Espacio entre los elementos */
-  padding: 20px;
-  width: 100%; /* Ancho 100% para que ocupe el espacio disponible */
-  max-width: 600px; /* Maximo ancho para no desbordar */
-  margin: 0 auto; /* Centrado horizontal */
-  justify-content: space-between; /* Distribuir los elementos de manera uniforme */
-  padding: 30px;
+  width: 300px; /* Ancho fijo para el formulario */
+  align-items: flex-start; /* Alineación a la izquierda */
+  margin-left: 20px; /* Margen a la izquierda para separarlo del borde */
 }
 
-.torneo-form-container input{
+.torneo-form-container input {
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
   font-size: 16px;
-  box-sizing: border-box; 
-  border-color: 000000;
+  box-sizing: border-box;
+  width: 100%; /* Campos ocupan todo el ancho del formulario */
 }
 
-.container {
+/* Contenedor específico para el número de jugadores */
+.num-players-container {
   display: flex;
-  flex-direction: column; /* Para que los elementos estén en una columna */
-  padding: 30px; /* Relleno alrededor del contenedor */
-  border-radius: 10px; /* Bordes redondeados */
-  max-width: 800px; /* Ancho máximo del contenedor */
+  flex-direction: row; /* Alineación horizontal para el label y el input */
+  align-items: center; /* Centrado vertical */
+  gap: 10px; /* Espacio entre el label y el input */
+  width: 100%; /* Igual al ancho de otros campos */
+}
+
+/* Estilo para el texto a la izquierda */
+.num-players-label {
+  font-size: 14px; /* Un poco más pequeño */
+  white-space: nowrap; /* Evita que el texto se divida */
+}
+
+/* Ajuste del input de número de jugadores */
+.num-players-container input[type="number"] {
+  width: 120px; /* Ancho más corto para el input */
+}
+
+/* Contenedor para la tabla de jugadores */
+.players-list-container {
+  flex: 1; /* Ocupa el espacio restante a la derecha */
+  max-width: 600px; /* Limita el ancho de la tabla */
 }
 
 .players-list {
-  width: 100%;
+  background: #fff;
   padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
+/* Título de la tabla en negrita con fuente Roboto */
+.players-list h2 {
+  font: bold 20px/1.2 'Roboto', sans-serif; /* Negrita para el título */
+  margin: 0 0 15px 0; /* Espacio debajo del título */
+}
+
+/* Fuente Roboto para la tabla */
 table {
   margin-top: 15px;
   padding: 15px;
   width: 100%;
   border-collapse: collapse; /* Eliminar los espacios entre celdas */
+  font: 400 16px/1.2 'Roboto', sans-serif; /* Fuente Roboto sin negrita */
 }
 
 th, td {
   padding: 12px; /* Espacio dentro de las celdas */
   text-align: left; /* Alineación del texto */
+  font: 400 16px/1.2 'Roboto', sans-serif; /* Fuente Roboto sin negrita */
 }
-
 
 td {
   border-bottom: 1px solid #ddd; /* Línea separadora entre filas */
+}
+
+/* Asegurar que los selects dentro de la tabla también usen Roboto */
+.players-list select {
+  font: 400 16px/1.2 'Roboto', sans-serif; /* Fuente Roboto para los selects */
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+  .torneo-two-column-container {
+    flex-direction: column; /* Cambia a columna en pantallas pequeñas */
+    justify-content: center; /* Centrado en móviles */
+    gap: 20px; /* Espacio reducido en columna */
+  }
+
+  .torneo-form-container {
+    width: 100%; /* Formulario ocupa todo el ancho */
+    max-width: 400px; /* Límite para no estirarse demasiado */
+    margin-left: 0; /* Sin margen izquierdo en móviles */
+  }
+
+  .players-list-container {
+    width: 100%; /* Tabla ocupa todo el ancho */
+    max-width: 400px; /* Límite para consistencia */
+  }
 }

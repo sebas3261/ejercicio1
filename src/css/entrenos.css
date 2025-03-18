@@ -153,24 +153,23 @@ button:hover {
 }
 .entreno-form-container {
   display: flex;
-  flex-direction: row; /* Alineación horizontal de los elementos */
+  flex-direction: column; /* Alineación vertical */
   gap: 15px; /* Espacio entre los elementos */
   padding: 20px;
-  width: 100%; /* Ancho 100% para que ocupe el espacio disponible */
-  max-width: 600px; /* Maximo ancho para no desbordar */
+  width: 100%;
+  max-width: 400px; /* Ancho más estrecho para columna */
   margin: 0 auto; /* Centrado horizontal */
-  justify-content: space-between; /* Distribuir los elementos de manera uniforme */
+  align-items: center; /* Centrado de los elementos en la columna */
 }
 
-.entreno-form-container input
- {
+.entreno-form-container input{
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
   font-size: 16px;
-  box-sizing: border-box; /* Asegura que el padding no afecte el tamaño total */
+  box-sizing: border-box;
+  width: 60%; /* Campos ocupan todo el ancho del contenedor */
 }
-
 
 .asistencia-container{
   display: flex;
