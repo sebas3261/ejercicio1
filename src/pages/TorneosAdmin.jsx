@@ -147,16 +147,30 @@ export default function TorneosAdmin() {
       return;
     }
 
-    const profesorOcupado = tournamentsList.some(tournament => 
-      tournament.profesor === profesor && 
-      tournament.horario === horario && 
-      tournament.fecha === fecha && 
-      (!editingTournament || tournament.id !== editingTournament.id)
+    const entrenosSnapshot = await getDocs(collection(db, "entrenos")); 
+    const entrenosList = entrenosSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  
+    const entrenoOcupado = entrenosList.some(entreno => 
+      entreno.cancha === cancha && 
+      entreno.horario === horario && 
+      entreno.fecha === fecha
     );
-    if (profesorOcupado) {
-      alert("El profesor seleccionado ya está asignado a otro torneo en ese horario y fecha.");
+    if (entrenoOcupado) {
+      alert("Ya hay un entrenamiento programado en esta cancha a esa hora.");
       return;
     }
+
+
+      const profesorOcupado = [...tournamentsList, ...entrenosList].some(evento => 
+        evento.profesor === profesor && 
+        evento.horario === horario && 
+        evento.fecha === fecha
+      );
+      if (profesorOcupado) {
+        alert("El profesor seleccionado ya está asignado a otro evento en ese horario y fecha.");
+        return;
+      }
+
 
     try {
       const tournamentData = {

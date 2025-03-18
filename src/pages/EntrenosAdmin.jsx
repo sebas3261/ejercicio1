@@ -94,69 +94,84 @@ export default function EntrenosAdmin() {
     setEditMode(true);
     setShowCreateEntreno(true);
   };
-
-  // Función para crear o actualizar un entrenamiento
   const handleSaveEntreno = async () => {
     const trimmedEntrenoName = entrenoName.trim();
     const trimmedCancha = cancha.trim();
-
+  
     if (!trimmedEntrenoName || !trimmedCancha || !horario || !fecha) {
       alert("Por favor, complete todos los campos: nombre, cancha, horario y fecha.");
       return;
     }
-
+  
     if (!profesor) {
       alert("Por favor, seleccione un profesor.");
       return;
     }
-
+  
     // Validar que la fecha esté entre mañana y 6 meses desde hoy
     const selectedDate = new Date(fecha);
     if (selectedDate < tomorrow || selectedDate > maxDate) {
-      alert("Los entrenos se pueden programar para dentro de dos dias y hasta 6 meses desde hoy.");
+      alert("Los entrenos se pueden programar para dentro de dos días y hasta 6 meses desde hoy.");
       return;
     }
-
+  
     try {
-      // Verificar si el nombre ya existe (excepto en modo edición para el mismo entreno)
+      // Obtener todos los entrenos y torneos existentes
       const entrenosSnapshot = await getDocs(collection(db, "entrenos"));
       const entrenosList = entrenosSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  
+      const tournamentsSnapshot = await getDocs(collection(db, "tournaments"));
+      const tournamentsList = tournamentsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  
+      // Verificar si el nombre ya existe (excepto en modo edición)
       const nombreDuplicado = entrenosList.some(entreno => 
         entreno.name.toLowerCase() === trimmedEntrenoName.toLowerCase() &&
         (!editMode || (editMode && entreno.id !== selectedEntrenoId))
       );
-
+  
       if (nombreDuplicado) {
         alert("Ya existe un entrenamiento con este nombre. Por favor, elige otro nombre.");
         return;
       }
-
-      // Verificar superposición de cancha, horario y fecha
+  
+      // Verificar superposición de cancha, horario y fecha con entrenos
       const canchaOcupada = entrenosList.some(entreno => 
         entreno.cancha === trimmedCancha && 
         entreno.horario === horario && 
         entreno.fecha === fecha &&
         (!editMode || (editMode && entreno.id !== selectedEntrenoId))
       );
-
+  
       if (canchaOcupada) {
-        alert("La cancha seleccionada ya está ocupada en ese horario y fecha.");
+        alert("La cancha seleccionada ya está ocupada en ese horario y fecha por otro entrenamiento.");
         return;
       }
-
-      // Verificar si el profesor ya está asignado a otro entreno en el mismo horario y fecha
-      const profesorOcupado = entrenosList.some(entreno => 
-        entreno.profesor === profesor && 
-        entreno.horario === horario && 
-        entreno.fecha === fecha &&
-        (!editMode || (editMode && entreno.id !== selectedEntrenoId))
+  
+      const torneoEnCancha = tournamentsList.some(torneo => 
+        torneo.cancha === trimmedCancha && 
+        torneo.horario === horario && 
+        torneo.fecha === fecha
       );
-
-      if (profesorOcupado) {
-        alert("El profesor seleccionado ya está asignado a otro entreno en ese horario y fecha.");
+  
+      if (torneoEnCancha) {
+        alert("No puedes programar un entrenamiento en esta cancha a esta hora porque ya hay un torneo.");
         return;
       }
-
+  
+      // Verificar si el profesor ya está asignado a otro entreno o torneo en el mismo horario y fecha
+      const profesorOcupado = [...entrenosList, ...tournamentsList].some(evento => 
+        evento.profesor === profesor && 
+        evento.horario === horario && 
+        evento.fecha === fecha &&
+        (!editMode || (editMode && evento.id !== selectedEntrenoId))
+      );
+  
+      if (profesorOcupado) {
+        alert("El profesor seleccionado ya está asignado a otro evento (entrenamiento o torneo) en ese horario y fecha.");
+        return;
+      }
+  
+      // Guardar en Firebase
       const entrenoData = {
         name: trimmedEntrenoName,
         categoria,
@@ -166,7 +181,7 @@ export default function EntrenosAdmin() {
         profesor,
         date: new Date().toISOString(), // Fecha de creación
       };
-
+  
       if (editMode) {
         await updateDoc(doc(db, "entrenos", selectedEntrenoId), entrenoData);
         setEntrenos(prev => prev.map(entreno => (entreno.id === selectedEntrenoId ? { id: selectedEntrenoId, ...entrenoData } : entreno)));
@@ -176,7 +191,7 @@ export default function EntrenosAdmin() {
         setEntrenos(prev => [...prev, { id: trimmedEntrenoName, ...entrenoData }]);
         alert("Entrenamiento creado exitosamente.");
       }
-
+  
       // Resetear formulario
       setEntrenoName('');
       setCategoria('Infantil');
@@ -191,6 +206,7 @@ export default function EntrenosAdmin() {
       alert("Error al guardar el entrenamiento: " + error.message);
     }
   };
+  
 
   return (
     <div className='Entrenos-background'>
