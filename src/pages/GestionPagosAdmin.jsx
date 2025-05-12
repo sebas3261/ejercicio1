@@ -7,9 +7,7 @@ import Header from "../components/Header";
 
 export default function GestionPagosAdmin() {
   const [usuarios, setUsuarios] = useState([]);
-  const [montoMensualidad, setMontoMensualidad] = useState(50);
-  const [montoConfirmado, setMontoConfirmado] = useState(null);
-  const [montoPago, setMontoPago] = useState({}); // Usar un objeto para manejar el monto de cada usuario
+  const [montoPago, setMontoPago] = useState({});
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -17,10 +15,12 @@ export default function GestionPagosAdmin() {
         const usersCollection = collection(db, "users");
         const data = await getDocs(usersCollection);
 
-        const filteredUsers = data.docs.map((doc) => ({
-          ...doc.data(),
-          id: doc.id,
-        })).filter((user) => user.type !== "admin" && user.type !== "profesor");
+        const filteredUsers = data.docs
+          .map((doc) => ({
+            ...doc.data(),
+            id: doc.id,
+          }))
+          .filter((user) => user.type !== "admin" && user.type !== "profesor");
 
         setUsuarios(filteredUsers);
       } catch (error) {
@@ -30,75 +30,48 @@ export default function GestionPagosAdmin() {
     fetchUsers();
   }, []);
 
-  // Establecer monto y sumarlo al monto pendiente del usuario
-  const handleSetMonto = async () => {
-    try {
-      const batchUpdates = usuarios.map(async (user) => {
-        const userRef = doc(db, "users", user.id);
-        const nuevoMonto = (user.montoMatricula || 0) + montoMensualidad;
-
-        await updateDoc(userRef, {
-          montoMatricula: nuevoMonto,
-          estadoPago: user.estadoPago || "Pendiente",
-        });
-
-        return { ...user, montoMatricula: nuevoMonto, estadoPago: "Pendiente" };
-      });
-
-      const updatedUsers = await Promise.all(batchUpdates);
-      setUsuarios(updatedUsers);
-      setMontoConfirmado(montoMensualidad);
-      alert("Monto de la mensualidad actualizado correctamente.");
-    } catch (error) {
-      console.error("Error al actualizar el monto:", error.message);
-      alert("Hubo un error al establecer el monto.");
-    }
-  };
-
-  // Simular pago y disminuir el monto adeudado
   const handleSimulatePayment = async (uid, montoPagoInput) => {
-    try {
-      const user = usuarios.find((u) => u.id === uid);
-      if (!user) return;
-  
-      if (montoPagoInput > user.montoMatricula) {
-        alert("El monto a pagar no puede superar el monto pendiente.");
-        return;
-      }
-  
-      const nuevoMonto = Math.max(0, (user.montoMatricula || 0) - montoPagoInput);
-      const nuevoEstado = nuevoMonto === 0 ? "Pagado" : "Pendiente";
-  
-      const userRef = doc(db, "users", uid);
-      await updateDoc(userRef, {
-        montoMatricula: nuevoMonto,
-        estadoPago: nuevoEstado,
-      });
-  
-      setUsuarios((prev) =>
-        prev.map((u) =>
-          u.id === uid ? { ...u, montoMatricula: nuevoMonto, estadoPago: nuevoEstado } : u
-        )
-      );
-  
-      // Vaciar el input después de pagar
-      setMontoPago((prev) => ({
-        ...prev,
-        [uid]: "", // Se vacía el input para ese usuario
-      }));
-  
-      alert("Pago simulado correctamente.");
-    } catch (error) {
-      console.error("Error al actualizar el pago:", error.message);
-      alert("Hubo un error al actualizar el pago.");
+  try {
+    const user = usuarios.find((u) => u.id === uid);
+    if (!user) return;
+
+    if (montoPagoInput > user.montoMatricula) {
+      alert("El monto a pagar no puede superar el monto pendiente.");
+      return;
     }
-  };
-  
-  // Manejar el cambio del monto de pago individual para cada usuario
+
+    const nuevoMonto = Math.max(0, (user.montoMatricula || 0) - montoPagoInput);
+    const nuevoEstado = nuevoMonto === 0 ? "Pagado" : "Pendiente";
+
+    const userRef = doc(db, "users", uid);
+    await updateDoc(userRef, {
+      montoMatricula: nuevoMonto,
+      estadoPago: nuevoEstado,
+    });
+
+    setUsuarios((prev) =>
+      prev.map((u) =>
+        u.id === uid ? { ...u, montoMatricula: nuevoMonto, estadoPago: nuevoEstado } : u
+      )
+    );
+
+    setMontoPago((prev) => ({
+      ...prev,
+      [uid]: "",
+    }));
+
+    alert("Pago simulado correctamente.");
+  } catch (error) {
+    console.error("Error al actualizar el pago:", error.message);
+    alert("Hubo un error al actualizar el pago.");
+  }
+};
+
+
   const handleMontoPagoChange = (userId, value) => {
     setMontoPago((prev) => ({
       ...prev,
-      [userId]: value, // Establecer el valor para ese usuario específico
+      [userId]: value,
     }));
   };
 
@@ -107,16 +80,6 @@ export default function GestionPagosAdmin() {
       <Header type="admin" />
       <TopImg number={6} />
       <h2 className="Admin-title">Gestión de Pagos de Usuarios</h2>
-
-      <div className="Admin-card">
-        <label>Monto de la mensualidad:</label>
-        <input
-          type="number"
-          value={montoMensualidad}
-          onChange={(e) => setMontoMensualidad(Number(e.target.value))}
-        />
-        <button onClick={handleSetMonto}>Establecer monto</button>
-      </div>
 
       <div className="Admin-card">
         <table className="Users-table">
@@ -141,12 +104,19 @@ export default function GestionPagosAdmin() {
                 <td>{user.montoMatricula ? `$${user.montoMatricula}` : "0"}</td>
                 <td>{user.estadoPago === "Pagado" ? "✅ Pagado" : "❌ Pendiente"}</td>
                 <td>
-                  {user.estadoPago !== "Pagado" && montoConfirmado === null && (
+                  {user.estadoPago !== "Pagado" && (
                     <>
                       <input
                         type="number"
-                        value={montoPago[user.id] || ""} // Usar el montoPago individual para ese usuario
+                        min="1"
+                        pattern="\d+" 
+                        value={montoPago[user.id] || ""}
                         onChange={(e) => handleMontoPagoChange(user.id, Number(e.target.value))}
+                        onKeyDown={(e) => {
+                          if (e.key === '-' || e.key === 'e' || e.key === '+' || e.key === 'E') {
+                            e.preventDefault(); // bloquea -, e, E, +
+                          }
+                        }}
                         placeholder={`Monto a pagar de ${user.name}`}
                       />
                       <button onClick={() => handleSimulatePayment(user.id, montoPago[user.id])}>
@@ -163,5 +133,3 @@ export default function GestionPagosAdmin() {
     </div>
   );
 }
-
-
