@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react'; 
 import { db } from "../firebase";
 import { collection, doc, setDoc, getDocs, deleteDoc } from "firebase/firestore";
 import "../css/torneos.css";
@@ -8,11 +8,9 @@ import Header from '../components/Header';
 export default function TorneosAdmin() {
   const [showCreateTournament, setShowCreateTournament] = useState(false);
   const [players, setPlayers] = useState([]);
-  const [filteredPlayers, setFilteredPlayers] = useState([]);
   const [tournamentName, setTournamentName] = useState('');
   const [categoria, setCategoria] = useState('Infantil');
-  const [numPlayers, setNumPlayers] = useState(0);
-  const [rankings, setRankings] = useState([]);
+  const [tournamentSize, setTournamentSize] = useState(0);
   const [tournaments, setTournaments] = useState([]);
   const [editingTournament, setEditingTournament] = useState(null);
   const [cancha, setCancha] = useState('');
@@ -53,15 +51,6 @@ export default function TorneosAdmin() {
     fetchTournaments();
   }, []);
 
-  useEffect(() => {
-    const filtered = players.filter(player => 
-      player.categoria === categoria && 
-      player.type === "user" && 
-      player.isAuthenticated === true
-    );
-    setFilteredPlayers(filtered);
-  }, [categoria, players]);
-
   const getCanchasDisponibles = () => {
     if (!horario || !fecha) return canchasPredefinidas;
     const canchasOcupadas = tournaments
@@ -74,42 +63,14 @@ export default function TorneosAdmin() {
     return canchasPredefinidas.filter(cancha => !canchasOcupadas.includes(cancha));
   };
 
-  const maxPlayers = filteredPlayers.length;
-
-  const handleRankChange = (position, playerId) => {
-    if (editingTournament) {
-      const updatedRankings = [...rankings];
-      updatedRankings[position - 1] = { position, playerId };
-      setRankings(updatedRankings);
-      return;
-    }
-
-    const isPlayerAlreadyAssigned = rankings.some(ranking => ranking.playerId === playerId);
-    if (isPlayerAlreadyAssigned) {
-      alert("Este jugador ya ha sido asignado a otra posición.");
-      return;
-    }
-
-    setRankings(prev => {
-      const updated = [...prev];
-      updated[position - 1] = { position, playerId };
-      return updated;
-    });
-  };
-
   const handleCreateOrEditTournament = async () => {
     if (!tournamentName || !cancha || !horario || !fecha || !profesor) {
       alert("Por favor, complete todos los campos: nombre, cancha, horario, fecha y profesor.");
       return;
     }
 
-    if (numPlayers === 0) {
-      alert("Por favor, asigne al menos un jugador para crear el torneo.");
-      return;
-    }
-
-    if (rankings.length !== numPlayers || rankings.some(r => !r.playerId)) {
-      alert("Por favor, asigne todos los jugadores a sus posiciones.");
+    if (tournamentSize <= 0) {
+      alert("Por favor, defina el tamaño del torneo (número máximo de jugadores).");
       return;
     }
 
@@ -119,11 +80,6 @@ export default function TorneosAdmin() {
     );
     if (nameExists) {
       alert("Ya existe un torneo con ese nombre. Elija otro.");
-      return;
-    }
-
-    if (numPlayers > maxPlayers) {
-      alert(`El número máximo de jugadores para este torneo es ${maxPlayers}.`);
       return;
     }
 
@@ -149,7 +105,7 @@ export default function TorneosAdmin() {
 
     const entrenosSnapshot = await getDocs(collection(db, "entrenos")); 
     const entrenosList = entrenosSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-  
+
     const entrenoOcupado = entrenosList.some(entreno => 
       entreno.cancha === cancha && 
       entreno.horario === horario && 
@@ -160,17 +116,15 @@ export default function TorneosAdmin() {
       return;
     }
 
-
-      const profesorOcupado = [...tournamentsList, ...entrenosList].some(evento => 
-        evento.profesor === profesor && 
-        evento.horario === horario && 
-        evento.fecha === fecha
-      );
-      if (profesorOcupado) {
-        alert("El profesor seleccionado ya está asignado a otro evento en ese horario y fecha.");
-        return;
-      }
-
+    const profesorOcupado = [...tournamentsList, ...entrenosList].some(evento => 
+      evento.profesor === profesor && 
+      evento.horario === horario && 
+      evento.fecha === fecha
+    );
+    if (profesorOcupado) {
+      alert("El profesor seleccionado ya está asignado a otro evento en ese horario y fecha.");
+      return;
+    }
 
     try {
       const tournamentData = {
@@ -180,8 +134,10 @@ export default function TorneosAdmin() {
         horario,
         fecha,
         profesor,
+        tournamentSize,
         date: new Date().toISOString(),
-        rankings,
+        rankings: [],
+        inscritos: [],
       };
 
       if (editingTournament) {
@@ -198,8 +154,7 @@ export default function TorneosAdmin() {
 
       setTournamentName('');
       setCategoria('Infantil');
-      setNumPlayers(0);
-      setRankings([]);
+      setTournamentSize(0);
       setCancha('');
       setHorario('');
       setFecha('');
@@ -214,8 +169,7 @@ export default function TorneosAdmin() {
   const handleEditTournament = (tournament) => {
     setTournamentName(tournament.name);
     setCategoria(tournament.categoria);
-    setNumPlayers(tournament.rankings.length);
-    setRankings(tournament.rankings);
+    setTournamentSize(tournament.tournamentSize);
     setCancha(tournament.cancha || '');
     setHorario(tournament.horario || '');
     setFecha(tournament.fecha || '');
@@ -256,6 +210,7 @@ export default function TorneosAdmin() {
                       <p>Horario: {tournament.horario || 'No definido'}</p>
                       <p>Fecha: {tournament.fecha || 'No definida'}</p>
                       <p>Profesor: {players.find(p => p.id === tournament.profesor)?.name || 'No asignado'}</p>
+                      <p>Tamaño del torneo: {tournament.tournamentSize}</p>
                     </div>
                     <div className="Torneo-actions">
                       <button className="edit-button" onClick={() => handleEditTournament(tournament)}>✏️ Editar</button>
@@ -276,90 +231,55 @@ export default function TorneosAdmin() {
         <div className="tournaments-container">
           <h2 className='Torneos-title'>{editingTournament ? "Editar Torneo" : "Crear nuevo torneo"}</h2>
           <div className="torneo-setup">
-            <div className="torneo-two-column-container">
-              <div className="torneo-form-container">
+            <div className="torneo-form-container">
+              <input
+                type="text"
+                value={tournamentName}
+                onChange={(e) => setTournamentName(e.target.value)}
+                placeholder="Nombre del Torneo"
+              />
+              <select value={categoria} onChange={(e) => setCategoria(e.target.value)}>
+                <option value="Infantil">Infantil</option>
+                <option value="Juvenil">Juvenil</option>
+                <option value="Adulto">Adulto</option>
+                <option value="Profesional">Profesional</option>
+              </select>
+              <div className="num-players-container">
+                <span className="num-players-label">Tamaño del torneo:</span>
                 <input
-                  type="text"
-                  value={tournamentName}
-                  onChange={(e) => setTournamentName(e.target.value)}
-                  placeholder="Nombre del Torneo"
+                  type="number"
+                  value={tournamentSize}
+                  onChange={(e) => setTournamentSize(Number(e.target.value))}
+                  placeholder="Máximo de jugadores"
+                  min="1"
                 />
-                <select value={categoria} onChange={(e) => setCategoria(e.target.value)}>
-                  <option value="Infantil">Infantil</option>
-                  <option value="Juvenil">Juvenil</option>
-                  <option value="Adulto">Adulto</option>
-                  <option value="Profesional">Profesional</option>
-                </select>
-                <div className="num-players-container">
-                  <span className="num-players-label">Seleccione el número de jugadores:</span>
-                  <input
-                    type="number"
-                    value={numPlayers}
-                    onChange={(e) => setNumPlayers(Number(e.target.value))}
-                    placeholder="Número de jugadores"
-                    min="1"
-                    max={maxPlayers}
-                  />
-                </div>
-                <select value={cancha} onChange={(e) => setCancha(e.target.value)}>
-                  <option value="">Seleccionar Cancha</option>
-                  {getCanchasDisponibles().map(canchaOption => (
-                    <option key={canchaOption} value={canchaOption}>{canchaOption}</option>
-                  ))}
-                </select>
-                <select value={horario} onChange={(e) => setHorario(e.target.value)}>
-                  <option value="">Seleccionar Horario</option>
-                  {horariosDisponibles.map(horarioOption => (
-                    <option key={horarioOption} value={horarioOption}>{horarioOption}</option>
-                  ))}
-                </select>
-                <input
-                  type="date"
-                  value={fecha}
-                  onChange={(e) => setFecha(e.target.value)}
-                  min={minDateStr}
-                  max={maxDateStr}
-                  placeholder="Seleccionar Fecha"
-                />
-                <select value={profesor} onChange={(e) => setProfesor(e.target.value)}>
-                  <option value="">Seleccionar Profesor</option>
-                  {players.filter(p => p.type === "profesor").map(player => (
-                    <option key={player.id} value={player.id}>{player.name}</option>
-                  ))}
-                </select>
               </div>
-              <div className="players-list-container">
-                <div className="players-list">
-                  <h2>Asignar Jugadores a Posiciones</h2>
-                  {numPlayers > 0 ? (
-                    <table>
-                      <thead>
-                        <tr><th>Posición</th><th>Jugador</th></tr>
-                      </thead>
-                      <tbody>
-                        {Array.from({ length: numPlayers }, (_, index) => (
-                          <tr key={index}>
-                            <td>{index + 1}</td>
-                            <td>
-                              <select 
-                                onChange={(e) => handleRankChange(index + 1, e.target.value)} 
-                                value={rankings[index]?.playerId || ""}
-                              >
-                                <option value="" disabled>Seleccione un jugador</option>
-                                {filteredPlayers.map(player => (
-                                  <option key={player.id} value={player.id}>{player.name}</option>
-                                ))}
-                              </select>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  ) : (
-                    <p>No hay jugadores seleccionados aún.</p>
-                  )}
-                </div>
-              </div>
+              <select value={cancha} onChange={(e) => setCancha(e.target.value)}>
+                <option value="">Seleccionar Cancha</option>
+                {getCanchasDisponibles().map(canchaOption => (
+                  <option key={canchaOption} value={canchaOption}>{canchaOption}</option>
+                ))}
+              </select>
+              <select value={horario} onChange={(e) => setHorario(e.target.value)}>
+                <option value="">Seleccionar Horario</option>
+                {horariosDisponibles.map(horarioOption => (
+                  <option key={horarioOption} value={horarioOption}>{horarioOption}</option>
+                ))}
+              </select>
+              <input
+                type="date"
+                value={fecha}
+                onChange={(e) => setFecha(e.target.value)}
+                min={minDateStr}
+                max={maxDateStr}
+                placeholder="Seleccionar Fecha"
+              />
+              <select value={profesor} onChange={(e) => setProfesor(e.target.value)}>
+                <option value="">Seleccionar Profesor</option>
+                {players.filter(p => p.type === "profesor").map(player => (
+                  <option key={player.id} value={player.id}>{player.name}</option>
+                ))}
+              </select>
             </div>
             <div className="torneos-contenedor">
               <button className="Torneo-button" onClick={handleCreateOrEditTournament}>
@@ -369,8 +289,7 @@ export default function TorneosAdmin() {
                 setShowCreateTournament(false);
                 setTournamentName('');
                 setCategoria('Infantil');
-                setNumPlayers(0);
-                setRankings([]);
+                setTournamentSize(0);
                 setCancha('');
                 setHorario('');
                 setFecha('');

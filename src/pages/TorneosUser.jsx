@@ -1,152 +1,124 @@
-import React, { useEffect, useState } from "react";
-import "../css/torneos.css";
-import TopImg from "../components/TopImg";
-import Header from "../components/Header";
-import { collection, query, where, getDocs, doc, getDoc } from "firebase/firestore";
+import React, { useState, useEffect } from 'react'; 
 import { db } from "../firebase";
+import { collection, doc, setDoc, getDocs, updateDoc } from "firebase/firestore";
+import "../css/torneos.css";
+import TopImg from '../components/TopImg';
+import Header from '../components/Header';
 
-export default function TorneosHome() {
+export default function TorneosUsuario() {
   const [tournaments, setTournaments] = useState([]);
   const [selectedTournament, setSelectedTournament] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [players, setPlayers] = useState([]);
+  const [showPayment, setShowPayment] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState("user123"); // Simulación de usuario actual
+  const [errorMessage, setErrorMessage] = useState("");
+  const costoTorneo = 55000;
 
   useEffect(() => {
     const fetchTournaments = async () => {
-      try {
-        // Recuperar el UID del usuario desde localStorage
-        const storedUser = JSON.parse(localStorage.getItem("user"));
-        const uid = storedUser?.uid;
+      const querySnapshot = await getDocs(collection(db, "tournaments"));
+      const today = new Date();
 
-        if (!uid) {
-          console.error("No se encontró un UID en localStorage.");
-          return;
-        }
+      const tournamentsList = querySnapshot.docs
+        .map(doc => ({ id: doc.id, ...doc.data() }))
+        .filter(t => {
+          if (!t.fecha) return false;
+          const tournamentDate = new Date(t.fecha);
+          return tournamentDate >= today;
+        })
+        .sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
 
-        // Obtener la categoría del usuario desde Firestore
-        const userDocRef = doc(db, "users", uid);
-        const userDoc = await getDoc(userDocRef);
-
-        if (!userDoc.exists()) {
-          console.error("No se encontró información del usuario en Firestore.");
-          return;
-        }
-
-        const userData = userDoc.data();
-        const userCategoria = userData.categoria;
-
-        if (!userCategoria) {
-          console.error("El usuario no tiene una categoría asignada.");
-          return;
-        }
-
-        // Obtener torneos según la categoría
-        const tournamentsRef = collection(db, "tournaments");
-        const q = query(tournamentsRef, where("categoria", "==", userCategoria));
-        const tournamentsSnapshot = await getDocs(q);
-
-        const tournaments = tournamentsSnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-
-        setTournaments(tournaments);
-      } catch (error) {
-        console.error("Error al cargar torneos:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    const fetchPlayers = async () => {
-      try {
-        const playersSnapshot = await getDocs(collection(db, "users"));
-        const playersList = playersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        setPlayers(playersList);
-      } catch (error) {
-        console.error("Error al cargar jugadores:", error);
-      }
+      setTournaments(tournamentsList);
     };
 
     fetchTournaments();
-    fetchPlayers();
   }, []);
 
-  const handleTournamentClick = (tournament) => {
+  const handleInscribirClick = (tournament) => {
+    setErrorMessage("");
     setSelectedTournament(tournament);
+    setShowPayment(true);
   };
 
-  const handleBack = () => {
-    setSelectedTournament(null);
-  };
+  const handlePagar = async () => {
+    if (!selectedTournament) return;
 
-  const getPlayerNameById = (playerId) => {
-    const player = players.find((p) => p.id === playerId);
-    return player ? player.name : "Jugador desconocido";
-  };
-
-  if (loading) {
-    return (
-      <div className="loading-container">
-        <p className="loading-text">Cargando torneos...</p>
-      </div>
+    const conflicto = tournaments.some(t => 
+      t.id !== selectedTournament.id &&
+      t.fecha === selectedTournament.fecha &&
+      t.horario === selectedTournament.horario &&
+      (t.inscritos || []).includes(currentUserId)
     );
-  }
+
+    if (conflicto) {
+      setErrorMessage("⚠ Ya estás inscrito en un torneo con la misma fecha y horario.");
+      return;
+    }
+
+    const inscritosActuales = selectedTournament.inscritos || [];
+    if (inscritosActuales.length >= selectedTournament.tournamentSize) {
+      setErrorMessage("⚠ El torneo ya alcanzó el número máximo de inscritos.");
+      return;
+    }
+
+    const updatedInscritos = [...inscritosActuales, currentUserId];
+
+    await updateDoc(doc(db, "tournaments", selectedTournament.id), {
+      inscritos: updatedInscritos
+    });
+
+    alert("Inscripción completada con éxito.");
+    setShowPayment(false);
+    setSelectedTournament(null);
+    setErrorMessage("");
+  };
 
   return (
-    <div className="Torneos-background">
-      <Header type="user" />
-      <TopImg number={3} />
-      <div className="Torneos-card">
-        {!selectedTournament ? (
-          <>
-            <h2 className="Torneos-title">Torneos Disponibles, dar click en el circulo para posiciones</h2>
-            <div className="Torneos-list">
-              {tournaments.length > 0 ? (
-                tournaments.map((tournament) => (
-                  <div
-                    key={tournament.id}
-                    className="Torneos-item"
-                    onClick={() => handleTournamentClick(tournament)}
-                  >
-                    <div className="Torneo-image"></div>
-                    <div className="Torneo-info">
-                      <h3>{tournament.name}</h3>
-                      <p>Categoría: {tournament.categoria}</p>
-                      <p>
-                        Fecha: {new Date(tournament.date).toLocaleDateString()}
-                      </p>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <p>No hay torneos disponibles para tu categoría.</p>
-              )}
-            </div>
-          </>
-        ) : (
-          <div className="Torneo-details">
-            <h2>{selectedTournament.name}</h2>
-            <p>Categoría: {selectedTournament.categoria}</p>
-            <p>Fecha: {new Date(selectedTournament.date).toLocaleDateString()}</p>
-            <h3>Participantes y Posiciones:</h3>
-            <ul>
-              {selectedTournament.rankings?.length > 0 ? (
-                selectedTournament.rankings.map((ranking, index) => (
-                  <li key={index}>
-                    Posición {ranking.position}: {getPlayerNameById(ranking.playerId)}
-                  </li>
-                ))
-              ) : (
-                <p>No se han asignado posiciones en este torneo.</p>
-              )}
-            </ul>
-            <button onClick={handleBack} className="Back-button">
-              Volver
-            </button>
+    <div className='Torneos-background'>
+      <Header type="usuario" />
+      <TopImg number={1} />
+      <h2 className='Torneos-title'>Próximos Torneos Disponibles</h2>
+      <div className='Torneos-card'>
+        <div className='Torneos-list-container'>
+          <div className='Torneos-list'>
+            {tournaments.map((tournament, index) => (
+              <div key={index} className='Torneos-item'>
+                <div className='Torneo-image'></div>
+                <div className='Torneo-info'>
+                  <h3>{tournament.name}</h3>
+                  <p>Categoría: {tournament.categoria}</p>
+                  <p>Cancha: {tournament.cancha || 'No definida'}</p>
+                  <p>Horario: {tournament.horario || 'No definido'}</p>
+                  <p>Fecha: {tournament.fecha || 'No definida'}</p>
+                  <p>Profesor: {tournament.profesor || 'No asignado'}</p>
+                  <p>Tamaño del torneo: {tournament.tournamentSize}</p>
+                  <p>Inscritos: {(tournament.inscritos || []).length}/{tournament.tournamentSize}</p>
+                </div>
+                <div className="Torneo-actions">
+                  {(tournament.inscritos || []).includes(currentUserId) ? (
+                    <p>✅ Ya estás inscrito</p>
+                  ) : (
+                    <button className="inscribirse-button" onClick={() => handleInscribirClick(tournament)}>
+                      Inscribirse
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
           </div>
-        )}
+        </div>
       </div>
+
+      {showPayment && selectedTournament && (
+        <div className="pago-modal">
+          <div className="pago-contenido">
+            <h3>Confirmar Inscripción</h3>
+            <p>Costo del torneo: ${costoTorneo.toLocaleString()}</p>
+            {errorMessage && <p className="error-message">{errorMessage}</p>}
+            <button onClick={handlePagar}>Pagar</button>
+            <button onClick={() => setShowPayment(false)}>Cancelar</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
