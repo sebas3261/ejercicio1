@@ -35,8 +35,14 @@ export default function AdminHome() {
   const handleAuth = async (uid) => {
     try {
       const userRef = doc(db, "users", uid); // Referencia al documento del usuario
-      await updateDoc(userRef, { isAuthenticated: true }); // Establece isAuthenticated en true
-      await updateDoc(userRef, { montoMatricula: 400 }); // Establece el monto de matrícula en 0
+
+      const fechaInscripcion = new Date().toLocaleString();
+      
+      await updateDoc(userRef, {
+      isAuthenticated: true,
+      montoMatricula: 400,
+      fechaInscripcion: fechaInscripcion,
+    });
 
       // Actualizar el estado para reflejar el cambio sin recargar
       setUsuarios((prev) =>
