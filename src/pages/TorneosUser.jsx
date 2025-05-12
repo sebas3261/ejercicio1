@@ -1,6 +1,13 @@
+// src/pages/TorneosUsuario.jsx
 import React, { useState, useEffect } from 'react'; 
 import { db } from "../firebase";
-import { collection, doc, setDoc, getDocs, updateDoc } from "firebase/firestore";
+import { 
+  collection, 
+  doc, 
+  getDocs, 
+  updateDoc, 
+  increment 
+} from "firebase/firestore";
 import "../css/torneos.css";
 import TopImg from '../components/TopImg';
 import Header from '../components/Header';
@@ -9,9 +16,12 @@ export default function TorneosUsuario() {
   const [tournaments, setTournaments] = useState([]);
   const [selectedTournament, setSelectedTournament] = useState(null);
   const [showPayment, setShowPayment] = useState(false);
-  const [currentUserId, setCurrentUserId] = useState("user123"); // Simulación de usuario actual
   const [errorMessage, setErrorMessage] = useState("");
   const costoTorneo = 55000;
+
+  // Obtén el UID del usuario almacenado en localStorage
+  const stored = localStorage.getItem('user');
+  const currentUserId = stored ? JSON.parse(stored).uid : null;
 
   useEffect(() => {
     const fetchTournaments = async () => {
@@ -40,36 +50,47 @@ export default function TorneosUsuario() {
   };
 
   const handlePagar = async () => {
-    if (!selectedTournament) return;
+    if (!selectedTournament || !currentUserId) return;
 
+    // 1) Validar conflictos de horario
     const conflicto = tournaments.some(t => 
       t.id !== selectedTournament.id &&
       t.fecha === selectedTournament.fecha &&
       t.horario === selectedTournament.horario &&
       (t.inscritos || []).includes(currentUserId)
     );
-
     if (conflicto) {
       setErrorMessage("⚠ Ya estás inscrito en un torneo con la misma fecha y horario.");
       return;
     }
 
+    // 2) Validar cupo
     const inscritosActuales = selectedTournament.inscritos || [];
     if (inscritosActuales.length >= selectedTournament.tournamentSize) {
       setErrorMessage("⚠ El torneo ya alcanzó el número máximo de inscritos.");
       return;
     }
 
-    const updatedInscritos = [...inscritosActuales, currentUserId];
+    try {
+      // 3) Actualizar lista de inscritos del torneo
+      const updatedInscritos = [...inscritosActuales, currentUserId];
+      await updateDoc(doc(db, "tournaments", selectedTournament.id), {
+        inscritos: updatedInscritos
+      });
 
-    await updateDoc(doc(db, "tournaments", selectedTournament.id), {
-      inscritos: updatedInscritos
-    });
+      // 4) Incrementar deuda del usuario en Firestore
+      await updateDoc(doc(db, "users", currentUserId), {
+        montoMatricula: increment(costoTorneo)
+      });
 
-    alert("Inscripción completada con éxito.");
-    setShowPayment(false);
-    setSelectedTournament(null);
-    setErrorMessage("");
+      alert("Inscripción y registro de pago agregados con éxito.");
+      setShowPayment(false);
+      setSelectedTournament(null);
+      setErrorMessage("");
+    } catch (err) {
+      console.error("Error al inscribir/pagar:", err);
+      setErrorMessage("⚠ Ha ocurrido un error. Intenta de nuevo.");
+    }
   };
 
   return (
@@ -81,7 +102,7 @@ export default function TorneosUsuario() {
         <div className='Torneos-list-container'>
           <div className='Torneos-list'>
             {tournaments.map((tournament, index) => (
-              <div key={index} className='Torneos-item'>
+              <div key={tournament.id} className='Torneos-item'>
                 <div className='Torneo-image'></div>
                 <div className='Torneo-info'>
                   <h3>{tournament.name}</h3>
@@ -97,7 +118,10 @@ export default function TorneosUsuario() {
                   {(tournament.inscritos || []).includes(currentUserId) ? (
                     <p>✅ Ya estás inscrito</p>
                   ) : (
-                    <button className="inscribirse-button" onClick={() => handleInscribirClick(tournament)}>
+                    <button 
+                      className="inscribirse-button" 
+                      onClick={() => handleInscribirClick(tournament)}
+                    >
                       Inscribirse
                     </button>
                   )}
@@ -109,16 +133,48 @@ export default function TorneosUsuario() {
       </div>
 
       {showPayment && selectedTournament && (
-        <div className="pago-modal">
-          <div className="pago-contenido">
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 1000
+          }}
+        >
+          <div
+            style={{
+              background: '#fff',
+              padding: '1.5rem',
+              borderRadius: '8px',
+              maxWidth: '90%',
+              width: '360px',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
+            }}
+          >
             <h3>Confirmar Inscripción</h3>
             <p>Costo del torneo: ${costoTorneo.toLocaleString()}</p>
-            {errorMessage && <p className="error-message">{errorMessage}</p>}
-            <button onClick={handlePagar}>Pagar</button>
-            <button onClick={() => setShowPayment(false)}>Cancelar</button>
+            {errorMessage && (
+              <p style={{ color: '#c00', marginBottom: '1rem' }}>
+                {errorMessage}
+              </p>
+            )}
+            <button onClick={handlePagar} style={{ marginRight: '0.5rem' }}>
+              Pagar
+            </button>
+            <button onClick={() => setShowPayment(false)}>
+              Cancelar
+            </button>
           </div>
         </div>
       )}
+
+
     </div>
   );
 }
