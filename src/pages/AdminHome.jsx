@@ -192,7 +192,9 @@ export default function AdminHome() {
             </tr>
           </thead>
           <tbody>
-            {usuarios.map(user => (
+          {usuarios
+            .filter(user => user.type !== "admin") // <-- Aquí filtramos admins
+            .map(user => (
               <tr key={user.id}>
                 {editingUserId === user.id ? (
                   <>
@@ -252,7 +254,7 @@ export default function AdminHome() {
                 )}
               </tr>
             ))}
-          </tbody>
+        </tbody>
         </table>
       </div>
       <NavLink to="/signup" className="navlink">
