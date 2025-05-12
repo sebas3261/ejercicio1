@@ -1,129 +1,162 @@
+// src/pages/AdminHome.jsx
 import React, { useEffect, useState } from 'react';
-import { collection, doc, updateDoc, deleteDoc, getDocs } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDocs,
+  getDoc,
+  updateDoc,
+  deleteDoc,
+  increment
+} from "firebase/firestore";
 import { db } from "../firebase";
 import "../css/AdminHome.css";
 import TopImg from '../components/TopImg';
 import Header from '../components/Header';
 import { NavLink } from "react-router";
-import { getDoc } from "firebase/firestore";
 
 export default function AdminHome() {
   const [usuarios, setUsuarios] = useState([]);
-  const [editingUserId, setEditingUserId] = useState(null); 
-  const [editingData, setEditingData] = useState({}); 
+  const [editingUserId, setEditingUserId] = useState(null);
+  const [editingData, setEditingData] = useState({});
+
+  // Helper para calcular meses completos entre dos fechas
+  const monthsBetween = (start, end) => {
+    const s = new Date(start);
+    const e = new Date(end);
+    let months = (e.getFullYear() - s.getFullYear()) * 12;
+    months += e.getMonth() - s.getMonth();
+    if (e.getDate() < s.getDate()) months--;
+    return Math.max(months, 0);
+  };
 
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchAndCharge = async () => {
       try {
-        const usersCollection = collection(db, "users");
-        const data = await getDocs(usersCollection);
-  
-        // Filtrar usuarios con type "user"
-        const filteredUsers = data.docs
-          .map((doc) => ({ ...doc.data(), id: doc.id }))
-          .filter((user) => user.type !== "admin");
-  
-        setUsuarios(filteredUsers);
+        const snapshot = await getDocs(collection(db, "users"));
+        const now = new Date();
+        const MENSUALIDAD = 400;
+        const updatedUsers = [];
+
+        // Procesamos cada usuario
+        for (const docSnap of snapshot.docs) {
+          const u = { id: docSnap.id, ...docSnap.data() };
+          // Sólo usuarios no-admin y autenticados que tengan fechaInscripcion
+          if (
+            u.type !== "admin" &&
+            u.isAuthenticated &&
+            u.fechaInscripcion
+          ) {
+            const meses = monthsBetween(u.fechaInscripcion, now);
+            if (meses >= 1) {
+              // Cobrar mensualidad * meses
+              const nuevaFecha = new Date(u.fechaInscripcion);
+              nuevaFecha.setMonth(nuevaFecha.getMonth() + meses);
+
+              const userRef = doc(db, "users", u.id);
+              await updateDoc(userRef, {
+                montoMatricula: increment(MENSUALIDAD * meses),
+                fechaInscripcion: nuevaFecha.toLocaleString(),
+              });
+
+              // Reflejamos en el objeto local
+              u.montoMatricula = (u.montoMatricula || 0) + MENSUALIDAD * meses;
+              u.fechaInscripcion = nuevaFecha.toLocaleString();
+            }
+          }
+          updatedUsers.push(u);
+        }
+
+        setUsuarios(updatedUsers);
       } catch (error) {
-        console.error("Error al obtener usuarios:", error);
+        console.error("Error al cargar/cobrar usuarios:", error);
       }
     };
-    fetchUsers();
+
+    fetchAndCharge();
   }, []);
 
-  // Función para autenticar usuarios (cambia isAuthenticated a true)
+  // Autenticar usuario
   const handleAuth = async (uid) => {
     try {
-      const userRef = doc(db, "users", uid); // Referencia al documento del usuario
-
+      const userRef = doc(db, "users", uid);
       const fechaInscripcion = new Date().toLocaleString();
-      
-      await updateDoc(userRef, {
-      isAuthenticated: true,
-      montoMatricula: 400,
-      fechaInscripcion: fechaInscripcion,
-    });
 
-      // Actualizar el estado para reflejar el cambio sin recargar
+      await updateDoc(userRef, {
+        isAuthenticated: true,
+        montoMatricula: 400,
+        fechaInscripcion: fechaInscripcion,
+      });
+
       setUsuarios((prev) =>
-        prev.map((user) =>
-          user.id === uid ? { ...user, isAuthenticated: true } : user
+        prev.map((u) =>
+          u.id === uid
+            ? { ...u, isAuthenticated: true, montoMatricula: 400, fechaInscripcion }
+            : u
         )
       );
 
-      console.log(`Usuario con UID: ${uid} autenticado correctamente.`);
-      alert("Usuario autenticado exitosamente.");
+      alert("Usuario autenticado y matrícula inicial cobrada.");
     } catch (error) {
-      console.error("Error al autenticar el usuario:", error.message);
+      console.error("Error al autenticar:", error);
       alert("Hubo un error al autenticar el usuario.");
     }
   };
 
-  // Función para eliminar usuarios
+  // Eliminar usuario
   const handleDeleteUser = async (id) => {
-    const confirmDelete = window.confirm("¿Estás seguro de que deseas eliminar este usuario?");
-  
-    if (!confirmDelete) return; // Cancelar la eliminación si el usuario no confirma
-  
+    if (!window.confirm("¿Seguro que deseas eliminar este usuario?")) return;
     try {
-      // Eliminar de Firestore
-      const userDoc = doc(db, "users", id);
-      await deleteDoc(userDoc);
-  
-      setUsuarios((prev) => prev.filter((user) => user.id !== id));
-      alert("Usuario eliminado exitosamente.");
+      await deleteDoc(doc(db, "users", id));
+      setUsuarios((prev) => prev.filter((u) => u.id !== id));
+      alert("Usuario eliminado.");
     } catch (error) {
-      console.error("Error al eliminar el usuario:", error);
-      alert("Hubo un error al intentar eliminar el usuario.");
+      console.error("Error al eliminar:", error);
+      alert("Hubo un error al eliminar el usuario.");
     }
   };
 
-  // Activar edición de usuario
+  // Editar usuario
   const handleEditClick = (user) => {
     setEditingUserId(user.id);
-    setEditingData(user);
+    setEditingData({
+      name: user.name,
+      apellido: user.apellido,
+      telefono: user.telefono,
+      email: user.email
+      // no tocamos montoMensualidad ni fechaInscripcion aquí
+    });
   };
-
-  // Manejar cambios en los campos de entrada
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setEditingData((prev) => ({ ...prev, [name]: value }));
   };
-
-  // Guardar cambios en Firestore
   const handleSaveEdit = async () => {
     try {
-      const userDocRef = doc(db, "users", editingUserId);
-      
-      // Obtener documento actual de Firestore directamente
-      const snapshot = await getDoc(userDocRef);
-      if (!snapshot.exists()) {
-        throw new Error("El usuario no existe");
-      }
-  
-      const currentData = snapshot.data();
-  
-      const updatedData = {
-        ...currentData,
+      const userRef = doc(db, "users", editingUserId);
+      const snapshot = await getDoc(userRef);
+      if (!snapshot.exists()) throw new Error("Usuario no existe");
+
+      const current = snapshot.data();
+      const merged = {
+        ...current,
         ...editingData,
-        montoMatricula: currentData.montoMatricula ?? 0 // <-- FORZAR que se mantenga el valor actual
+        montoMensualidad: current.montoMensualidad ?? 0,
+        fechaInscripcion: current.fechaInscripcion
       };
-  
-      await updateDoc(userDocRef, updatedData);
-  
+
+      await updateDoc(userRef, merged);
+
       setUsuarios((prev) =>
-        prev.map((user) => (user.id === editingUserId ? { ...updatedData, id: editingUserId } : user))
+        prev.map((u) =>
+          u.id === editingUserId ? { ...merged, id: u.id } : u
+        )
       );
-  
       setEditingUserId(null);
     } catch (error) {
-      console.error("Error al actualizar el usuario:", error);
+      console.error("Error al guardar edición:", error);
     }
   };
-  
-  
-
-  // Cancelar edición
   const handleCancelEdit = () => {
     setEditingUserId(null);
     setEditingData({});
@@ -135,83 +168,60 @@ export default function AdminHome() {
       <TopImg number={6} />
       <h2 className='Admin-title'>Administrar miembros</h2>
       <div className='Admin-card'>
-        <div className='Admin-card-header'>
-          <table className="Users-table">
-            <thead>
-              <tr>
-                <th>Nombre</th>
-                <th>Apellido</th>
-                <th>Teléfono</th>
-                <th>Correo</th>
-                <th>Autenticado</th>
-                <th>Acciones</th>
+        <table className="Users-table">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Apellido</th>
+              <th>Teléfono</th>
+              <th>Correo</th>
+              <th>Autenticado</th>
+              <th>Matrícula</th>
+              <th>Fecha Inscripción</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {usuarios.map((user) => (
+              <tr key={user.id}>
+                {editingUserId === user.id ? (
+                  <>
+                    <td><input name="name" value={editingData.name} onChange={handleInputChange} /></td>
+                    <td><input name="apellido" value={editingData.apellido} onChange={handleInputChange} /></td>
+                    <td><input name="telefono" value={editingData.telefono} onChange={handleInputChange} /></td>
+                    <td><input name="email" value={editingData.email} onChange={handleInputChange} /></td>
+                    <td colSpan={4}>
+                      <button onClick={handleSaveEdit}>Guardar</button>
+                      <button onClick={handleCancelEdit}>Cancelar</button>
+                    </td>
+                  </>
+                ) : (
+                  <>
+                    <td>{user.name}</td>
+                    <td>{user.apellido}</td>
+                    <td>{user.telefono}</td>
+                    <td>{user.email}</td>
+                    <td>{user.isAuthenticated ? "✅" : "❌"}</td>
+                    <td>{user.montoMatricula ?? 0}</td>
+                    <td>{user.fechaInscripcion || "-"}</td>
+                    <td>
+                      <button onClick={() => handleEditClick(user)}>Editar</button>
+                      <button
+                        onClick={() => handleAuth(user.id)}
+                        disabled={user.isAuthenticated}
+                      >
+                        Autenticar
+                      </button>
+                      <button onClick={() => handleDeleteUser(user.id)}>Borrar</button>
+                    </td>
+                  </>
+                )}
               </tr>
-            </thead>
-            <tbody>
-              {usuarios.map((user) => (
-                <tr key={user.id}>
-                  {editingUserId === user.id ? (
-                    <>
-                      <td>
-                        <input
-                          name="name"
-                          value={editingData.name}
-                          onChange={handleInputChange}
-                        />
-                      </td>
-                      <td>
-                        <input
-                          name="apellido"
-                          value={editingData.apellido}
-                          onChange={handleInputChange}
-                        />
-                      </td>
-                      <td>
-                        <input
-                          name="telefono"
-                          value={editingData.telefono}
-                          onChange={handleInputChange}
-                        />
-                      </td>
-                      <td>
-                        <input
-                          name="email"
-                          value={editingData.email}
-                          onChange={handleInputChange}
-                        />
-                      </td>
-                      <td>
-                        <button onClick={handleSaveEdit}>Guardar</button>
-                        <button onClick={handleCancelEdit}>Cancelar</button>
-                      </td>
-                    </>
-                  ) : (
-                    <>
-                      <td>{user.name}</td>
-                      <td>{user.apellido}</td>
-                      <td>{user.telefono}</td>
-                      <td>{user.email}</td>
-                      <td>{user.type}</td>
-                      <td>{user.isAuthenticated ? "✅ Sí" : "❌ No"}</td>
-                      <td>
-                        <button onClick={() => handleEditClick(user)}>Editar</button>
-                        <button 
-                          onClick={() => handleAuth(user.id)} 
-                          disabled={user.isAuthenticated}
-                        >
-                          Autenticar
-                        </button>
-                        <button onClick={() => handleDeleteUser(user.id)}>Borrar</button>
-                      </td>
-                    </>
-                  )}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </table>
       </div>
-      <NavLink to={"/signup"} className={"navlink"}>
+      <NavLink to="/signup" className="navlink">
         <button className='Add-button'>Crear nuevo miembro</button>
       </NavLink>
     </div>
