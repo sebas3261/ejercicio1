@@ -17,7 +17,7 @@ export default function TorneosUsuario() {
   const [selectedTournament, setSelectedTournament] = useState(null);
   const [showPayment, setShowPayment] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const costoTorneo = 55000;
+  
 
   // Obtén el UID del usuario almacenado en localStorage
   const stored = localStorage.getItem('user');
@@ -110,9 +110,10 @@ export default function TorneosUsuario() {
                   <p>Cancha: {tournament.cancha || 'No definida'}</p>
                   <p>Horario: {tournament.horario || 'No definido'}</p>
                   <p>Fecha: {tournament.fecha || 'No definida'}</p>
-                  <p>Profesor: {tournament.profesor || 'No asignado'}</p>
+                  <p>Profesor: {tournament.profesor?.name || 'No asignado'}</p>
                   <p>Tamaño del torneo: {tournament.tournamentSize}</p>
                   <p>Inscritos: {(tournament.inscritos || []).length}/{tournament.tournamentSize}</p>
+                  <p>Precio: ${tournament.precio || 'No asignado'}</p>
                 </div>
                 <div className="Torneo-actions">
                   {(tournament.inscritos || []).includes(currentUserId) ? (
@@ -158,7 +159,7 @@ export default function TorneosUsuario() {
             }}
           >
             <h3>Confirmar Inscripción</h3>
-            <p>Costo del torneo: ${costoTorneo.toLocaleString()}</p>
+            <p>Costo del torneo: ${selectedTournament.precio.toLocaleString()}</p>
             {errorMessage && (
               <p style={{ color: '#c00', marginBottom: '1rem' }}>
                 {errorMessage}

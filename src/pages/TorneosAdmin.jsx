@@ -17,6 +17,9 @@ export default function TorneosAdmin() {
   const [horario, setHorario] = useState('');
   const [fecha, setFecha] = useState('');
   const [profesor, setProfesor] = useState('');
+  const [precio, setPrecio] = useState('');
+  const [showClasifications, setShowClasifications] = useState(false);
+  const [selectedClasifications, setSelectedClasifications] = useState([]);
 
   const canchasPredefinidas = Array.from({ length: 20 }, (_, i) => `Cancha ${i + 1}`);
 
@@ -30,6 +33,7 @@ export default function TorneosAdmin() {
   tomorrow.setDate(today.getDate() + 1);
   const maxDate = new Date(today);
   maxDate.setMonth(today.getMonth() + 6);
+ // Verificar si el torneo ya pasó
 
   const minDateStr = tomorrow.toISOString().split('T')[0];
   const maxDateStr = maxDate.toISOString().split('T')[0];
@@ -51,6 +55,8 @@ export default function TorneosAdmin() {
     fetchTournaments();
   }, []);
 
+
+// Modal o vista para ingresar clasificaciones
   const getCanchasDisponibles = () => {
     if (!horario || !fecha) return canchasPredefinidas;
     const canchasOcupadas = tournaments
@@ -64,13 +70,13 @@ export default function TorneosAdmin() {
   };
 
   const handleCreateOrEditTournament = async () => {
-    if (!tournamentName || !cancha || !horario || !fecha || !profesor) {
-      alert("Por favor, complete todos los campos: nombre, cancha, horario, fecha y profesor.");
+    if (!tournamentName || !cancha || !horario || !fecha || !profesor || !precio) {
+      alert("Por favor, complete todos los campos requeridos.");
       return;
     }
 
     if (tournamentSize <= 0) {
-      alert("Por favor, defina el tamaño del torneo (número máximo de jugadores).");
+      alert("Por favor, defina el tamaño del torneo.");
       return;
     }
 
@@ -79,7 +85,7 @@ export default function TorneosAdmin() {
       (!editingTournament || editingTournament.name !== tournamentName)
     );
     if (nameExists) {
-      alert("Ya existe un torneo con ese nombre. Elija otro.");
+      alert("Ya existe un torneo con ese nombre.");
       return;
     }
 
@@ -99,7 +105,7 @@ export default function TorneosAdmin() {
       (!editingTournament || tournament.id !== editingTournament.id)
     );
     if (canchaOcupada) {
-      alert("La cancha seleccionada ya está ocupada en ese horario y fecha.");
+      alert("La cancha seleccionada ya está ocupada.");
       return;
     }
 
@@ -112,34 +118,45 @@ export default function TorneosAdmin() {
       entreno.fecha === fecha
     );
     if (entrenoOcupado) {
-      alert("Ya hay un entrenamiento programado en esta cancha a esa hora.");
+      alert("Ya hay un entrenamiento en esa cancha y horario.");
       return;
     }
 
     const profesorOcupado = [...tournamentsList, ...entrenosList].some(evento => 
-      evento.profesor === profesor && 
+      evento.profesor?.id === profesor && 
       evento.horario === horario && 
       evento.fecha === fecha
     );
     if (profesorOcupado) {
-      alert("El profesor seleccionado ya está asignado a otro evento en ese horario y fecha.");
+      alert("El profesor ya tiene otro evento asignado.");
       return;
     }
 
-    try {
-      const tournamentData = {
-        name: tournamentName,
-        categoria,
-        cancha,
-        horario,
-        fecha,
-        profesor,
-        tournamentSize,
-        date: new Date().toISOString(),
-        rankings: [],
-        inscritos: [],
-      };
+  const profesorObj = players.find(p => p.id === profesor);
+if (!profesorObj) {
+  alert("Profesor no válido.");
+  return;
+}
 
+const tournamentData = {
+  name: tournamentName,
+  categoria,
+  cancha,
+  horario,
+  fecha,
+  profesor: {
+    id: profesorObj.id,
+    name: profesorObj.name,
+  },
+  tournamentSize,
+  precio: Number(precio),
+  date: new Date().toISOString(),
+  rankings: [],
+  inscritos: [],
+};
+
+
+    try {
       if (editingTournament) {
         await setDoc(doc(db, "tournaments", editingTournament.id), tournamentData);
         alert("Torneo actualizado exitosamente.");
@@ -159,6 +176,7 @@ export default function TorneosAdmin() {
       setHorario('');
       setFecha('');
       setProfesor('');
+      setPrecio('');
       setShowCreateTournament(false);
       setEditingTournament(null);
     } catch (error) {
@@ -174,6 +192,7 @@ export default function TorneosAdmin() {
     setHorario(tournament.horario || '');
     setFecha(tournament.fecha || '');
     setProfesor(tournament.profesor || '');
+    setPrecio(tournament.precio || '');
     setEditingTournament(tournament);
     setShowCreateTournament(true);
   };
@@ -189,8 +208,49 @@ export default function TorneosAdmin() {
       }
     }
   };
+  const handleSetClassification = (player, position) => {
+  setSelectedClasifications((prev) => {
+    const updated = [...prev];
+    const index = updated.findIndex((item) => item.id === player.id);
+    if (index !== -1) {
+      updated[index] = { ...updated[index], position };
+    } else {
+      updated.push({ id: player.id, position });
+    }
+    return updated;
+  });
+};
 
-  return (
+const handleSaveClasifications = async () => {
+  try {
+    // Actualizar las clasificaciones en la base de datos
+    await setDoc(doc(db, "tournaments", editingTournament.id), {
+      ...editingTournament,
+      rankings: selectedClasifications,
+    });
+
+    alert("Clasificaciones guardadas con éxito.");
+    setShowClasifications(false);
+    setTournaments((prev) =>
+      prev.map((tournament) =>
+        tournament.id === editingTournament.id
+          ? { ...tournament, rankings: selectedClasifications }
+          : tournament
+      )
+    );
+  } catch (error) {
+    alert("Error al guardar las clasificaciones: " + error.message);
+  }
+};
+const handleOpenClasifications = (tournament) => {
+  if (!tournament.participantes) {
+    tournament.participantes = [];
+  }
+    setEditingTournament(tournament);
+    setShowClasifications(true);
+    setSelectedClasifications([]);
+  };
+ return (
     <div className='Torneos-background'>
       <Header type="admin" />
       <TopImg number={1} />
@@ -211,10 +271,16 @@ export default function TorneosAdmin() {
                       <p>Fecha: {tournament.fecha || 'No definida'}</p>
                       <p>Profesor: {players.find(p => p.id === tournament.profesor)?.name || 'No asignado'}</p>
                       <p>Tamaño del torneo: {tournament.tournamentSize}</p>
+                      <p>Precio: ${tournament.precio}</p>
                     </div>
                     <div className="Torneo-actions">
                       <button className="edit-button" onClick={() => handleEditTournament(tournament)}>✏️ Editar</button>
                       <button className="delete-button" onClick={() => handleDeleteTournament(tournament.name)}>🗑️ Eliminar</button>
+                       {new Date(tournament.fecha) < new Date() && (
+  <button className="clas-button" onClick={() => handleOpenClasifications(tournament)}>
+    🏅 Agregar Clasificación
+  </button>
+)}
                     </div>
                   </div>
                 ))}
@@ -232,12 +298,7 @@ export default function TorneosAdmin() {
           <h2 className='Torneos-title'>{editingTournament ? "Editar Torneo" : "Crear nuevo torneo"}</h2>
           <div className="torneo-setup">
             <div className="torneo-form-container">
-              <input
-                type="text"
-                value={tournamentName}
-                onChange={(e) => setTournamentName(e.target.value)}
-                placeholder="Nombre del Torneo"
-              />
+              <input type="text" value={tournamentName} onChange={(e) => setTournamentName(e.target.value)} placeholder="Nombre del Torneo" />
               <select value={categoria} onChange={(e) => setCategoria(e.target.value)}>
                 <option value="Infantil">Infantil</option>
                 <option value="Juvenil">Juvenil</option>
@@ -246,14 +307,9 @@ export default function TorneosAdmin() {
               </select>
               <div className="num-players-container">
                 <span className="num-players-label">Tamaño del torneo:</span>
-                <input
-                  type="number"
-                  value={tournamentSize}
-                  onChange={(e) => setTournamentSize(Number(e.target.value))}
-                  placeholder="Máximo de jugadores"
-                  min="1"
-                />
+                <input type="number" value={tournamentSize} onChange={(e) => setTournamentSize(Number(e.target.value))} placeholder="Máximo de jugadores" min="1" />
               </div>
+              <input type="number" value={precio} onChange={(e) => setPrecio(e.target.value)} placeholder="Precio del torneo" min="0" />
               <select value={cancha} onChange={(e) => setCancha(e.target.value)}>
                 <option value="">Seleccionar Cancha</option>
                 {getCanchasDisponibles().map(canchaOption => (
@@ -266,14 +322,7 @@ export default function TorneosAdmin() {
                   <option key={horarioOption} value={horarioOption}>{horarioOption}</option>
                 ))}
               </select>
-              <input
-                type="date"
-                value={fecha}
-                onChange={(e) => setFecha(e.target.value)}
-                min={minDateStr}
-                max={maxDateStr}
-                placeholder="Seleccionar Fecha"
-              />
+              <input type="date" value={fecha} onChange={(e) => setFecha(e.target.value)} min={minDateStr} max={maxDateStr} placeholder="Seleccionar Fecha" />
               <select value={profesor} onChange={(e) => setProfesor(e.target.value)}>
                 <option value="">Seleccionar Profesor</option>
                 {players.filter(p => p.type === "profesor").map(player => (
@@ -294,6 +343,7 @@ export default function TorneosAdmin() {
                 setHorario('');
                 setFecha('');
                 setProfesor('');
+                setPrecio('');
                 setEditingTournament(null);
               }}>
                 Cancelar
@@ -302,6 +352,42 @@ export default function TorneosAdmin() {
           </div>
         </div>
       )}
+      {showClasifications && editingTournament && (
+  <div className="clasification-modal">
+    <h3>Agregar Clasificación para {editingTournament.name}</h3>
+    <div className="clasification-form">
+      <label>🥇 Primer lugar:</label>
+      <select onChange={(e) => handleSetClassification(players.find(p => p.id === e.target.value), 1)}>
+        <option value="">Seleccionar jugador</option>
+        {players.filter(p => editingTournament.inscritos?.includes(p.id)).map(player => (
+          <option key={player.id} value={player.id}>{player.name}</option>
+        ))}
+      </select>
+
+      <label>🥈 Segundo lugar:</label>
+      <select onChange={(e) => handleSetClassification(players.find(p => p.id === e.target.value), 2)}>
+        <option value="">Seleccionar jugador</option>
+        {players.filter(p => editingTournament.inscritos?.includes(p.id)).map(player => (
+          <option key={player.id} value={player.id}>{player.name}</option>
+        ))}
+      </select>
+
+      <label>🥉 Tercer lugar:</label>
+      <select onChange={(e) => handleSetClassification(players.find(p => p.id === e.target.value), 3)}>
+        <option value="">Seleccionar jugador</option>
+        {players.filter(p => editingTournament.inscritos?.includes(p.id)).map(player => (
+          <option key={player.id} value={player.id}>{player.name}</option>
+        ))}
+      </select>
+
+      <div className="torneos-contenedor">
+        <button className="Torneo-button" onClick={handleSaveClasifications}>Guardar Clasificación</button>
+        <button className="Torneo-button cancelar" onClick={() => setShowClasifications(false)}>Cancelar</button>
+      </div>
+    </div>
+  </div>
+)}
+
     </div>
   );
-}
+};
