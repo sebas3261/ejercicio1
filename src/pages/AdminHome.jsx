@@ -5,6 +5,7 @@ import "../css/AdminHome.css";
 import TopImg from '../components/TopImg';
 import Header from '../components/Header';
 import { NavLink } from "react-router";
+import { getDoc } from "firebase/firestore";
 
 export default function AdminHome() {
   const [usuarios, setUsuarios] = useState([]);
@@ -35,6 +36,7 @@ export default function AdminHome() {
     try {
       const userRef = doc(db, "users", uid); // Referencia al documento del usuario
       await updateDoc(userRef, { isAuthenticated: true }); // Establece isAuthenticated en true
+      await updateDoc(userRef, { montoMatricula: 400 }); // Establece el monto de matrícula en 0
 
       // Actualizar el estado para reflejar el cambio sin recargar
       setUsuarios((prev) =>
@@ -85,18 +87,35 @@ export default function AdminHome() {
   // Guardar cambios en Firestore
   const handleSaveEdit = async () => {
     try {
-      const userDoc = doc(db, "users", editingUserId);
-      await updateDoc(userDoc, editingData);
-
+      const userDocRef = doc(db, "users", editingUserId);
+      
+      // Obtener documento actual de Firestore directamente
+      const snapshot = await getDoc(userDocRef);
+      if (!snapshot.exists()) {
+        throw new Error("El usuario no existe");
+      }
+  
+      const currentData = snapshot.data();
+  
+      const updatedData = {
+        ...currentData,
+        ...editingData,
+        montoMatricula: currentData.montoMatricula ?? 0 // <-- FORZAR que se mantenga el valor actual
+      };
+  
+      await updateDoc(userDocRef, updatedData);
+  
       setUsuarios((prev) =>
-        prev.map((user) => (user.id === editingUserId ? editingData : user))
+        prev.map((user) => (user.id === editingUserId ? { ...updatedData, id: editingUserId } : user))
       );
-
+  
       setEditingUserId(null);
     } catch (error) {
       console.error("Error al actualizar el usuario:", error);
     }
   };
+  
+  
 
   // Cancelar edición
   const handleCancelEdit = () => {
@@ -170,7 +189,12 @@ export default function AdminHome() {
                       <td>{user.isAuthenticated ? "✅ Sí" : "❌ No"}</td>
                       <td>
                         <button onClick={() => handleEditClick(user)}>Editar</button>
-                        <button onClick={() => handleAuth(user.id)}>Autenticar</button>
+                        <button 
+                          onClick={() => handleAuth(user.id)} 
+                          disabled={user.isAuthenticated}
+                        >
+                          Autenticar
+                        </button>
                         <button onClick={() => handleDeleteUser(user.id)}>Borrar</button>
                       </td>
                     </>
