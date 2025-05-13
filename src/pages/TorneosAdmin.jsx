@@ -245,15 +245,22 @@ export default function TorneosAdmin() {
     setSelectedClasifications(tournament.rankings || []);
   };
 
-  // Helper function to get available players for a given position
-  const getAvailablePlayers = (currentPosition) => {
+  // Helper function to get only those inscritos con matrícula al día
+    const getAvailablePlayers = (currentPosition) => {
     const selectedIds = selectedClasifications
       .filter(item => item.position !== currentPosition)
       .map(item => item.id);
-    return players.filter(p => 
-      editingTournament.inscritos?.includes(p.id) && !selectedIds.includes(p.id)
+
+    return players.filter(p =>
+      // 1) sólo si está inscrito
+      editingTournament.inscritos?.includes(p.id) &&
+      // 2) sólo si no lo hemos ya seleccionado para otra posición
+      !selectedIds.includes(p.id) &&
+      // 3) sólo si montoMatricula es 0
+      (p.montoMatricula || 0) === 0
     );
   };
+
 
   return (
     <div className='Torneos-background'>
@@ -304,18 +311,26 @@ export default function TorneosAdmin() {
                       )}
                     </div>
                     <div className="asistencia-container">
-                      <h4>Usuarios Inscritos:</h4>
-                      {players.filter(p => tournament.inscritos?.includes(p.id)).length > 0 ? (
-                        <ul>
-                          {players
-                            .filter(p => tournament.inscritos?.includes(p.id))
-                            .map(player => (
+                      <h4>Usuarios Inscritos (matrícula al día):</h4>
+                      {(() => {
+                        // Filtramos primero los IDs inscritos
+                        const inscritosIds = tournament.inscritos || [];
+                        // Y luego sólo los jugadores con deuda 0
+                        const inscritosAlDia = players.filter(p =>
+                          inscritosIds.includes(p.id) &&
+                          (p.montoMatricula || 0) === 0
+                        );
+                        if (inscritosAlDia.length === 0) {
+                          return <p>No hay usuarios con matrícula al día inscritos aún.</p>;
+                        }
+                        return (
+                          <ul>
+                            {inscritosAlDia.map(player => (
                               <li key={player.id}>{player.name}</li>
                             ))}
-                        </ul>
-                      ) : (
-                        <p>No hay usuarios inscritos aún.</p>
-                      )}
+                          </ul>
+                        );
+                      })()}
                     </div>
                   </div>
                 ))}
