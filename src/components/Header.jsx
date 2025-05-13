@@ -28,8 +28,8 @@ export default function Header({ type }) {
           <NavLink to={"/entrenosProfe"} className={"navlink"}>
             <p>Entrenos</p>
           </NavLink>
-            <NavLink to={"/entrenosProfe1"} className={"navlink"}>
-            <p>Entrenos1</p>
+            <NavLink to={"/TorneosProfe"} className={"navlink"}>
+            <p>Torneos</p>
           </NavLink>
         </div>
         <div onClick={handleLogout}>
