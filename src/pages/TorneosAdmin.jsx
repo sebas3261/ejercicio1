@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'; 
 import { db } from "../firebase";
-import { collection, doc, setDoc, getDocs, deleteDoc } from "firebase/firestore";
+import { collection, doc, setDoc, getDocs, updateDoc, deleteDoc } from "firebase/firestore";
 import "../css/torneos.css";
+import "../css/entrenos.css";
 import TopImg from '../components/TopImg';
 import Header from '../components/Header';
 
@@ -33,8 +34,6 @@ export default function TorneosAdmin() {
   tomorrow.setDate(today.getDate() + 1);
   const maxDate = new Date(today);
   maxDate.setMonth(today.getMonth() + 6);
- // Verificar si el torneo ya pasó
-
   const minDateStr = tomorrow.toISOString().split('T')[0];
   const maxDateStr = maxDate.toISOString().split('T')[0];
 
@@ -55,8 +54,6 @@ export default function TorneosAdmin() {
     fetchTournaments();
   }, []);
 
-
-// Modal o vista para ingresar clasificaciones
   const getCanchasDisponibles = () => {
     if (!horario || !fecha) return canchasPredefinidas;
     const canchasOcupadas = tournaments
@@ -75,8 +72,8 @@ export default function TorneosAdmin() {
       return;
     }
 
-    if (tournamentSize <= 0) {
-      alert("Por favor, defina el tamaño del torneo.");
+    if (tournamentSize < 3) {
+      alert("El tamaño del torneo debe ser al menos 3 participantes.");
       return;
     }
 
@@ -132,36 +129,35 @@ export default function TorneosAdmin() {
       return;
     }
 
-  const profesorObj = players.find(p => p.id === profesor);
-if (!profesorObj) {
-  alert("Profesor no válido.");
-  return;
-}
+    const profesorObj = players.find(p => p.id === profesor);
+    if (!profesorObj) {
+      alert("Profesor no válido.");
+      return;
+    }
 
-const tournamentData = {
-  name: tournamentName,
-  categoria,
-  cancha,
-  horario,
-  fecha,
-  profesor: {
-    id: profesorObj.id,
-    name: profesorObj.name,
-  },
-  tournamentSize,
-  precio: Number(precio),
-  date: new Date().toISOString(),
-  rankings: [],
-  inscritos: [],
-};
-
+    const tournamentData = {
+      name: tournamentName,
+      categoria,
+      cancha,
+      horario,
+      fecha,
+      profesor: {
+        id: profesorObj.id,
+        name: profesorObj.name,
+      },
+      tournamentSize,
+      precio: Number(precio),
+      date: new Date().toISOString(),
+      rankings: editingTournament ? (editingTournament.rankings || []) : [],
+      inscritos: editingTournament ? (editingTournament.inscritos || []) : [],
+    };
 
     try {
       if (editingTournament) {
         await setDoc(doc(db, "tournaments", editingTournament.id), tournamentData);
         alert("Torneo actualizado exitosamente.");
         setTournaments(prev => prev.map(tournament => 
-          tournament.id === editingTournament.id ? { ...tournament, ...tournamentData } : tournament
+          tournament.id === editingTournament.id ? { id: editingTournament.id, ...tournamentData } : tournament
         ));
       } else {
         await setDoc(doc(db, "tournaments", tournamentName), tournamentData);
@@ -191,7 +187,7 @@ const tournamentData = {
     setCancha(tournament.cancha || '');
     setHorario(tournament.horario || '');
     setFecha(tournament.fecha || '');
-    setProfesor(tournament.profesor || '');
+    setProfesor(tournament.profesor?.id || '');
     setPrecio(tournament.precio || '');
     setEditingTournament(tournament);
     setShowCreateTournament(true);
@@ -208,58 +204,65 @@ const tournamentData = {
       }
     }
   };
+
   const handleSetClassification = (player, position) => {
-  setSelectedClasifications((prev) => {
-    const updated = [...prev];
-    const index = updated.findIndex((item) => item.id === player.id);
-    if (index !== -1) {
-      updated[index] = { ...updated[index], position };
-    } else {
+    setSelectedClasifications((prev) => {
+      // Remove any existing entry for this player
+      const updated = prev.filter(item => item.id !== player.id);
+      // Add new entry for this player and position
       updated.push({ id: player.id, position });
-    }
-    return updated;
-  });
-};
-
-const handleSaveClasifications = async () => {
-  try {
-    // Actualizar las clasificaciones en la base de datos
-    await setDoc(doc(db, "tournaments", editingTournament.id), {
-      ...editingTournament,
-      rankings: selectedClasifications,
+      return updated;
     });
+  };
 
-    alert("Clasificaciones guardadas con éxito.");
-    setShowClasifications(false);
-    setTournaments((prev) =>
-      prev.map((tournament) =>
-        tournament.id === editingTournament.id
-          ? { ...tournament, rankings: selectedClasifications }
-          : tournament
-      )
-    );
-  } catch (error) {
-    alert("Error al guardar las clasificaciones: " + error.message);
-  }
-};
-const handleOpenClasifications = (tournament) => {
-  if (!tournament.participantes) {
-    tournament.participantes = [];
-  }
+  const handleSaveClasifications = async () => {
+    try {
+      await updateDoc(doc(db, "tournaments", editingTournament.id), {
+        rankings: selectedClasifications,
+      });
+      alert("Clasificaciones guardadas con éxito.");
+      setShowClasifications(false);
+      setTournaments((prev) =>
+        prev.map((tournament) =>
+          tournament.id === editingTournament.id
+            ? { ...tournament, rankings: selectedClasifications }
+            : tournament
+        )
+      );
+    } catch (error) {
+      alert("Error al guardar las clasificaciones: " + error.message);
+    }
+  };
+
+  const handleOpenClasifications = (tournament) => {
+    if (!tournament.inscritos) {
+      tournament.inscritos = [];
+    }
     setEditingTournament(tournament);
     setShowClasifications(true);
-    setSelectedClasifications([]);
+    setSelectedClasifications(tournament.rankings || []);
   };
- return (
+
+  // Helper function to get available players for a given position
+  const getAvailablePlayers = (currentPosition) => {
+    const selectedIds = selectedClasifications
+      .filter(item => item.position !== currentPosition)
+      .map(item => item.id);
+    return players.filter(p => 
+      editingTournament.inscritos?.includes(p.id) && !selectedIds.includes(p.id)
+    );
+  };
+
+  return (
     <div className='Torneos-background'>
       <Header type="admin" />
-      <TopImg number={1} />
+      <TopImg number={5} />
       {!showCreateTournament ? (
         <>
-          <h2 className='Torneos-title'>Torneos</h2>
-          <div className='Torneos-card'>
-            <div className='Torneos-list-container'>
-              <div className='Torneos-list'>
+          <h2 className="Entrenos-title">Torneos</h2>
+          <div className="Entrenos-card">
+            <div className="Entrenos-list-container">
+              <div className="Entrenos-list">
                 {tournaments.map((tournament, index) => (
                   <div key={index} className='Torneos-item'>
                     <div className='Torneo-image'></div>
@@ -269,34 +272,49 @@ const handleOpenClasifications = (tournament) => {
                       <p>Cancha: {tournament.cancha || 'No definida'}</p>
                       <p>Horario: {tournament.horario || 'No definido'}</p>
                       <p>Fecha: {tournament.fecha || 'No definida'}</p>
-                      <p>Profesor: {players.find(p => p.id === tournament.profesor)?.name || 'No asignado'}</p>
+                      <p>Profesor: {players.find(p => p.id === tournament.profesor?.id)?.name || 'No asignado'}</p>
                       <p>Tamaño del torneo: {tournament.tournamentSize}</p>
                       <p>Precio: ${tournament.precio}</p>
-                      <p>Clasificaciones: {tournament.rankings ? tournament.rankings.map(r => <span key={r.id}>{r.position}</span>) : 'No definidas'}</p>
+                      <p>
+                        Clasificaciones:{' '}
+                        {tournament.rankings && tournament.rankings.length > 0
+                          ? tournament.rankings
+                              .sort((a, b) => a.position - b.position)
+                              .map(r => {
+                                const player = players.find(p => p.id === r.id);
+                                return (
+                                  <span key={r.id}>
+                                    {r.position}°: {player ? player.name : 'Desconocido'}
+                                  </span>
+                                );
+                              })
+                              .reduce((prev, curr) => [prev, ', ', curr])
+                          : 'No definidas'}
+                      </p>
                     </div>
                     <div className="Torneo-actions">
                       <button className="edit-button" onClick={() => handleEditTournament(tournament)}>✏️ Editar</button>
                       <button className="delete-button" onClick={() => handleDeleteTournament(tournament.name)}>🗑️ Eliminar</button>
-                       {new Date(tournament.fecha) < new Date() && (
-  <button className="clas-button" onClick={() => handleOpenClasifications(tournament)}>
-    🏅 Agregar Clasificación
-  </button>
-)}
+                      {tournament.inscritos?.length > 0 && (
+                        <button className="Entreno-button" onClick={() => handleOpenClasifications(tournament)}>
+                          🏅 Agregar Clasificación
+                        </button>
+                      )}
                     </div>
                     <div className="asistencia-container">
                       <h4>Usuarios Inscritos:</h4>
-    {players.filter(p => tournament.inscritos?.includes(p.id)).length > 0 ? (
-      <ul>
-        {players
-          .filter(p => tournament.inscritos?.includes(p.id))
-          .map(player => (
-            <li key={player.id}>{player.name}</li>
-          ))}
-      </ul>
-    ) : (
-      <p>No hay usuarios inscritos aún.</p>
-    )}
-                      </div>
+                      {players.filter(p => tournament.inscritos?.includes(p.id)).length > 0 ? (
+                        <ul>
+                          {players
+                            .filter(p => tournament.inscritos?.includes(p.id))
+                            .map(player => (
+                              <li key={player.id}>{player.name}</li>
+                            ))}
+                        </ul>
+                      ) : (
+                        <p>No hay usuarios inscritos aún.</p>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -322,7 +340,7 @@ const handleOpenClasifications = (tournament) => {
               </select>
               <div className="num-players-container">
                 <span className="num-players-label">Tamaño del torneo:</span>
-                <input type="number" value={tournamentSize} onChange={(e) => setTournamentSize(Number(e.target.value))} placeholder="Máximo de jugadores" min="1" />
+                <input type="number" value={tournamentSize} onChange={(e) => setTournamentSize(Number(e.target.value))} placeholder="Máximo de jugadores" min="3" />
               </div>
               <input type="number" value={precio} onChange={(e) => setPrecio(e.target.value)} placeholder="Precio del torneo" min="0" />
               <select value={cancha} onChange={(e) => setCancha(e.target.value)}>
@@ -368,41 +386,37 @@ const handleOpenClasifications = (tournament) => {
         </div>
       )}
       {showClasifications && editingTournament && (
-  <div className="clasification-modal">
-    <h3>Agregar Clasificación para {editingTournament.name}</h3>
-    <div className="clasification-form">
-      <label>🥇 Primer lugar:</label>
-      <select onChange={(e) => handleSetClassification(players.find(p => p.id === e.target.value), 1)}>
-        <option value="">Seleccionar jugador</option>
-        {players.filter(p => editingTournament.inscritos?.includes(p.id)).map(player => (
-          <option key={player.id} value={player.id}>{player.name}</option>
-        ))}
-      </select>
-
-      <label>🥈 Segundo lugar:</label>
-      <select onChange={(e) => handleSetClassification(players.find(p => p.id === e.target.value), 2)}>
-        <option value="">Seleccionar jugador</option>
-        {players.filter(p => editingTournament.inscritos?.includes(p.id)).map(player => (
-          <option key={player.id} value={player.id}>{player.name}</option>
-        ))}
-      </select>
-
-      <label>🥉 Tercer lugar:</label>
-      <select onChange={(e) => handleSetClassification(players.find(p => p.id === e.target.value), 3)}>
-        <option value="">Seleccionar jugador</option>
-        {players.filter(p => editingTournament.inscritos?.includes(p.id)).map(player => (
-          <option key={player.id} value={player.id}>{player.name}</option>
-        ))}
-      </select>
-
-      <div className="torneos-contenedor">
-        <button className="Torneo-button" onClick={handleSaveClasifications}>Guardar Clasificación</button>
-        <button className="Torneo-button cancelar" onClick={() => setShowClasifications(false)}>Cancelar</button>
-      </div>
-    </div>
-  </div>
-)}
-
+        <div className="clasification-modal">
+          <h3>Agregar Clasificación para {editingTournament.name}</h3>
+          <div className="clasification-form">
+            <label>🥇 Primer lugar:</label>
+            <select onChange={(e) => handleSetClassification(players.find(p => p.id === e.target.value), 1)}>
+              <option value="">Seleccionar jugador</option>
+              {getAvailablePlayers(1).map(player => (
+                <option key={player.id} value={player.id}>{player.name}</option>
+              ))}
+            </select>
+            <label>🥈 Segundo lugar:</label>
+            <select onChange={(e) => handleSetClassification(players.find(p => p.id === e.target.value), 2)}>
+              <option value="">Seleccionar jugador</option>
+              {getAvailablePlayers(2).map(player => (
+                <option key={player.id} value={player.id}>{player.name}</option>
+              ))}
+            </select>
+            <label>🥉 Tercer lugar:</label>
+            <select onChange={(e) => handleSetClassification(players.find(p => p.id === e.target.value), 3)}>
+              <option value="">Seleccionar jugador</option>
+              {getAvailablePlayers(3).map(player => (
+                <option key={player.id} value={player.id}>{player.name}</option>
+              ))}
+            </select>
+            <div className="torneos-contenedor">
+              <button className="Torneo-button" onClick={handleSaveClasifications}>Guardar Clasificación</button>
+              <button className="Torneo-button cancelar" onClick={() => setShowClasifications(false)}>Cancelar</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
-};
+}

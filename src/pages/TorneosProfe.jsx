@@ -124,8 +124,13 @@ export default function TournamentsProfe() {
     const trimmedTorneoName = torneoName.trim();
     const trimmedCancha = cancha.trim();
 
-    if (!trimmedTorneoName || !trimmedCancha || !horario || !fecha || !precio || tournamentSize <= 0) {
-      alert("Por favor, complete todos los campos: nombre, cancha, horario, fecha, y precio y tamaño del torneo.");
+    if (!trimmedTorneoName || !trimmedCancha || !horario || !fecha || !precio) {
+      alert("Por favor, complete todos los campos: nombre, cancha, horario, fecha, y precio.");
+      return;
+    }
+
+    if (tournamentSize < 3) {
+      alert("El tamaño del torneo debe ser al menos 3 participantes.");
       return;
     }
 
@@ -302,9 +307,9 @@ export default function TournamentsProfe() {
                       <p>Tamaño del torneo: {torneo.tournamentSize}</p>
                       <p>Precio: ${torneo.precio}</p>
                     </div>
-                   <div className="Torneo-actions">
+                    <div className="Torneo-actions">
                       <button className="edit-button" onClick={() => handleEditTorneo(torneo)}>✏️ Editar</button>
-                      <button className="delete-button" onClick={() => handleDeleteTorneo(torneo.name)}>🗑️ Eliminar</button>
+                      <button className="delete-button" onClick={() => handleDeleteTorneo(torneo.id)}>🗑️ Eliminar</button>
                       {torneo.inscritos?.length > 0 && (
                         <button className="Entreno-button" onClick={() => handleOpenClasifications(torneo)}>
                           🏅 Agregar Clasificación
@@ -360,7 +365,7 @@ export default function TournamentsProfe() {
                   value={tournamentSize}
                   onChange={(e) => setTournamentSize(Number(e.target.value))}
                   placeholder="Máximo de jugadores"
-                  min="1"
+                  min="3"
                 />
               </div>
               <input
@@ -410,8 +415,10 @@ export default function TournamentsProfe() {
                   setCancha('');
                   setHorario('');
                   setFecha('');
-                  setProfesor('');
+                  setProfesor(profesorUid);
                   setPrecio('');
+                  setEditMode(false);
+                  setSelectedTorneoId(null);
                   setEditingTournament(null);
                 }}
               >
