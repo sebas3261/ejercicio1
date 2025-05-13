@@ -290,11 +290,11 @@ export default function EntrenosAdmin() {
                 ))}
               </select>
             </div>
-            <div className="entrenos-contenedor">
-              <button className="Entreno-button" onClick={handleSaveEntreno}>
+            <div className="torneos-contenedor">
+              <button className="Torneo-button" onClick={handleSaveEntreno}>
                 {editMode ? "Actualizar Entrenamiento" : "Crear Entrenamiento"}
               </button>
-              <button className="Entreno-button" onClick={() => {
+              <button className="Torneo-button cancelar" onClick={() => {
                 setShowCreateEntreno(false);
                 setEntrenoName('');
                 setCategoria('Infantil');
