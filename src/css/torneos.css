@@ -215,3 +215,17 @@
 .Torneo-button.cancelar:hover {
     background-color: #d32f2f; /* Cambio de color al pasar el mouse para cancelar */
 }
+
+.Torneos-title {
+    text-align: center; /* Centra el texto horizontalmente */
+    margin: 20px 0; /* Margen superior e inferior para separarlo del contenido */
+}
+
+/* Opcional: Para un mejor estilo visual */
+.Torneos-title {
+    text-align: center;
+    margin: 20px 0;
+    font-size: 24px; /* Tamaño de fuente */
+    font-weight: bold; /* Texto en negrita */
+    color: #333; /* Color del texto (gris oscuro) */
+}
