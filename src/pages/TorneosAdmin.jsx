@@ -229,6 +229,8 @@ export default function TorneosAdmin() {
             : tournament
         )
       );
+      setEditingTournament(null);
+      setSelectedClasifications([]);
     } catch (error) {
       alert("Error al guardar las clasificaciones: " + error.message);
     }
@@ -257,7 +259,7 @@ export default function TorneosAdmin() {
     <div className='Torneos-background'>
       <Header type="admin" />
       <TopImg number={5} />
-      {!showCreateTournament ? (
+      {!showCreateTournament && !showClasifications ? (
         <>
           <h2 className="Entrenos-title">Torneos</h2>
           <div className="Entrenos-card">
@@ -326,7 +328,7 @@ export default function TorneosAdmin() {
             </button>
           </div>
         </>
-      ) : (
+      ) : showCreateTournament ? (
         <div className="tournaments-container">
           <h2 className='Torneos-title'>{editingTournament ? "Editar Torneo" : "Crear nuevo torneo"}</h2>
           <div className="torneo-setup">
@@ -384,39 +386,48 @@ export default function TorneosAdmin() {
             </div>
           </div>
         </div>
-      )}
-      {showClasifications && editingTournament && (
-        <div className="clasification-modal">
-          <h3>Agregar Clasificación para {editingTournament.name}</h3>
-          <div className="clasification-form">
-            <label>🥇 Primer lugar:</label>
-            <select onChange={(e) => handleSetClassification(players.find(p => p.id === e.target.value), 1)}>
-              <option value="">Seleccionar jugador</option>
-              {getAvailablePlayers(1).map(player => (
-                <option key={player.id} value={player.id}>{player.name}</option>
-              ))}
-            </select>
-            <label>🥈 Segundo lugar:</label>
-            <select onChange={(e) => handleSetClassification(players.find(p => p.id === e.target.value), 2)}>
-              <option value="">Seleccionar jugador</option>
-              {getAvailablePlayers(2).map(player => (
-                <option key={player.id} value={player.id}>{player.name}</option>
-              ))}
-            </select>
-            <label>🥉 Tercer lugar:</label>
-            <select onChange={(e) => handleSetClassification(players.find(p => p.id === e.target.value), 3)}>
-              <option value="">Seleccionar jugador</option>
-              {getAvailablePlayers(3).map(player => (
-                <option key={player.id} value={player.id}>{player.name}</option>
-              ))}
-            </select>
+      ) : showClasifications && editingTournament ? (
+        <div className="tournaments-container">
+          <h2 className='Torneos-title'>Agregar Clasificación para {editingTournament.name}</h2>
+          <div className="torneo-setup">
+            <div className="torneo-form-container">
+              <label>🥇 Primer lugar:</label>
+              <select onChange={(e) => handleSetClassification(players.find(p => p.id === e.target.value), 1)}>
+                <option value="">Seleccionar jugador</option>
+                {getAvailablePlayers(1).map(player => (
+                  <option key={player.id} value={player.id}>{player.name}</option>
+                ))}
+              </select>
+              <label>🥈 Segundo lugar:</label>
+              <select onChange={(e) => handleSetClassification(players.find(p => p.id === e.target.value), 2)}>
+                <option value="">Seleccionar jugador</option>
+                {getAvailablePlayers(2).map(player => (
+                  <option key={player.id} value={player.id}>{player.name}</option>
+                ))}
+              </select>
+              <label>🥉 Tercer lugar:</label>
+              <select onChange={(e) => handleSetClassification(players.find(p => p.id === e.target.value), 3)}>
+                <option value="">Seleccionar jugador</option>
+                {getAvailablePlayers(3).map(player => (
+                  <option key={player.id} value={player.id}>{player.name}</option>
+                ))}
+              </select>
+            </div>
             <div className="torneos-contenedor">
-              <button className="Torneo-button" onClick={handleSaveClasifications}>Guardar Clasificación</button>
-              <button className="Torneo-button cancelar" onClick={() => setShowClasifications(false)}>Cancelar</button>
+              <button className="Torneo-button" onClick={handleSaveClasifications}>
+                Guardar Clasificación
+              </button>
+              <button className="Torneo-button cancelar" onClick={() => {
+                setShowClasifications(false);
+                setEditingTournament(null);
+                setSelectedClasifications([]);
+              }}>
+                Cancelar
+              </button>
             </div>
           </div>
         </div>
-      )}
+      ) : null}
     </div>
   );
 }
