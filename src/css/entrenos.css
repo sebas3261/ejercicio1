@@ -346,3 +346,27 @@
   padding-top: 20px;
   font-family: 'Roboto', sans-serif;
 }
+
+.Entreno-button {
+    padding: 10px 20px; /* Padding vertical de 10px y horizontal de 20px */
+    display: block; /* Hace que el botón ocupe todo el ancho disponible y pueda centrarse */
+    margin: 0 auto; /* Centra el botón horizontalmente */
+    text-align: center; /* Centra el texto dentro del botón */
+}
+
+/* Opcional: Para un mejor estilo visual */
+.Entreno-button {
+    padding: 10px 20px;
+    display: block;
+    margin: 0 auto;
+    text-align: center;
+    background-color: #4CAF50; /* Color de fondo verde */
+    color: white; /* Color del texto blanco */
+    border: none; /* Sin borde */
+    border-radius: 5px; /* Bordes redondeados */
+    cursor: pointer; /* Cambia el cursor a mano al pasar por encima */
+}
+
+.Entreno-button:hover {
+    background-color: #45a049; /* Cambio de color al pasar el mouse */
+}
