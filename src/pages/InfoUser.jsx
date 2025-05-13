@@ -54,7 +54,7 @@ export default function InfoUser() {
           if (entrenoData.categoria === userData.categoria) {
             totalCategoryTrainings++;
           }
-          if (entrenoData.asistencia && entrenoData.asistencia.includes(uid)) {
+          if (entrenoData.asistencia && Array.isArray(entrenoData.asistencia) && entrenoData.asistencia.includes(uid)) {
             attendedTrainings++;
           }
         });
@@ -74,28 +74,34 @@ export default function InfoUser() {
           const tournamentData = doc.data();
           const tournamentId = doc.id;
 
-          if (tournamentData.categoria === userData.categoria) {
+          // Verificar que el torneo tenga una categoría y que coincida con la del usuario
+          if (tournamentData.categoria && tournamentData.categoria === userData.categoria) {
             totalCategoryTournaments++;
+          } else {
+            console.log(`Torneo ${tournamentData.name || tournamentId} no tiene categoría o no coincide:`, tournamentData.categoria);
           }
 
-          if (tournamentData.inscritos && tournamentData.inscritos.includes(uid)) {
+          // Verificar si el usuario está inscrito en el torneo
+          if (tournamentData.inscritos && Array.isArray(tournamentData.inscritos) && tournamentData.inscritos.includes(uid)) {
             attendedTournaments++;
-          }
 
-          if (tournamentData.rankings && Array.isArray(tournamentData.rankings)) {
-            const userFirstPlace = tournamentData.rankings.find(
-              (rank) => rank.id === uid && rank.position === 0
-            );
-
-            if (userFirstPlace) {
-              wonTournaments++;
-              firstPlaceList.push({
-                id: tournamentId,
-                name: tournamentData.name,
-                fecha: tournamentData.fecha || "No definida",
-                categoria: tournamentData.categoria,
-              });
+            // Verificar si el usuario ganó (position 0 in rankings array, id matches uid, and position === 1)
+            if (tournamentData.rankings && Array.isArray(tournamentData.rankings) && tournamentData.rankings.length > 0) {
+              const firstPlaceRank = tournamentData.rankings[0]; // Check the first entry in rankings
+              if (firstPlaceRank.id === uid && firstPlaceRank.position === 1) {
+                wonTournaments++;
+                firstPlaceList.push({
+                  id: tournamentId,
+                  name: tournamentData.name || "Nombre no definido",
+                  fecha: tournamentData.fecha || "No definida",
+                  categoria: tournamentData.categoria || "Desconocida",
+                  cancha: tournamentData.cancha || "No definida",
+                });
+                console.log(`Usuario ganó torneo ${tournamentData.name || tournamentId}:`, firstPlaceRank);
+              }
             }
+          } else {
+            console.log(`Usuario no inscrito en torneo ${tournamentData.name || tournamentId}:`, tournamentData.inscritos);
           }
         });
 
@@ -103,6 +109,10 @@ export default function InfoUser() {
         setTotalTournaments(totalCategoryTournaments);
         setTournamentsWon(wonTournaments);
         setFirstPlaceTournaments(firstPlaceList);
+
+        console.log("Total torneos en categoría:", totalCategoryTournaments);
+        console.log("Torneos participados:", attendedTournaments);
+        console.log("Torneos ganados:", wonTournaments);
 
       } catch (error) {
         console.error("Error al cargar datos del usuario:", error);
@@ -131,7 +141,7 @@ export default function InfoUser() {
   const pieChartDataTournaments = [
     ["Torneos", "Cantidad"],
     ["Participados", tournamentCount],
-    ["No participados", totalTournaments - tournamentCount],
+    ["No participados", Math.max(totalTournaments - tournamentCount, 0)], // Evitar valores negativos
   ];
 
   const pieChartOptions = {
@@ -178,7 +188,7 @@ export default function InfoUser() {
                   <li key={tournament.id} className="first-place-item">
                     <span>🏆 {tournament.name}</span>
                     <span>Fecha: {tournament.fecha}</span>
-                    <span>Categoría: {tournament.categoria}</span>
+                    
                   </li>
                 ))}
               </ul>
