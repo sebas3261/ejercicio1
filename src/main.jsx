@@ -12,7 +12,7 @@ import TorneosUser from "./pages/TorneosUser";
 import InfoUser from "./pages/InfoUser";
 import UserHome from "./pages/UserHome";
 import EntrenosProfe from "./pages/EntrenosProfe"
-import TorneosProfe from "./pages/TorneosProfe"
+import EntrenosProfe1 from "./pages/EntrenosProfe1"
 
 import Infoadmin from "./pages/infoadmin"
 import GestionPagosAdmin from "./pages/GestionPagosAdmin";
@@ -37,7 +37,7 @@ createRoot(document.getElementById("root")).render(
         <Route path="/infoUser" element={<PrivateRoute type="user"><InfoUser /></PrivateRoute>} />
         <Route path="/infoadmin" element={<PrivateRoute type="admin"><Infoadmin /></PrivateRoute>} />
         <Route path="/entrenosprofe" element={<PrivateRoute type="profesor"><EntrenosProfe /></PrivateRoute>} />
-        <Route path="/torneosprofe" element={<PrivateRoute type="profesor"><TorneosProfe /></PrivateRoute>} />
+        <Route path="/entrenosprofe1" element={<PrivateRoute type="profesor"><EntrenosProfe1 /></PrivateRoute>} />
         <Route path="/gestionpagos" element={<PrivateRoute type="admin"><GestionPagosAdmin /></PrivateRoute>} />
         <Route path="/pagosuser" element={<PrivateRoute type="user"><PagosUser /></PrivateRoute>} />
         <Route path="*" element={<Navigate to="/" replace />} />

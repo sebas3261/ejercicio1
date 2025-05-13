@@ -97,6 +97,14 @@
   padding-bottom: 40px;
 }
 
+
+
+.Torneo-mark-attendance, .Entreno-remove-attendance {
+  padding: 5px 10px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
 .Torneo-details {
   display: flex;
   flex-direction: column;
@@ -232,4 +240,13 @@ td {
     width: 100%; /* Tabla ocupa todo el ancho */
     max-width: 400px; /* Límite para consistencia */
   }
+}
+.asistencia-container{
+  display: flex;
+  gap: 10px; 
+  justify-content: flex-start; 
+  align-items: center;
+  margin-right: 25px;
+  
+
 }
