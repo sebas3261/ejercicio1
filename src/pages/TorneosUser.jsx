@@ -127,6 +127,7 @@ export default function TorneosUsuario() {
                     </button>
                   )}
                 </div>
+                
               </div>
             ))}
           </div>

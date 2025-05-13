@@ -272,6 +272,7 @@ const handleOpenClasifications = (tournament) => {
                       <p>Profesor: {players.find(p => p.id === tournament.profesor)?.name || 'No asignado'}</p>
                       <p>Tamaño del torneo: {tournament.tournamentSize}</p>
                       <p>Precio: ${tournament.precio}</p>
+                      <p>Clasificaciones: {tournament.rankings ? tournament.rankings.map(r => <span key={r.id}>{r.position}</span>) : 'No definidas'}</p>
                     </div>
                     <div className="Torneo-actions">
                       <button className="edit-button" onClick={() => handleEditTournament(tournament)}>✏️ Editar</button>
@@ -282,6 +283,20 @@ const handleOpenClasifications = (tournament) => {
   </button>
 )}
                     </div>
+                    <div className="asistencia-container">
+                      <h4>Usuarios Inscritos:</h4>
+    {players.filter(p => tournament.inscritos?.includes(p.id)).length > 0 ? (
+      <ul>
+        {players
+          .filter(p => tournament.inscritos?.includes(p.id))
+          .map(player => (
+            <li key={player.id}>{player.name}</li>
+          ))}
+      </ul>
+    ) : (
+      <p>No hay usuarios inscritos aún.</p>
+    )}
+                      </div>
                   </div>
                 ))}
               </div>
