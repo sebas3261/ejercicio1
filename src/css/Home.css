@@ -3,62 +3,84 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background: url("../assets/fondo.jpg"); 
-    background-size: 100vw; /* La imagen ocupará la mitad superior */
-    background-origin: content-box;
+    background: url("../assets/fondo.jpg");
+    background-size: cover;
+    background-position: center;
     background-repeat: no-repeat;
-    background-attachment: fixed; 
+    background-attachment: fixed;
     overflow: hidden;
 }
 
-.home-backbox{
+.home-backbox {
     color: white;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-
-    h1{
-        font-size: 90px;
-    }
-
-    
+    text-align: center;
 }
 
-input, select, textarea{
-    border-radius: 20px ;
+.home-backbox h1 {
+    font-size: 90px;
+    margin-bottom: 30px;
+}
+
+input,
+select,
+textarea {
+    border-radius: 20px;
     width: 200px;
-    height: 25px;
+    height: 30px;
     padding-left: 10px;
     margin-bottom: 10px;
-    border-color: white;
-    border-style: none ;
+    border: none;
+    outline: none;
 }
 
-textarea{
+textarea {
     padding-top: 10px;
     height: 50px;
 }
 
-.home-button{
-    border: solid white;
+.home-button {
+    border: 2px solid white;
     font-size: 20px;
     border-radius: 20px;
-    width: 120px;
+    width: 140px;
+    padding: 10px 20px;
+    color: white;
+    background-color: transparent;
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
+    margin-top: 10px;
+    transition: background 0.3s ease, color 0.3s ease;
 }
 
-.navlink{
+.home-button:hover {
+    background-color: white;
+    color: #333;
+}
+
+.navlink {
     text-decoration: none;
-    color: inherit;
+    color: white;
+    font-size: 14px;
+    margin-top: 12px;
+    transition: color 0.3s ease;
+}
+
+.navlink:hover {
+    color: #c0ffc7;
 }
 
 @media (max-width: 700px) {
-    .home-background{
+    .home-background {
         background-size: 200vh;
     }
-  }
 
+    .home-backbox h1 {
+        font-size: 60px;
+    }
+}

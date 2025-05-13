@@ -3,10 +3,12 @@ import "./header.css";
 import { NavLink } from "react-router";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router";
+
 export default function Header({ type }) {
   const { logout } = useAuth();
   const navigate = useNavigate();
-  const handleLogout =  () => {
+  
+  const handleLogout = () => {
     const confirmLogOut = window.confirm("¿Estás seguro de que deseas cerrar tu sesión?");
   
     if (!confirmLogOut) {
@@ -14,39 +16,36 @@ export default function Header({ type }) {
     }
     else {
       logout();
-    navigate("/");
-
+      navigate("/");
     }
-    
-
-    
   }
+  
   if (type == "profesor") {
     return (
       <div className="header-container">
+        <div className="logo">
+          CourtSide
+        </div>
         <div className="header-content">
           <NavLink to={"/entrenosProfe"} className={"navlink"}>
-            <p>Entrenos</p>
-          </NavLink>
-            <NavLink to={"/TorneosProfe"} className={"navlink"}>
-            <p>Torneos</p>
+            <p>Entrenamiento</p>
           </NavLink>
         </div>
-        <div onClick={handleLogout}>
+        <div onClick={handleLogout} className="logout-btn">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="40"
             height="40"
             fill="currentColor"
-            class="bi bi-box-arrow-right"
+            className="bi bi-box-arrow-right"
             viewBox="0 0 16 16"
           >
             <path
-              fill-rule="evenodd"
+              fillRule="evenodd"
               d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0z"
             />
             <path
-              fill-rule="evenodd"
+              fillRule="evenodd"
               d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z"
             />
           </svg>
@@ -54,9 +53,13 @@ export default function Header({ type }) {
       </div>
     );
   }
+  
   if (type == "admin") {
     return (
       <div className="header-container">
+        <div className="logo">
+          CourtSide
+        </div>
         <div className="header-content">
           <NavLink to={"/admindashboard"} className={"navlink"}>
             <p>Inicio</p>
@@ -68,27 +71,27 @@ export default function Header({ type }) {
             <p>Torneos</p>
           </NavLink>
           <NavLink to={"/infoadmin"} className={"navlink"}>
-          <p>Infromacion General</p>
-        </NavLink>
-        <NavLink to={"/gestionpagos"} className={"navlink"}>
-          <p>Gestión Pagos</p>
-        </NavLink>
+            <p>Información General</p>
+          </NavLink>
+          <NavLink to={"/gestionpagos"} className={"navlink"}>
+            <p>Gestión Pagos</p>
+          </NavLink>
         </div>
-        <div onClick={handleLogout}>
+        <div onClick={handleLogout} className="logout-btn">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="40"
             height="40"
             fill="currentColor"
-            class="bi bi-box-arrow-right"
+            className="bi bi-box-arrow-right"
             viewBox="0 0 16 16"
           >
             <path
-              fill-rule="evenodd"
+              fillRule="evenodd"
               d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0z"
             />
             <path
-              fill-rule="evenodd"
+              fillRule="evenodd"
               d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z"
             />
           </svg>
@@ -96,8 +99,12 @@ export default function Header({ type }) {
       </div>
     );
   }
+  
   return (
     <div className="header-container">
+      <div className="logo">
+        CourtSide
+      </div>
       <div className="header-content">
         <NavLink to={"/userdashboard"} className={"navlink"}>
           <p>Inicio</p>
@@ -112,21 +119,21 @@ export default function Header({ type }) {
           <p>Mi Información</p>
         </NavLink>
       </div>
-      <div onClick={handleLogout}>
+      <div onClick={handleLogout} className="logout-btn">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="40"
           height="40"
           fill="currentColor"
-          class="bi bi-box-arrow-right"
+          className="bi bi-box-arrow-right"
           viewBox="0 0 16 16"
         >
           <path
-            fill-rule="evenodd"
+            fillRule="evenodd"
             d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0z"
           />
           <path
-            fill-rule="evenodd"
+            fillRule="evenodd"
             d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z"
           />
         </svg>

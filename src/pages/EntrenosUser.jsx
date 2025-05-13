@@ -76,7 +76,7 @@ export default function EntrenosHome() {
   return (
     <div className="Entrenos-background">
       <Header type="user" />
-      <TopImg number={2} />
+      <TopImg number={6} />
       <h2 className="Entrenos-title">Entrenamientos Programados</h2>
       <div className="Entrenos-card">
         <div className="Entrenos-list">

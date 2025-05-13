@@ -3,11 +3,11 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background: url("../assets/fondo2.jpg"); 
+    background: url("../assets/fondo2.jpg");
     background-size: 100vw;
     background-origin: content-box;
     background-repeat: no-repeat;
-    background-attachment: fixed; 
+    background-attachment: fixed;
     color: white;
 }
 
@@ -44,8 +44,20 @@
     margin-bottom: 10px;
 }
 
+.register-white-button {
+    background-color: white !important;
+    color: #333 !important;
+    border: solid white !important;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.register-white-button:hover {
+    background-color: transparent !important;
+    color: white !important;
+}
+
 @media (max-width: 700px) {
     .signup-background{
         background-size: 200vh;
     }
-  }
+}

@@ -1,35 +1,165 @@
 .User-background {
-  height: 100vh;
+  min-height: 100vh;
   background-color: #e6f6ff;
+  overflow-x: hidden;
+  position: relative;
+}
+
+.User-background::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('/ruta-a-tu-imagen/relieve.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0.3;
+  z-index: -1;
+}
+
+.User-background::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 100%;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent,
+    transparent 15px,
+    rgba(74, 124, 89, 0.2) 15px,
+    rgba(74, 124, 89, 0.2) 30px
+  );
+  z-index: -1;
+}
+
+.Admin-img-container {
+  width: 100%;
+  height: 350px;
   overflow: hidden;
+  position: relative;
+  margin: 0 auto;
+  z-index: 1;
+}
+
+.Admin-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+  display: block;
 }
 
 .User-card {
-    background: linear-gradient(to bottom, #C2D1B0, #ffffff); /* Degradado verde */
-    height: 400px;
-    width: 90vw;
-    margin: 50px auto;
-    border-radius: 20px ;
-    box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.25); 
-    
+  background: linear-gradient(to bottom right, #f8f9fa, #ffffff);
+  width: 95%;
+  max-width: 1400px;
+  margin: 20px auto;
+  min-height: 320px;
+  padding: 40px 30px;
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  position: relative;
+  z-index: 2;
+  border-left: 5px solid #4a7c59;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .User-card-header {
-  display: flex; 
-  flex-direction: column;
-  align-items: center; 
-  justify-content: center; 
-  height: 100%; 
-  text-align: center; 
-  
-}
-.home-button{
-  border: solid white;
-  font-size: 20px;
-  border-radius: 20px;
-  width: 120px;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eaeaea;
+  position: relative;
+}
+
+.User-card-header::before {
+  content: "";
+  position: absolute;
+  top: -20px;
+  left: 0;
+  width: 60px;
+  height: 3px;
+  background-color: #4a7c59;
+  border-radius: 3px;
+}
+
+.evento-title {
+  font-size: 32px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.torneos-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.home-button {
+  background-color: #4a7c59;
+  color: white;
+  font-size: 15px;
+  border-radius: 8px;
+  padding: 12px 24px;
+  border: none;
   cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  box-shadow: 0 4px 6px rgba(74, 124, 89, 0.2);
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+  text-decoration: none;
+}
+
+.home-button:hover {
+  background-color: #3e6a4a;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(74, 124, 89, 0.25);
+}
+
+.home-button::after {
+  content: "→";
+  margin-left: 8px;
+  transition: transform 0.3s ease;
+}
+
+.home-button:hover::after {
+  transform: translateX(4px);
+}
+
+.centered-large {
+  font-size: 20px;
+  padding: 20px 60px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(74, 124, 89, 0.25);
+  text-align: center;
+  font-weight: 600;
+}
+
+.full-width-button {
+  width: 100%;
+  max-width: 500px; /* Puedes ajustar este valor a 600px si lo deseas aún más ancho */
+  margin: 0 auto;
+  display: block;
+}
+
+.navlink-button {
+  text-decoration: none;
+  color: inherit;
 }

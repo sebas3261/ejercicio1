@@ -135,7 +135,7 @@ export default function TorneosUsuario() {
   return (
     <div className='Torneos-background'>
       <Header type="usuario" />
-      <TopImg number={1} />
+      <TopImg number={5} />
       <h2 className='Torneos-title'>
         {userCategoria ? `Torneos ${userCategoria} Disponibles` : 'Cargando Torneos...'}
       </h2>

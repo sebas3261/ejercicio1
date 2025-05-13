@@ -9,9 +9,8 @@ export default function SignUp() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
   const [errorType, setErrorType] = useState(1);
-  const {signUp} = useAuth()
+  const { signUp } = useAuth();
   const navigate = useNavigate();
-  
 
   const [user, setUser] = useState({
     name: "",
@@ -30,15 +29,15 @@ export default function SignUp() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if ((name == "name" || name =="emergencyContact") && !/^[a-zA-Z\s6]*$/.test(value)) {
+    if ((name === "name" || name === "emergencyContact") && !/^[a-zA-Z\s6]*$/.test(value)) {
       return;
     }
 
-    if (name == "lastname" && !/^[a-zA-Z\s]*$/.test(value)) {
+    if (name === "lastname" && !/^[a-zA-Z\s]*$/.test(value)) {
       return;
     }
 
-    if ((name == "number" || name == "emergenciContactNumber") && !/^3\d{0,9}$/.test(value)) {
+    if ((name === "number" || name === "emergenciContactNumber") && !/^3\d{0,9}$/.test(value)) {
       return;
     }
 
@@ -48,23 +47,20 @@ export default function SignUp() {
     }));
   };
 
-  const handleNext = () => {  
-    
-    if(step == 1){
-        user.category = getCategoriaByEdad()
-        console.log(user)
+  const handleNext = () => {
+    if (step === 1) {
+      user.category = getCategoriaByEdad();
+      console.log(user);
     }
 
-
-    if(error){
-        return
+    if (error) {
+      return;
     }
     setStep(step + 1);
-    setError(true)
-};
+    setError(true);
+  };
 
-
-  const handleSignUp = async() => {
+  const handleSignUp = async () => {
     setError(false);
     const emailPattern = /^[^\s@]+@[a-zA-Z.-]+\.[a-zA-Z]{2,}$/;
 
@@ -74,7 +70,7 @@ export default function SignUp() {
       return false;
     }
 
-    if (password == "") {
+    if (password === "") {
       setErrorType(5);
       setError(true);
       return false;
@@ -84,13 +80,12 @@ export default function SignUp() {
       setError(true);
       return false;
     }
-    try{
-        await signUp(user, password)
-        navigate("/");
-        alert("Registro completado exitosamente");
-    }
-    catch(error){
-        console.log(error)
+    try {
+      await signUp(user, password);
+      navigate("/");
+      alert("Registro completado exitosamente");
+    } catch (error) {
+      console.log(error);
     }
     setError(false);
     return true;
@@ -101,7 +96,6 @@ export default function SignUp() {
     const fechaNac = new Date(user.birthday);
     let edad = fechaActual.getFullYear() - fechaNac.getFullYear();
 
-    // Ajustar la edad si aún no ha pasado el cumpleaños este año
     if (
       fechaActual.getMonth() < fechaNac.getMonth() ||
       (fechaActual.getMonth() === fechaNac.getMonth() && fechaActual.getDate() < fechaNac.getDate())
@@ -118,7 +112,7 @@ export default function SignUp() {
     } else if (edad >= 40 && edad <= 100) {
       return 'Profesional';
     } else {
-      return 'Infantil'; // Por defecto, aunque la validación previa debería evitar esto
+      return 'Infantil';
     }
   };
 
@@ -136,7 +130,7 @@ export default function SignUp() {
       />
       <div>
         {step > 1 && (
-          <button onClick={() => {setStep(step - 1); setError(false)}} className="signup-button">
+          <button onClick={() => { setStep(step - 1); setError(false); }} className="signup-button">
             Anterior
           </button>
         )}
@@ -145,14 +139,18 @@ export default function SignUp() {
             Siguiente
           </button>
         )}
-        {step == 3 && (
-          <button onClick={handleSignUp} className="signup-button">
+        {step === 3 && (
+          <button onClick={handleSignUp} className="signup-button register-white-button">
             Registrarse
           </button>
         )}
       </div>
-      <NavLink to={"/"} className={"navlink"}>
-        <div>¿Ya tienes cuenta? Inicia Sesion</div>
+      <NavLink
+        to="/login"
+        className="navlink"
+        style={{ color: "white", fontWeight: "bold", marginTop: "5px" }}
+      >
+        ¿Ya tienes cuenta? Iniciar sesión
       </NavLink>
     </div>
   );
