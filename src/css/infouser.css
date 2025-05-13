@@ -136,3 +136,29 @@
   .pay-button:hover{
     background-color: #45a049;
     }
+
+  .first-place-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+}
+
+.first-place-item {
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem;
+  border-bottom: 1px solid #e0e0e0;
+  font-size: 0.9rem;
+}
+
+.first-place-item span:first-child {
+  font-weight: bold;
+  color: #215723;
+}
+
+.no-wins {
+  font-style: italic;
+  color: #666;
+  margin-top: 1rem;
+  text-align: center;
+}
