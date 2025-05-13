@@ -29,7 +29,7 @@ export default function TournamentsProfe() {
 
   const horariosDisponibles = [
     "8:00-9:30", "10:00-11:30", "12:00-13:30", "14:00-15:30",
-    "16:00-17:30", "18:00-19:30", "20:00-21:30"
+    "16:00-17:30", "18 Aquino:00-19:30", "20:00-21:30"
   ];
 
   const today = new Date();
@@ -167,7 +167,6 @@ export default function TournamentsProfe() {
     if (!trimmedTorneoName || !trimmedCancha || !horario || !fecha || !precio || tournamentSize <= 0) {
       alert("Por favor, complete todos los campos: nombre, cancha, horario, fecha, y  precio y tamaño del torneo.");
       return;
-      
     }
 
     const selectedDate = new Date(fecha);
@@ -191,7 +190,7 @@ export default function TournamentsProfe() {
       if (nombreDuplicado) {
         alert("Ya existe un torneo con este nombre. Por favor, elige otro nombre.");
         return;
-        }
+      }
 
       const canchaOcupada = tournamentsList.some(torneo => 
         torneo.cancha === trimmedCancha && 
@@ -320,83 +319,84 @@ export default function TournamentsProfe() {
     setShowClasifications(true);
     setSelectedClasifications(torneo.rankings || []);
   };
-return (
-  <div className="Entrenos-background">
-    <Header type="profesor" />
-    <TopImg number={5} />
-    {!showCreateTorneo ? (
-      <>
-        <h2 className="Entrenos-title">Torneos del Profesor</h2>
-        <div className="Entrenos-card">
-          <div className="Entrenos-list-container">
-            <div className="Entrenos-list">
-              {tournaments.filter(torneo => torneo.profesor?.id === profesorUid).map((torneo, index) => (
-                <div key={index} className="Entreno-item">
-                  <div className="Entreno-image"></div>
-                  <div className="Entreno-info">
-                    <h3>{torneo.name}</h3>
-                    <p>Categoría: {torneo.categoria}</p>
-                    <p>Cancha: {torneo.cancha}</p>
-                    <p>Horario: {torneo.horario || "No definido"}</p>
-                    <p>Fecha: {torneo.fecha || "No definida"}</p>
-                    <p>Profesor: {players.find(p => p.id === torneo.profesor?.id)?.name}</p>
-                    <p>Tamaño del torneo: {torneo.tournamentSize}</p>
-                    <p>Precio: ${torneo.precio}</p>
-                  </div>
-                 <div className="Torneo-actions">
+
+  return (
+    <div className="Entrenos-background">
+      <Header type="profesor" />
+      <TopImg number={5} />
+      {!showCreateTorneo ? (
+        <>
+          <h2 className="Entrenos-title">Torneos del Profesor</h2>
+          <div className="Entrenos-card">
+            <div className="Entrenos-list-container">
+              <div className="Entrenos-list">
+                {tournaments.filter(torneo => torneo.profesor?.id === profesorUid).map((torneo, index) => (
+                  <div key={index} className="Entreno-item">
+                    <div className="Entreno-image"></div>
+                    <div className="Entreno-info">
+                      <h3>{torneo.name}</h3>
+                      <p>Categoría: {torneo.categoria}</p>
+                      <p>Cancha: {torneo.cancha}</p>
+                      <p>Horario: {torneo.horario || "No definido"}</p>
+                      <p>Fecha: {torneo.fecha || "No definida"}</p>
+                      <p>Profesor: {players.find(p => p.id === torneo.profesor?.id)?.name}</p>
+                      <p>Tamaño del torneo: {torneo.tournamentSize}</p>
+                      <p>Precio: ${torneo.precio}</p>
+                    </div>
+                    <div className="Torneo-actions">
                       <button className="edit-button" onClick={() => handleEditTorneo(torneo)}>✏️ Editar</button>
                       <button className="delete-button" onClick={() => handleDeleteTorneo(torneo.name)}>🗑️ Eliminar</button>
-                       {new Date(torneo.fecha) < new Date() && (
-                      <button className="Entreno-button" onClick={() => handleOpenClasifications(torneo)}>
-                        🏅 Agregar Clasificación
-                      </button>
-                    )}
-                  </div>
-                  <div className="asistencia-container">
-                    <p className="Entreno-mark-attendance">Marque/desmarque la asistencia</p>
-                    <div>
-                      {players
-                        .filter(
-                          player =>
-                            player.categoria === torneo.categoria &&
-                            player.type === "user" &&
-                            player.isAuthenticated === true
-                        )
-                        .map(player => (
-                          <div key={player.id}>
-                            <input
-                              type="checkbox"
-                              checked={attendanceSelection[torneo.id]?.[player.id] || false}
-                              onChange={e => handleAttendanceChange(torneo.id, player.id, e.target.checked)}
-                            />
-                            <label>{player.name}</label>
-                          </div>
-                        ))}
+                      {/* {new Date(torneo.fecha) < new Date() && ( */}
+                        <button className="Entreno-button" onClick={() => handleOpenClasifications(torneo)}>
+                          🏅 Agregar Clasificación
+                        </button>
+                      {/* )} */}
+                    </div>
+                    <div className="asistencia-container">
+                      <p className="Entreno-mark-attendance">Marque/desmarque la asistencia</p>
+                      <div>
+                        {players
+                          .filter(
+                            player =>
+                              player.categoria === torneo.categoria &&
+                              player.type === "user" &&
+                              player.isAuthenticated === true
+                          )
+                          .map(player => (
+                            <div key={player.id}>
+                              <input
+                                type="checkbox"
+                                checked={attendanceSelection[torneo.id]?.[player.id] || false}
+                                onChange={e => handleAttendanceChange(torneo.id, player.id, e.target.checked)}
+                              />
+                              <label>{player.name}</label>
+                            </div>
+                          ))}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
-        </div>
-        <div className="entrenos-contenedor">
-          <button className="Entreno-button" onClick={() => setShowCreateTorneo(true)}>
-            Crear nuevo Torneo
-          </button>
-        </div>
-      </>
+          <div className="entrenos-contenedor">
+            <button className="Entreno-button" onClick={() => setShowCreateTorneo(true)}>
+              Crear nuevo Torneo
+            </button>
+          </div>
+        </>
       ) : (
-       <div className="tournaments-container">
-          <h2 className='Torneos-title'>{editingTournament ? "Editar Torneo" : "Crear nuevo torneo"}</h2>
+        <div className="tournaments-container">
+          <h2 className="Torneos-title">{editingTournament ? "Editar Torneo" : "Crear nuevo torneo"}</h2>
           <div className="torneo-setup">
             <div className="torneo-form-container">
-            <input
-              type="text"
-              value={torneoName}
-              onChange={e => setTorneoName(e.target.value)}
-              placeholder="Nombre Torneo"
-            />  
-                <select value={categoria} onChange={(e) => setCategoria(e.target.value)}>
+              <input
+                type="text"
+                value={torneoName}
+                onChange={e => setTorneoName(e.target.value)}
+                placeholder="Nombre Torneo"
+              />
+              <select value={categoria} onChange={(e) => setCategoria(e.target.value)}>
                 <option value="Infantil">Infantil</option>
                 <option value="Juvenil">Juvenil</option>
                 <option value="Adulto">Adulto</option>
@@ -404,9 +404,21 @@ return (
               </select>
               <div className="num-players-container">
                 <span className="num-players-label">Tamaño del torneo:</span>
-                <input type="number" value={tournamentSize} onChange={(e) => setTournamentSize(Number(e.target.value))} placeholder="Máximo de jugadores" min="1" />
+                <input
+                  type="number"
+                  value={tournamentSize}
+                  onChange={(e) => setTournamentSize(Number(e.target.value))}
+                  placeholder="Máximo de jugadores"
+                  min="1"
+                />
               </div>
-              <input type="number" value={precio} onChange={(e) => setPrecio(e.target.value)} placeholder="Precio del torneo" min="0" />
+              <input
+                type="number"
+                value={precio}
+                onChange={(e) => setPrecio(e.target.value)}
+                placeholder="Precio del torneo"
+                min="0"
+              />
               <select value={cancha} onChange={(e) => setCancha(e.target.value)}>
                 <option value="">Seleccionar Cancha</option>
                 {getCanchasDisponibles().map(canchaOption => (
@@ -419,29 +431,39 @@ return (
                   <option key={horarioOption} value={horarioOption}>{horarioOption}</option>
                 ))}
               </select>
-              <input type="date" value={fecha} onChange={(e) => setFecha(e.target.value)} min={minDateStr} max={maxDateStr} placeholder="Seleccionar Fecha" />
-             <select value={profesor} disabled>
-          <option value={profesorUid}>
-            {players.find(p => p.id === profesorUid)?.name}
-          </option>
-        </select>
+              <input
+                type="date"
+                value={fecha}
+                onChange={(e) => setFecha(e.target.value)}
+                min={minDateStr}
+                max={maxDateStr}
+                placeholder="Seleccionar Fecha"
+              />
+              <select value={profesor} disabled>
+                <option value={profesorUid}>
+                  {players.find(p => p.id === profesorUid)?.name}
+                </option>
+              </select>
             </div>
             <div className="torneos-contenedor">
               <button className="Torneo-button" onClick={handleCreateOrEditTorneo}>
                 {editingTournament ? "Actualizar Torneo" : "Crear Torneo"}
               </button>
-              <button className="Torneo-button cancelar" onClick={() => {
-                setShowCreateTorneo(false);
-                setTorneoName('');
-                setCategoria('Infantil');
-                setTournamentSize(0);
-                setCancha('');
-                setHorario('');
-                setFecha('');
-                setProfesor('');
-                setPrecio('');
-                setEditingTournament(null);
-              }}>
+              <button
+                className="Torneo-button cancelar"
+                onClick={() => {
+                  setShowCreateTorneo(false);
+                  setTorneoName('');
+                  setCategoria('Infantil');
+                  setTournamentSize(0);
+                  setCancha('');
+                  setHorario('');
+                  setFecha('');
+                  setProfesor('');
+                  setPrecio('');
+                  setEditingTournament(null);
+                }}
+              >
                 Cancelar
               </button>
             </div>
@@ -449,41 +471,37 @@ return (
         </div>
       )}
       {showClasifications && editingTournament && (
-  <div className="clasification-modal">
-    <h3>Agregar Clasificación para {editingTournament.name}</h3>
-    <div className="clasification-form">
-      <label>🥇 Primer lugar:</label>
-      <select onChange={(e) => handleSetClassification(players.find(p => p.id === e.target.value), 1)}>
-        <option value="">Seleccionar jugador</option>
-        {players.filter(p => editingTournament.inscritos?.includes(p.id)).map(player => (
-          <option key={player.id} value={player.id}>{player.name}</option>
-        ))}
-      </select>
-
-      <label>🥈 Segundo lugar:</label>
-      <select onChange={(e) => handleSetClassification(players.find(p => p.id === e.target.value), 2)}>
-        <option value="">Seleccionar jugador</option>
-        {players.filter(p => editingTournament.inscritos?.includes(p.id)).map(player => (
-          <option key={player.id} value={player.id}>{player.name}</option>
-        ))}
-      </select>
-
-      <label>🥉 Tercer lugar:</label>
-      <select onChange={(e) => handleSetClassification(players.find(p => p.id === e.target.value), 3)}>
-        <option value="">Seleccionar jugador</option>
-        {players.filter(p => editingTournament.inscritos?.includes(p.id)).map(player => (
-          <option key={player.id} value={player.id}>{player.name}</option>
-        ))}
-      </select>
-
-      <div className="torneos-contenedor">
-        <button className="Torneo-button" onClick={handleSaveClasifications}>Guardar Clasificación</button>
-        <button className="Torneo-button cancelar" onClick={() => setShowClasifications(false)}>Cancelar</button>
-      </div>
-    </div>
-  </div>
-)}
-
+        <div className="clasification-modal">
+          <h3>Agregar Clasificación para {editingTournament.name}</h3>
+          <div className="clasification-form">
+            <label>🥇 Primer lugar:</label>
+            <select onChange={(e) => handleSetClassification(players.find(p => p.id === e.target.value), 1)}>
+              <option value="">Seleccionar jugador</option>
+              {players.filter(p => editingTournament.inscritos?.includes(p.id)).map(player => (
+                <option key={player.id} value={player.id}>{player.name}</option>
+              ))}
+            </select>
+            <label>🥈 Segundo lugar:</label>
+            <select onChange={(e) => handleSetClassification(players.find(p => p.id === e.target.value), 2)}>
+              <option value="">Seleccionar jugador</option>
+              {players.filter(p => editingTournament.inscritos?.includes(p.id)).map(player => (
+                <option key={player.id} value={player.id}>{player.name}</option>
+              ))}
+            </select>
+            <label>🥉 Tercer lugar:</label>
+            <select onChange={(e) => handleSetClassification(players.find(p => p.id === e.target.value), 3)}>
+              <option value="">Seleccionar jugador</option>
+              {players.filter(p => editingTournament.inscritos?.includes(p.id)).map(player => (
+                <option key={player.id} value={player.id}>{player.name}</option>
+              ))}
+            </select>
+            <div className="torneos-contenedor">
+              <button className="Torneo-button" onClick={handleSaveClasifications}>Guardar Clasificación</button>
+              <button className="Torneo-button cancelar" onClick={() => setShowClasifications(false)}>Cancelar</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
-};
+}
