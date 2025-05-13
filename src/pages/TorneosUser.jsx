@@ -1,4 +1,3 @@
-// src/pages/TorneosUsuario.jsx
 import React, { useState, useEffect } from 'react'; 
 import { db } from "../firebase";
 import { 
@@ -6,7 +5,8 @@ import {
   doc, 
   getDocs, 
   updateDoc, 
-  increment 
+  increment,
+  getDoc 
 } from "firebase/firestore";
 import "../css/torneos.css";
 import TopImg from '../components/TopImg';
@@ -17,31 +17,63 @@ export default function TorneosUsuario() {
   const [selectedTournament, setSelectedTournament] = useState(null);
   const [showPayment, setShowPayment] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  
+  const [userCategoria, setUserCategoria] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   // Obtén el UID del usuario almacenado en localStorage
   const stored = localStorage.getItem('user');
   const currentUserId = stored ? JSON.parse(stored).uid : null;
 
   useEffect(() => {
-    const fetchTournaments = async () => {
-      const querySnapshot = await getDocs(collection(db, "tournaments"));
-      const today = new Date();
+    const fetchUserAndTournaments = async () => {
+      if (!currentUserId) {
+        setErrorMessage("⚠ No se encontró información del usuario. Inicia sesión nuevamente.");
+        setLoading(false);
+        return;
+      }
 
-      const tournamentsList = querySnapshot.docs
-        .map(doc => ({ id: doc.id, ...doc.data() }))
-        .filter(t => {
-          if (!t.fecha) return false;
-          const tournamentDate = new Date(t.fecha);
-          return tournamentDate >= today;
-        })
-        .sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+      try {
+        // Fetch user data to get categoria
+        const userDoc = await getDoc(doc(db, "users", currentUserId));
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          if (userData.categoria) {
+            setUserCategoria(userData.categoria);
+          } else {
+            setErrorMessage("⚠ No se encontró la categoría del usuario.");
+            setLoading(false);
+            return;
+          }
+        } else {
+          setErrorMessage("⚠ No se encontró el perfil del usuario.");
+          setLoading(false);
+          return;
+        }
 
-      setTournaments(tournamentsList);
+        // Fetch tournaments
+        const querySnapshot = await getDocs(collection(db, "tournaments"));
+        const today = new Date();
+
+        const tournamentsList = querySnapshot.docs
+          .map(doc => ({ id: doc.id, ...doc.data() }))
+          .filter(t => {
+            if (!t.fecha || !t.categoria) return false;
+            const tournamentDate = new Date(t.fecha);
+            return tournamentDate >= today && t.categoria === userCategoria;
+          })
+          .sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+
+        setTournaments(tournamentsList);
+        setLoading(false);
+      } catch (err) {
+        console.error("Error al cargar datos:", err);
+        setErrorMessage("⚠ Error al cargar los torneos. Intenta de nuevo.");
+        setLoading(false);
+      }
     };
 
-    fetchTournaments();
-  }, []);
+    fetchUserAndTournaments();
+  }, [currentUserId, userCategoria]);
 
   const handleInscribirClick = (tournament) => {
     setErrorMessage("");
@@ -80,8 +112,15 @@ export default function TorneosUsuario() {
 
       // 4) Incrementar deuda del usuario en Firestore
       await updateDoc(doc(db, "users", currentUserId), {
-        montoMatricula: increment(costoTorneo)
+        montoMatricula: increment(selectedTournament.precio)
       });
+
+      // Update local state to reflect inscription
+      setTournaments(prev => prev.map(t => 
+        t.id === selectedTournament.id 
+          ? { ...t, inscritos: updatedInscritos }
+          : t
+      ));
 
       alert("Inscripción y registro de pago agregados con éxito.");
       setShowPayment(false);
@@ -97,43 +136,58 @@ export default function TorneosUsuario() {
     <div className='Torneos-background'>
       <Header type="usuario" />
       <TopImg number={1} />
-      <h2 className='Torneos-title'>Próximos Torneos Disponibles</h2>
-      <div className='Torneos-card'>
-        <div className='Torneos-list-container'>
-          <div className='Torneos-list'>
-            {tournaments.map((tournament, index) => (
-              <div key={tournament.id} className='Torneos-item'>
-                <div className='Torneo-image'></div>
-                <div className='Torneo-info'>
-                  <h3>{tournament.name}</h3>
-                  <p>Categoría: {tournament.categoria}</p>
-                  <p>Cancha: {tournament.cancha || 'No definida'}</p>
-                  <p>Horario: {tournament.horario || 'No definido'}</p>
-                  <p>Fecha: {tournament.fecha || 'No definida'}</p>
-                  <p>Profesor: {tournament.profesor?.name || 'No asignado'}</p>
-                  <p>Tamaño del torneo: {tournament.tournamentSize}</p>
-                  <p>Inscritos: {(tournament.inscritos || []).length}/{tournament.tournamentSize}</p>
-                  <p>Precio: ${tournament.precio || 'No asignado'}</p>
+      <h2 className='Torneos-title'>
+        {userCategoria ? `Torneos ${userCategoria} Disponibles` : 'Cargando Torneos...'}
+      </h2>
+      {errorMessage && (
+        <p style={{ color: '#c00', textAlign: 'center', margin: '1rem 0' }}>
+          {errorMessage}
+        </p>
+      )}
+      {loading ? (
+        <p style={{ textAlign: 'center', margin: '1rem 0' }}>
+          Cargando torneos...
+        </p>
+      ) : tournaments.length === 0 && !errorMessage ? (
+        <p style={{ textAlign: 'center', margin: '1rem 0' }}>
+          No hay torneos disponibles para tu categoría ({userCategoria}).
+        </p>
+      ) : (
+        <div className='Torneos-card'>
+          <div className='Torneos-list-container'>
+            <div className='Torneos-list'>
+              {tournaments.map((tournament) => (
+                <div key={tournament.id} className='Torneos-item'>
+                  <div className='Torneo-image'></div>
+                  <div className='Torneo-info'>
+                    <h3>{tournament.name}</h3>
+                    <p>Categoría: {tournament.categoria}</p>
+                    <p>Cancha: {tournament.cancha || 'No definida'}</p>
+                    <p>Horario: {tournament.horario || 'No definido'}</p>
+                    <p>Fecha: {tournament.fecha || 'No definida'}</p>
+                    <p>Profesor: {tournament.profesor?.name || 'No asignado'}</p>
+                    <p>Tamaño del torneo: {tournament.tournamentSize}</p>
+                    <p>Inscritos: {(tournament.inscritos || []).length}/{tournament.tournamentSize}</p>
+                    <p>Precio: ${tournament.precio || 'No asignado'}</p>
+                  </div>
+                  <div className="Torneo-actions">
+                    {(tournament.inscritos || []).includes(currentUserId) ? (
+                      <p>✅ Ya estás inscrito</p>
+                    ) : (
+                      <button 
+                        className="inscribirse-button" 
+                        onClick={() => handleInscribirClick(tournament)}
+                      >
+                        Inscribirse
+                      </button>
+                    )}
+                  </div>
                 </div>
-                <div className="Torneo-actions">
-                  {(tournament.inscritos || []).includes(currentUserId) ? (
-                    <p>✅ Ya estás inscrito</p>
-                  ) : (
-                    <button 
-                      className="inscribirse-button" 
-                      onClick={() => handleInscribirClick(tournament)}
-                    >
-                      Inscribirse
-                    </button>
-                  )}
-                </div>
-                
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
-      </div>
-
+      )}
       {showPayment && selectedTournament && (
         <div
           style={{
@@ -175,8 +229,6 @@ export default function TorneosUsuario() {
           </div>
         </div>
       )}
-
-
     </div>
   );
 }
