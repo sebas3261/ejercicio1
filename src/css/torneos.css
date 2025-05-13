@@ -241,12 +241,52 @@ td {
     max-width: 400px; /* Límite para consistencia */
   }
 }
-.asistencia-container{
+.asistencia-container {
   display: flex;
-  gap: 10px; 
-  justify-content: flex-start; 
-  align-items: center;
-  margin-right: 25px;
-  
+  flex-direction: column; /* Stack title and list vertically */
+  padding: 15px 20px; /* Add padding on left and right for more space */
+  margin-right: 25px; /* Keep existing right margin */
+  margin-left: 10px; /* Add left margin for balance */
+}
 
+.asistencia-container h4 {
+  font: 600 16px/1.2 'Roboto', sans-serif; /* Match Roboto style, bold for emphasis */
+  color: #333; /* Darker color for contrast */
+  margin: 0 0 10px 0; /* Bottom margin to separate from list */
+}
+
+.asistencia-container ul {
+  list-style: disc; /* Keep bullets for clarity, or use 'none' to remove */
+  padding-left: 20px; /* Indent list for hierarchy */
+  margin: 0; /* Remove default margins */
+}
+
+.asistencia-container li {
+  font: 400 14px/1.2 'Roboto', sans-serif; /* Match Torneo-info style */
+  color: #6c757d; /* Same gray as other info text */
+  margin-bottom: 5px; /* Space between list items */
+}
+
+.asistencia-container p {
+  font: 400 14px/1.2 'Roboto', sans-serif; /* Match list item style */
+  color: #6c757d; /* Same gray as other info text */
+  margin: 0; /* Remove default margins */
+}
+
+/* Responsiveness for smaller screens */
+@media (max-width: 768px) {
+  .asistencia-container {
+    padding: 10px 15px; /* Reduce padding on smaller screens */
+    margin-right: 15px; /* Adjust margin */
+    margin-left: 5px;
+  }
+
+  .asistencia-container h4 {
+    font-size: 14px; /* Slightly smaller title */
+  }
+
+  .asistencia-container li,
+  .asistencia-container p {
+    font-size: 13px; /* Slightly smaller text */
+  }
 }

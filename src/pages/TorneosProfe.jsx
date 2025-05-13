@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { db } from "../firebase";
-import { collection, doc, getDocs, setDoc, updateDoc, deleteDoc, arrayUnion, arrayRemove } from "firebase/firestore";
+import { collection, doc, getDocs, setDoc, updateDoc, deleteDoc } from "firebase/firestore";
 import "../css/entrenos.css";
 import TopImg from "../components/TopImg";
 import Header from "../components/Header";
@@ -8,7 +8,6 @@ import Header from "../components/Header";
 export default function TournamentsProfe() {
   const [tournaments, setTournaments] = useState([]);
   const [players, setPlayers] = useState([]);
-  const [attendanceSelection, setAttendanceSelection] = useState({});
   const [profesorUid, setProfesorUid] = useState(null);
   const [showCreateTorneo, setShowCreateTorneo] = useState(false);
   const [editMode, setEditMode] = useState(false);
@@ -29,7 +28,7 @@ export default function TournamentsProfe() {
 
   const horariosDisponibles = [
     "8:00-9:30", "10:00-11:30", "12:00-13:30", "14:00-15:30",
-    "16:00-17:30", "18 Aquino:00-19:30", "20:00-21:30"
+    "16:00-17:30", "18:00-19:30", "20:00-21:30"
   ];
 
   const today = new Date();
@@ -61,17 +60,6 @@ export default function TournamentsProfe() {
         const playersSnapshot = await getDocs(collection(db, "users"));
         const playersList = playersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         setPlayers(playersList);
-
-        const attendanceMap = {};
-        tournamentsList.forEach(torneo => {
-          if (torneo.asistencia) {
-            attendanceMap[torneo.id] = {};
-            torneo.asistencia.forEach(userUid => {
-              attendanceMap[torneo.id][userUid] = true;
-            });
-          }
-        });
-        setAttendanceSelection(attendanceMap);
       } catch (error) {
         console.error("Error al cargar los datos:", error);
       }
@@ -90,34 +78,6 @@ export default function TournamentsProfe() {
       )
       .map(torneo => torneo.cancha);
     return canchasPredefinidas.filter(cancha => !canchasOcupadas.includes(cancha));
-  };
-
-  const handleAttendanceChange = async (torneoId, userId, isPresent) => {
-    setAttendanceSelection(prev => ({
-      ...prev,
-      [torneoId]: {
-        ...prev[torneoId],
-        [userId]: isPresent,
-      },
-    }));
-
-    const torneoRef = doc(db, "tournaments", torneoId);
-    try {
-      if (isPresent) {
-        await updateDoc(torneoRef, {
-          asistencia: arrayUnion(userId),
-        });
-        alert('Asistencia marcada para el usuario.');
-      } else {
-        await updateDoc(torneoRef, {
-          asistencia: arrayRemove(userId),
-        });
-        alert('Asistencia eliminada para el usuario.');
-      }
-    } catch (error) {
-      console.error("Error al actualizar asistencia:", error);
-      alert("Error al actualizar asistencia: " + error.message);
-    }
   };
 
   const handleDeleteTorneo = async (torneoId) => {
@@ -165,7 +125,7 @@ export default function TournamentsProfe() {
     const trimmedCancha = cancha.trim();
 
     if (!trimmedTorneoName || !trimmedCancha || !horario || !fecha || !precio || tournamentSize <= 0) {
-      alert("Por favor, complete todos los campos: nombre, cancha, horario, fecha, y  precio y tamaño del torneo.");
+      alert("Por favor, complete todos los campos: nombre, cancha, horario, fecha, y precio y tamaño del torneo.");
       return;
     }
 
@@ -246,7 +206,6 @@ export default function TournamentsProfe() {
         tournamentSize: Number(tournamentSize),
         precio: Number(precio),
         date: new Date().toISOString(),
-        asistencia: editMode ? (tournaments.find(t => t.id === selectedTorneoId)?.asistencia || []) : [],
         rankings: editMode ? (tournaments.find(t => t.id === selectedTorneoId)?.rankings || []) : [],
         inscritos: editMode ? (tournaments.find(t => t.id === selectedTorneoId)?.inscritos || []) : [],
       };
@@ -343,36 +302,28 @@ export default function TournamentsProfe() {
                       <p>Tamaño del torneo: {torneo.tournamentSize}</p>
                       <p>Precio: ${torneo.precio}</p>
                     </div>
-                    <div className="Torneo-actions">
+                   <div className="Torneo-actions">
                       <button className="edit-button" onClick={() => handleEditTorneo(torneo)}>✏️ Editar</button>
                       <button className="delete-button" onClick={() => handleDeleteTorneo(torneo.name)}>🗑️ Eliminar</button>
-                      {/* {new Date(torneo.fecha) < new Date() && ( */}
+                      {torneo.inscritos?.length > 0 && (
                         <button className="Entreno-button" onClick={() => handleOpenClasifications(torneo)}>
                           🏅 Agregar Clasificación
                         </button>
-                      {/* )} */}
+                      )}
                     </div>
                     <div className="asistencia-container">
-                      <p className="Entreno-mark-attendance">Marque/desmarque la asistencia</p>
-                      <div>
-                        {players
-                          .filter(
-                            player =>
-                              player.categoria === torneo.categoria &&
-                              player.type === "user" &&
-                              player.isAuthenticated === true
-                          )
-                          .map(player => (
-                            <div key={player.id}>
-                              <input
-                                type="checkbox"
-                                checked={attendanceSelection[torneo.id]?.[player.id] || false}
-                                onChange={e => handleAttendanceChange(torneo.id, player.id, e.target.checked)}
-                              />
-                              <label>{player.name}</label>
-                            </div>
-                          ))}
-                      </div>
+                      <h4>Usuarios Inscritos:</h4>
+                      {players.filter(p => torneo.inscritos?.includes(p.id)).length > 0 ? (
+                        <ul>
+                          {players
+                            .filter(p => torneo.inscritos?.includes(p.id))
+                            .map(player => (
+                              <li key={player.id}>{player.name}</li>
+                            ))}
+                        </ul>
+                      ) : (
+                        <p>No hay usuarios inscritos aún.</p>
+                      )}
                     </div>
                   </div>
                 ))}
