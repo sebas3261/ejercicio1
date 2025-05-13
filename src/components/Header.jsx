@@ -26,7 +26,10 @@ export default function Header({ type }) {
       <div className="header-container">
         <div className="header-content">
           <NavLink to={"/entrenosProfe"} className={"navlink"}>
-            <p>Entrenamiento</p>
+            <p>Entrenos</p>
+          </NavLink>
+           <NavLink to={"/torneosProfe"} className={"navlink"}>
+            <p>Torneos</p>
           </NavLink>
         </div>
         <div onClick={handleLogout}>
