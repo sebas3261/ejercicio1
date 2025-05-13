@@ -30,6 +30,10 @@ export default function Header({ type }) {
           <NavLink to={"/entrenosProfe"} className={"navlink"}>
             <p>Entrenamiento</p>
           </NavLink>
+
+            <NavLink to={"/TorneosProfe"} className={"navlink"}>
+            <p>Torneo</p>
+          </NavLink>
         </div>
         <div onClick={handleLogout} className="logout-btn">
           <svg
