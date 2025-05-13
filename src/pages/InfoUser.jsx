@@ -172,7 +172,7 @@ export default function InfoUser() {
             <Chart chartType="PieChart" data={pieChartDataTrainings} options={pieChartOptions} width={"100%"} height={"200px"} />
           </div>
           <div className="infouser-chart-item">
-            <p>Torneos Participados</p>
+            <p>Torneos Inscritos</p>
             <Chart chartType="PieChart" data={pieChartDataTournaments} options={pieChartOptions} width={"100%"} height={"200px"} />
             {tournamentsWon > 0 && (
               <p className="tournament-wins">
