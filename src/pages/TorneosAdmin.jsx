@@ -246,7 +246,7 @@ export default function TorneosAdmin() {
   };
 
   // Helper function to get only those inscritos con matrícula al día
-    const getAvailablePlayers = (currentPosition) => {
+  const getAvailablePlayers = (currentPosition) => {
     const selectedIds = selectedClasifications
       .filter(item => item.position !== currentPosition)
       .map(item => item.id);
@@ -261,7 +261,6 @@ export default function TorneosAdmin() {
     );
   };
 
-
   return (
     <div className='Torneos-background'>
       <Header type="admin" />
@@ -271,23 +270,24 @@ export default function TorneosAdmin() {
           <h2 className="Entrenos-title">Torneos</h2>
           <div className="Entrenos-card">
             <div className="Entrenos-list-container">
-              <div className="Entrenos-list">
+              <div className="Torneos-list">
                 {tournaments.map((tournament, index) => (
                   <div key={index} className='Torneos-item'>
-                    <div className='Torneo-image'></div>
-                    <div className='Torneo-info'>
-                      <h3>{tournament.name}</h3>
-                      <p>Categoría: {tournament.categoria}</p>
-                      <p>Cancha: {tournament.cancha || 'No definida'}</p>
-                      <p>Horario: {tournament.horario || 'No definido'}</p>
-                      <p>Fecha: {tournament.fecha || 'No definida'}</p>
-                      <p>Profesor: {players.find(p => p.id === tournament.profesor?.id)?.name || 'No asignado'}</p>
-                      <p>Tamaño del torneo: {tournament.tournamentSize}</p>
-                      <p>Precio: ${tournament.precio}</p>
-                      <p>
-                        Clasificaciones:{' '}
-                        {tournament.rankings && tournament.rankings.length > 0
-                          ? tournament.rankings
+                    <div className='Torneo-main-content'>
+                      <div className='Torneo-image'></div>
+                      <div className='Torneo-info'>
+                        <h3>{tournament.name}</h3>
+                        <p>Categoría: {tournament.categoria}</p>
+                        <p>Cancha: {tournament.cancha || 'No definida'}</p>
+                        <p>Horario: {tournament.horario || 'No definido'}</p>
+                        <p>Fecha: {tournament.fecha || 'No definida'}</p>
+                        <p>Profesor: {players.find(p => p.id === tournament.profesor?.id)?.name || 'No asignado'}</p>
+                        <p>Tamaño del torneo: {tournament.tournamentSize}</p>
+                        <p>Precio: ${tournament.precio}</p>
+                        <p>Clasificaciones:</p>
+                        <div className="Torneo-clasificaciones">
+                          {tournament.rankings && tournament.rankings.length > 0 ? (
+                            tournament.rankings
                               .sort((a, b) => a.position - b.position)
                               .map(r => {
                                 const player = players.find(p => p.id === r.id);
@@ -297,19 +297,27 @@ export default function TorneosAdmin() {
                                   </span>
                                 );
                               })
-                              .reduce((prev, curr) => [prev, ', ', curr])
-                          : 'No definidas'}
-                      </p>
+                          ) : (
+                            <span>No definidas</span>
+                          )}
+                        </div>
+                      </div>
                     </div>
+                    
                     <div className="Torneo-actions">
-                      <button className="edit-button" onClick={() => handleEditTournament(tournament)}>✏️ Editar</button>
-                      <button className="delete-button" onClick={() => handleDeleteTournament(tournament.name)}>🗑️ Eliminar</button>
+                      <button className="edit-button" onClick={() => handleEditTournament(tournament)}>
+                        ✏️ Editar
+                      </button>
+                      <button className="delete-button" onClick={() => handleDeleteTournament(tournament.name)}>
+                        🗑️ Eliminar
+                      </button>
                       {tournament.inscritos?.length > 0 && (
                         <button className="Entreno-button" onClick={() => handleOpenClasifications(tournament)}>
                           🏅 Agregar Clasificación
                         </button>
                       )}
                     </div>
+                    
                     <div className="asistencia-container">
                       <h4>Usuarios Inscritos (matrícula al día):</h4>
                       {(() => {
