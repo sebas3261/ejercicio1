@@ -283,14 +283,22 @@ export default function TournamentsProfe() {
     setSelectedClasifications(torneo.rankings || []);
   };
 
+  // Helper function to get only those inscritos con matrícula al día
   const getAvailablePlayers = (currentPosition) => {
     const selectedIds = selectedClasifications
       .filter(item => item.position !== currentPosition)
       .map(item => item.id);
-    return players.filter(p => 
-      editingTournament.inscritos?.includes(p.id) && !selectedIds.includes(p.id)
+
+    return players.filter(p =>
+      // 1) sólo si está inscrito
+      editingTournament.inscritos?.includes(p.id) &&
+      // 2) sólo si no lo hemos ya seleccionado para otra posición
+      !selectedIds.includes(p.id) &&
+      // 3) sólo si montoMatricula es 0
+      (p.montoMatricula || 0) === 0
     );
   };
+
 
   return (
     <div className="Entrenos-background">
@@ -341,18 +349,23 @@ export default function TournamentsProfe() {
                       )}
                     </div>
                     <div className="asistencia-container">
-                      <h4>Usuarios Inscritos:</h4>
-                      {players.filter(p => torneo.inscritos?.includes(p.id)).length > 0 ? (
-                        <ul>
-                          {players
-                            .filter(p => torneo.inscritos?.includes(p.id))
-                            .map(player => (
+                      <h4>Usuarios Inscritos (matrícula al día):</h4>
+                      {(() => {
+                        // Filtramos los jugadores que están en inscritos Y cuya deuda sea 0
+                        const inscritosPagados = players.filter(p =>
+                          torneo.inscritos?.includes(p.id) &&
+                          (p.montoMatricula || 0) === 0
+                        );
+                        return inscritosPagados.length > 0 ? (
+                          <ul>
+                            {inscritosPagados.map(player => (
                               <li key={player.id}>{player.name}</li>
                             ))}
-                        </ul>
-                      ) : (
-                        <p>No hay usuarios inscritos aún.</p>
-                      )}
+                          </ul>
+                        ) : (
+                          <p>No hay usuarios inscritos (con matrícula al día) aún.</p>
+                        );
+                      })()}
                     </div>
                   </div>
                 ))}
