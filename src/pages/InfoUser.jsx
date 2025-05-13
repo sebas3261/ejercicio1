@@ -6,17 +6,17 @@ import { doc, getDoc, collection, query, getDocs } from "firebase/firestore";
 import { db } from "../firebase";
 import TopImg from "../components/TopImg";
 import { NavLink } from "react-router";
+
 export default function InfoUser() {
   const [userCategory, setUserCategory] = useState(null);
-  //pagos
   const [userBalance, setUserBalance] = useState(null);
   const [paymentStatus, setPaymentStatus] = useState(null);
-
   const [trainingCount, setTrainingCount] = useState(0);
   const [totalTrainings, setTotalTrainings] = useState(0);
   const [tournamentCount, setTournamentCount] = useState(0);
   const [totalTournaments, setTotalTournaments] = useState(0);
-  const [tournamentsWon, setTournamentsWon] = useState(0); // Estado para los torneos ganados
+  const [tournamentsWon, setTournamentsWon] = useState(0);
+  const [firstPlaceTournaments, setFirstPlaceTournaments] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -61,34 +61,48 @@ export default function InfoUser() {
 
         setTrainingCount(attendedTrainings);
         setTotalTrainings(totalCategoryTrainings);
-        
+
         // Consultar torneos
         const tournamentsQuery = query(collection(db, "tournaments"));
         const tournamentsSnapshot = await getDocs(tournamentsQuery);
         let attendedTournaments = 0;
         let totalCategoryTournaments = 0;
-        let wonTournaments = 0; // Variable para contar los torneos ganados
+        let wonTournaments = 0;
+        const firstPlaceList = [];
 
         tournamentsSnapshot.forEach((doc) => {
           const tournamentData = doc.data();
+          const tournamentId = doc.id;
+
           if (tournamentData.categoria === userData.categoria) {
             totalCategoryTournaments++;
           }
-          if (
-            tournamentData.rankings &&
-            tournamentData.rankings.some((rank) => rank.playerId === uid)
-          ) {
+
+          if (tournamentData.inscritos && tournamentData.inscritos.includes(uid)) {
             attendedTournaments++;
-            // Verificar si el jugador ha ganado el torneo
-            if (tournamentData.rankings.some((rank) => rank.playerId === uid && rank.position === 1)) {
+          }
+
+          if (tournamentData.rankings && Array.isArray(tournamentData.rankings)) {
+            const userFirstPlace = tournamentData.rankings.find(
+              (rank) => rank.id === uid && rank.position === 0
+            );
+
+            if (userFirstPlace) {
               wonTournaments++;
+              firstPlaceList.push({
+                id: tournamentId,
+                name: tournamentData.name,
+                fecha: tournamentData.fecha || "No definida",
+                categoria: tournamentData.categoria,
+              });
             }
           }
         });
 
         setTournamentCount(attendedTournaments);
         setTotalTournaments(totalCategoryTournaments);
-        setTournamentsWon(wonTournaments); // Actualizar el estado de torneos ganados
+        setTournamentsWon(wonTournaments);
+        setFirstPlaceTournaments(firstPlaceList);
 
       } catch (error) {
         console.error("Error al cargar datos del usuario:", error);
@@ -138,9 +152,8 @@ export default function InfoUser() {
           <p>${userBalance}</p>
           <span className={`payment-status ${paymentStatus === "Debe dinero" ? "debt" : "paid"}`}>{paymentStatus}</span>
           <NavLink to={"/pagosuser"} className={"navlink"}>
-          {paymentStatus === "Debe dinero" && <button className="pay-button" >Pagar</button>}
-        </NavLink>
-          
+            {paymentStatus === "Debe dinero" && <button className="pay-button">Pagar</button>}
+          </NavLink>
         </div>
 
         <div className="infouser-chart">
@@ -153,8 +166,24 @@ export default function InfoUser() {
             <Chart chartType="PieChart" data={pieChartDataTournaments} options={pieChartOptions} width={"100%"} height={"200px"} />
             {tournamentsWon > 0 && (
               <p className="tournament-wins">
-                🏆 Has ganado {tournamentsWon} de {totalTournaments} torneos en tu categoria.
+                🏆 Has ganado {tournamentsWon} de {totalTournaments} torneos en tu categoría.
               </p>
+            )}
+          </div>
+          <div className="infouser-chart-item">
+            <h3>Torneos Ganados</h3>
+            {firstPlaceTournaments.length > 0 ? (
+              <ul className="first-place-list">
+                {firstPlaceTournaments.map((tournament) => (
+                  <li key={tournament.id} className="first-place-item">
+                    <span>🏆 {tournament.name}</span>
+                    <span>Fecha: {tournament.fecha}</span>
+                    <span>Categoría: {tournament.categoria}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="no-wins">No has ganado ningún torneo aún.</p>
             )}
           </div>
         </div>
